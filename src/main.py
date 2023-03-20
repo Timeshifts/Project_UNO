@@ -18,7 +18,12 @@ def main():
     settings = setting.Settings()
     
     # 기본 화면 설정 (기본 해상도 FHD)
-    size = width, height = settings.resolution[settings.settings['resolution']]
+    if settings.settings['resolution'] in settings.resolution.keys():
+        size = width, height = settings.resolution[settings.settings['resolution']]
+    else:
+        # 지정된 해상도 범위 초과 시 초기화
+        size = width, height = settings.settings['resolution'] = settings.default_setting['resolution']
+
     screen = pygame.display.set_mode(size)
 
     clock = pygame.time.Clock()
