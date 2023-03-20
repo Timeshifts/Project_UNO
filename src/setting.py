@@ -2,7 +2,12 @@ import pygame, pickle
 from pathlib import Path
 
 class Settings:
-    default_setting = { 'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'enter': pygame.K_KP_ENTER }
+    
+    # 가능한 해상도 목록
+    resolution = {0: (1024, 576), 1: (1280, 720), 2: (1600, 900), 3: (1920, 1080)}
+    
+    # 기본 설정
+    default_setting = { 'version': 1, 'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'enter': pygame.K_KP_ENTER, 'colorblind': False, 'resolution': 3 }
 
     # 싱글톤 객체 생성
     _instance = None

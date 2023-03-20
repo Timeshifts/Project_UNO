@@ -14,24 +14,26 @@ def main():
     
     pygame.init()
 
-    # 기본 해상도 1920x1080 (FHD)
-    size = width, height = 1920, 1080    
-
+    # 설정 불러오기
+    settings = setting.Settings()
+    
+    # 기본 화면 설정 (기본 해상도 FHD)
+    size = width, height = settings.resolution[settings.settings['resolution']]
     screen = pygame.display.set_mode(size)
+
     clock = pygame.time.Clock()
 
     # 창 제목, 아이콘
     pygame.display.set_caption('우노 게임')
     #pygame.display.set_icon(pygame.image.load(resource_path / '아이콘 파일 위치.png'))
 
-    # 설정 불러오기
-    settings = setting.Settings()
-
+    
+    
     # 메인 메뉴 배경
     background = pygame.transform.scale(pygame.image.load(resource_path / 'main.png'), size)
 
     while True:
-        
+
         for event in pygame.event.get():
 
             # 사용자가 X 버튼을 누르는 등의 동작으로 창 종료 시 종료 처리
