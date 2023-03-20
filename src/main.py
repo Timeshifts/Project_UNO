@@ -26,8 +26,6 @@ def main():
     # 창 제목, 아이콘
     pygame.display.set_caption('우노 게임')
     #pygame.display.set_icon(pygame.image.load(resource_path / '아이콘 파일 위치.png'))
-
-    
     
     # 메인 메뉴 배경
     background = pygame.transform.scale(pygame.image.load(resource_path / 'main.png'), size)
