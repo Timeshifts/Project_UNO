@@ -14,8 +14,8 @@ def main():
     
     pygame.init()
 
-    # 기본 해상도 1280x720
-    size = width, height = 1280, 720
+    # 기본 해상도 1920x1080 (FHD)
+    size = width, height = 1920, 1080
 
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
