@@ -1,4 +1,4 @@
-import sys
+import sys,setting
 from pathlib import Path
 
 #pygame 검사
@@ -24,14 +24,19 @@ def main():
     pygame.display.set_caption('우노 게임')
     #pygame.display.set_icon(pygame.image.load(resource_path / '아이콘 파일 위치.png'))
 
+    # 설정 불러오기
+    settings = setting.Settings()
+
     while True:
         for event in pygame.event.get():
 
             # 사용자가 X 버튼을 누르는 등의 동작으로 창 종료 시 종료 처리
             if event.type == pygame.QUIT:
+                settings.save_setting()
                 pygame.quit()
                 sys.exit(0)
 
+        # 기본 화면 표시
         screen.fill(pygame.Color('white'))
         pygame.display.flip()
 
@@ -43,7 +48,7 @@ if __name__ == '__main__':
         print('[경고] Python 3.8 이상이 필요합니다.')
         sys.exit(1)
     if pygame.version.vernum < (2, 2, 0):
-        print('[경고] Pygame 2.2.0 이상을 권장합니다.')
+        print('[주의] Pygame 2.2.0 이상을 권장합니다.')
 
     # 리소스 폴더 경로
     resource_path = Path.cwd() / 'resources'
