@@ -2,7 +2,8 @@ import pygame, pickle
 from pathlib import Path
 
 class Settings:
-    default_keyset = { 'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'enter': pygame.K_KP_ENTER }
+    default_setting = { 'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'enter': pygame.K_KP_ENTER }
+
     # 싱글톤 객체 생성
     _instance = None
     
@@ -12,7 +13,7 @@ class Settings:
         return cls._instance
     
     def __init__(self):
-        self.settings = Settings.default_keyset
+        self.settings = Settings.default_setting
         self.setting_path = Path.cwd() / 'resources' / 'settings.ini'
         self.load_setting()
 
@@ -32,7 +33,7 @@ class Settings:
 
     # 설정 초기화하기
     def reset_setting(self):
-        self.settings = Settings.default_keyset
+        self.settings = Settings.default_setting
     
     def apply_setting(self):
         pass
