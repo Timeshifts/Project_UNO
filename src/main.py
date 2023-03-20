@@ -15,7 +15,7 @@ def main():
     pygame.init()
 
     # 기본 해상도 1920x1080 (FHD)
-    size = width, height = 1920, 1080
+    size = width, height = 1920, 1080    
 
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
@@ -27,7 +27,11 @@ def main():
     # 설정 불러오기
     settings = setting.Settings()
 
+    # 메인 메뉴 배경
+    background = pygame.transform.scale(pygame.image.load(resource_path / 'main.png'), size)
+
     while True:
+        
         for event in pygame.event.get():
 
             # 사용자가 X 버튼을 누르는 등의 동작으로 창 종료 시 종료 처리
@@ -37,16 +41,18 @@ def main():
                 sys.exit(0)
 
         # 기본 화면 표시
-        screen.fill(pygame.Color('white'))
+        screen.blit(background, (0, 0))
         pygame.display.flip()
 
         # Frame Per Second - 우선 60으로 가정합니다.
         clock.tick(60)
 
 if __name__ == '__main__':
+
     if sys.version_info < (3, 8):
         print('[경고] Python 3.8 이상이 필요합니다.')
         sys.exit(1)
+
     if pygame.version.vernum < (2, 2, 0):
         print('[주의] Pygame 2.2.0 이상을 권장합니다.')
 
