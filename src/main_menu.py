@@ -22,17 +22,22 @@ class Main_menu():
         self.rect = []
         self.pos = (pos[0]-size[0]/2, pos[1])
         self.size = size
+        self.highlight = 0 # 현재 highlight된 위치의 index
         for i in range(self.max_menu):
             # 각 버튼 별 이미지 조작
             self.button.append(pygame.transform.scale(pygame.image.load(resource_path / 'temp_image.png'), self.size))
             # 각 버튼 이벤트 처리용 Rect 생성
             self.rect.append(self.button[i].get_rect())
             (self.rect[i].x, self.rect[i].y) = self.get_position(i)
+            # highlight용 오브젝트 생성
+            self.highlight_obj = pygame.transform.scale(pygame.image.load(resource_path / 'highlight.png'), self.size)
 
     # 스크린에 자신을 그리기
     def draw(self, screen):
         for i in range(self.max_menu):
             screen.blit(self.button[len(self.button)-1], self.get_position(i))
+        
+        screen.blit(self.highlight_obj, self.get_position(self.highlight))
     
     # 이벤트 처리
     def handle_event(self, event):
@@ -47,4 +52,5 @@ class Main_menu():
                         pass # 싱글플레이
             elif event.type == pygame.MOUSEMOTION:
                 if self.rect[i].collidepoint(event.pos):
-                    print(f'{i} 번 버튼에 마우스 호버') # 올렸을 때, 임시 메시지
+                    # highlight 대상을 변경
+                    self.highlight = i
