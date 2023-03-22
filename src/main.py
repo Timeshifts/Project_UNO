@@ -1,5 +1,6 @@
-import sys,setting
+import sys, setting, GameManager
 from pathlib import Path
+from main_menu import Main_menu, EVENT_QUIT_GAME
 
 #pygame 검사
 try:
@@ -9,44 +10,7 @@ except ImportError:
     sys.exit(1)
 
 resource_path = None
-
-# 메인 메뉴 - 추후 분리 예정
-class Main_menu():
-    
-    # 가능한 메뉴 목록
-    avail_menu = ['single', 'setting', 'exit']
-
-    # 버튼이 있어야 할 위치 반환
-    get_position = lambda self, index: (self.pos[0], self.pos[1]+self.size[1]*1.2*index)
-
-    def __init__(self, pos=(0, 0), size=(150, 50)):
-        self.menu = self.avail_menu
-        self.max_menu = len(self.menu)
-        self.button = []
-        self.rect = []
-        self.pos = (pos[0]-size[0]/2, pos[1])
-        self.size = size
-        for i in range(self.max_menu):
-            # 각 버튼 별 이미지 조작
-            self.button.append(pygame.transform.scale(pygame.image.load(resource_path / 'temp_image.png'), self.size))
-            # 각 버튼 이벤트 처리용 Rect 생성
-            self.rect.append(self.button[i].get_rect())
-            (self.rect[i].x, self.rect[i].y) = self.get_position(i)
-
-    # 스크린에 자신을 그리기
-    def draw(self, screen):
-        for i in range(self.max_menu):
-            screen.blit(self.button[len(self.button)-1], self.get_position(i))
-    
-    # 이벤트 처리
-    def handle_event(self, event):
-        for i in range(self.max_menu):
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.rect[i].collidepoint(event.pos):
-                    print(f'{i} 번 버튼에 마우스 클릭') # 눌렸을 때
-            elif event.type == pygame.MOUSEMOTION:
-                if self.rect[i].collidepoint(event.pos):
-                    print(f'{i} 번 버튼에 마우스 호버') # 올렸을 때
+settings = None
 
 def main():
     
@@ -84,8 +48,8 @@ def main():
 
         for event in pygame.event.get():
 
-            # 사용자가 X 버튼을 누르는 등의 동작으로 창 종료 시 종료 처리
-            if event.type == pygame.QUIT:
+            # 사용자가 X 버튼을 누르는 등의 동작으로 창 종료 시, 메뉴에서 종료 선택 시 종료 처리
+            if event.type in (pygame.QUIT, EVENT_QUIT_GAME):
                 settings.save_setting()
                 pygame.quit()
                 sys.exit(0)

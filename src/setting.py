@@ -2,7 +2,7 @@ import pygame, pickle
 from pathlib import Path
 
 class Settings:
-    
+
     # 가능한 해상도 목록
     resolution = {0: (1024, 576), 1: (1280, 720), 2: (1600, 900), 3: (1920, 1080)}
     
