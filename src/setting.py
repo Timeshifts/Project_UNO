@@ -7,7 +7,7 @@ class Settings:
     resolution = {0: (1024, 576), 1: (1280, 720), 2: (1600, 900), 3: (1920, 1080)}
     
     # 기본 설정
-    default_setting = { 'version': 1, 'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'enter': pygame.K_KP_ENTER, 'colorblind': False, 'resolution': 3 }
+    default_setting = { 'version': 2, 'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'enter': pygame.K_RETURN, 'colorblind': False, 'resolution': 3 }
 
     # 싱글톤 객체 생성
     _instance = None
@@ -27,6 +27,9 @@ class Settings:
         try:
             with open(self.setting_path, 'rb') as f:
                 self.settings = pickle.load(f)
+                # 버전이 다를 시 기본 설정 덮어쓰기
+                if self.default_setting['version'] != self.settings['version']:
+                    self.reset_setting()
         # 파일이 없을 시 기본 설정 불러오기
         except FileNotFoundError:
             self.reset_setting()
