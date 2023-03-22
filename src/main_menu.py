@@ -6,6 +6,7 @@ from setting import Settings
 resource_path = Path.cwd() / 'resources'
 
 EVENT_QUIT_GAME = pygame.event.custom_type()
+EVENT_START_SINGLE = pygame.event.custom_type()
 
 # 메인 메뉴
 class Main_menu():
@@ -48,13 +49,12 @@ class Main_menu():
     
     # 메뉴 선택 시 처리
     def select_menu(self, index):
-        print(index)
         if self.avail_menu[index] == 'exit':
             pygame.event.post(pygame.event.Event(EVENT_QUIT_GAME)) # 게임 종료
         elif self.avail_menu[index] == 'setting':
             pass # 설정
         elif self.avail_menu[index] == 'single':
-            pass # 싱글플레이
+            pygame.event.post(pygame.event.Event(EVENT_START_SINGLE)) # 싱글플레이
 
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):

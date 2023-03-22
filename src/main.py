@@ -1,6 +1,6 @@
 import sys, setting, GameManager
 from pathlib import Path
-from main_menu import Main_menu, EVENT_QUIT_GAME
+from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE
 
 #pygame 검사
 try:
@@ -32,7 +32,7 @@ def main():
 
     # 창 제목, 아이콘
     pygame.display.set_caption('우노 게임')
-    #pygame.display.set_icon(pygame.image.load(resource_path / '아이콘 파일 위치.png'))
+    # pygame.display.set_icon(pygame.image.load(resource_path / '아이콘 파일 위치.png'))
     
     # 게임 오브젝트 배열
     game_objects = []
@@ -54,6 +54,12 @@ def main():
                 pygame.quit()
                 sys.exit(0)
 
+            # 게임 시작
+            if event.type == EVENT_START_SINGLE:
+                # 메인 메뉴 제거
+                game_objects.remove(main_menu)
+                # GameManager.GameManager().game_start() 게임 시작 처리
+            
             # 오브젝트별로 이벤트 처리
             for obj in game_objects:
                 obj.handle_event(event)
