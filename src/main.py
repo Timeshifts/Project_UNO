@@ -245,6 +245,18 @@ def play():
             hovering_color="Green",
         )
 
+        # 색
+        card_color = Button(
+            image=pygame.transform.scale(
+                pygame.image.load(resource_path / "card/blue.png"), (80, 80)
+            ),
+            pos=(width * 3 / 8 + 200, height * 9 / 20),
+            text_input="",
+            font=get_font(0),
+            base_color="White",
+            hovering_color="Green",
+        )
+
         # 메인메뉴로 나가기
         PLAY_BACK = Button(
             image=None,
@@ -255,7 +267,7 @@ def play():
             hovering_color="Green",
         )
 
-        for button in [uno_button, draw_deck, put_card, PLAY_BACK]:
+        for button in [uno_button, draw_deck, put_card, card_color, PLAY_BACK]:
             button.changeColor(play_mouse_pos, screen)
             button.update(screen)
 
