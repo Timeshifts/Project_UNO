@@ -1,8 +1,6 @@
 import pygame, pickle
 from pathlib import Path
-
-# 리소스 폴더 경로
-resource_path = Path.cwd() / 'resources'
+from constant import *
 
 class Settings:
 
@@ -26,16 +24,18 @@ class Settings:
         self.load_setting()
         self.pos = pos
         self.size = size
-        self.background = (pygame.transform.scale(pygame.image.load(resource_path / 'temp_image.png'), self.size))
+        self.background = (pygame.transform.scale(pygame.image.load(RESOURCE_PATH / 'temp_image.png'), self.size))
     
     # 파일에 저장된 설정 불러오기
     def load_setting(self):
         try:
             with open(self.setting_path, 'rb') as f:
                 self.settings = pickle.load(f)
+
                 # 버전이 다를 시 기본 설정 덮어쓰기
                 if self.default_setting['version'] != self.settings['version']:
                     self.reset_setting()
+                    
         # 파일이 없을 시 기본 설정 불러오기
         except FileNotFoundError:
             self.reset_setting()
@@ -54,8 +54,8 @@ class Settings:
     
     def resize(self, size):
         self.size = size
-        self.background = (pygame.transform.scale(pygame.image.load(resource_path / 'temp_image.png'), self.size))
-        
+        self.background = (pygame.transform.scale(pygame.image.load(RESOURCE_PATH / 'temp_image.png'), self.size))
+
     # 스크린에 자신을 그리기
     def draw(self, screen):
         screen.blit(self.background, self.pos)

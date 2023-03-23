@@ -1,13 +1,6 @@
 import pygame
-from pathlib import Path
 from setting import Settings
-
-# 리소스 폴더 경로
-resource_path = Path.cwd() / 'resources'
-
-EVENT_QUIT_GAME = pygame.event.custom_type()
-EVENT_START_SINGLE = pygame.event.custom_type()
-EVENT_OPEN_OPTION = pygame.event.custom_type()
+from constant import *
 
 # 메인 메뉴
 class Main_menu():
@@ -34,12 +27,12 @@ class Main_menu():
 
         for i in range(self.max_menu):
             # 각 버튼 별 이미지 조작
-            self.button.append(pygame.transform.scale(pygame.image.load(resource_path / 'temp_image.png'), self.size))
+            self.button.append(pygame.transform.scale(pygame.image.load(RESOURCE_PATH / 'temp_image.png'), self.size))
             # 각 버튼 이벤트 처리용 Rect 생성
             self.rect.append(self.button[i].get_rect())
             (self.rect[i].x, self.rect[i].y) = self.get_position(i)
             # highlight용 오브젝트 생성
-            self.highlight_obj = pygame.transform.scale(pygame.image.load(resource_path / 'highlight.png'), self.size)
+            self.highlight_obj = pygame.transform.scale(pygame.image.load(RESOURCE_PATH / 'highlight.png'), self.size)
 
     # 스크린에 자신을 그리기
     def draw(self, screen):

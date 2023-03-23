@@ -1,6 +1,6 @@
 import sys, setting, GameManager
-from pathlib import Path
 from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN_OPTION
+from constant import *
 
 #pygame 검사
 try:
@@ -9,7 +9,6 @@ except ImportError:
     print("[경고] Pygame이 설치되어 있지 않습니다.")
     sys.exit(1)
 
-resource_path = None
 settings = None
 
 def main():
@@ -34,13 +33,13 @@ def main():
 
     # 창 제목, 아이콘
     pygame.display.set_caption('우노 게임')
-    # pygame.display.set_icon(pygame.image.load(resource_path / '아이콘 파일 위치.png'))
+    # pygame.display.set_icon(pygame.image.load(RESOURCE_PATH / '아이콘 파일 위치.png'))
     
     # 게임 오브젝트 배열
     game_objects = []
 
     # 메인 배경
-    background = pygame.transform.scale(pygame.image.load(resource_path / 'main.png'), size)
+    background = pygame.transform.scale(pygame.image.load(RESOURCE_PATH / 'main.png'), size)
 
     # 메인 메뉴 생성하여 게임 오브젝트에 추가
     main_menu = Main_menu((width/2, height/2+100), (400, 100))
@@ -92,8 +91,5 @@ if __name__ == '__main__':
 
     if pygame.version.vernum < (2, 2, 0):
         print('[주의] Pygame 2.2.0 이상을 권장합니다.')
-
-    # 리소스 폴더 경로
-    resource_path = Path.cwd() / 'resources'
 
     main()
