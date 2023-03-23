@@ -91,15 +91,115 @@ def play():
 
         screen.fill("#526580")
 
-        # 내 공간
-        pygame.draw.rect(
-            screen, (100, 100, 100), [0, height * 5 / 8, width * 3 / 4, height * 3 / 8]
-        )
+        # 전체 타이머
+        e_timer = get_font(45).render("entire timer", True, "White")
+        e_timer_rect = e_timer.get_rect(center=(width * 2 / 20, height * 1 / 20))
+        screen.blit(e_timer, e_timer_rect)
 
         # 플레이어 리스트 공간
         pygame.draw.rect(screen, (37, 37, 37), [width * 3 / 4, 0, width / 4, height])
 
-        # my
+        # 플레이어 리스트
+        player_list = get_font(45).render("Player list", True, "White")
+        player_list_rect = player_list.get_rect(center=(width * 7 / 8, height * 5 / 20))
+        screen.blit(player_list, player_list_rect)
+
+        # 플레이어 리스트 my
+        player_list_my = get_font(60).render("Me", True, "White")
+        player_list_my_rect = player_list_my.get_rect(
+            center=(width * 13 / 16, height * 7 / 20)
+        )
+        screen.blit(player_list_my, player_list_my_rect)
+
+        # 플레이어 리스트 my 남은 카드 개수
+        player_list_my = get_font(60).render("rest", True, "White")
+        player_list_my_rect = player_list_my.get_rect(
+            center=(width * 15 / 16, height * 7 / 20)
+        )
+        screen.blit(player_list_my, player_list_my_rect)
+
+        # 플레이어 리스트 플레이어 1
+        player_list_p1 = get_font(60).render("P1", True, "White")
+        player_list_p1_rect = player_list_p1.get_rect(
+            center=(width * 13 / 16, height * 9 / 20)
+        )
+        screen.blit(player_list_p1, player_list_p1_rect)
+
+        # 플레이어 리스트 플레이어 1 남은 카드 개수
+        player_list_p1 = get_font(60).render("rest", True, "White")
+        player_list_p1_rect = player_list_p1.get_rect(
+            center=(width * 15 / 16, height * 9 / 20)
+        )
+        screen.blit(player_list_p1, player_list_p1_rect)
+
+        # 플레이어 리스트 플레이어 2
+        player_list_p2 = get_font(60).render("P2", True, "White")
+        player_list_p2_rect = player_list_p2.get_rect(
+            center=(width * 13 / 16, height * 11 / 20)
+        )
+        screen.blit(player_list_p2, player_list_p2_rect)
+
+        # 플레이어 리스트 플레이어 2 남은 카드 개수
+        player_list_p2 = get_font(60).render("rest", True, "White")
+        player_list_p2_rect = player_list_p2.get_rect(
+            center=(width * 15 / 16, height * 11 / 20)
+        )
+        screen.blit(player_list_p2, player_list_p2_rect)
+
+        # 플레이어 리스트 플레이어 3
+        player_list_p3 = get_font(60).render("P3", True, "White")
+        player_list_p3_rect = player_list_p3.get_rect(
+            center=(width * 13 / 16, height * 13 / 20)
+        )
+        screen.blit(player_list_p3, player_list_p3_rect)
+
+        # 플레이어 리스트 플레이어 3 남은 카드 개수
+        player_list_p3 = get_font(60).render("rest", True, "White")
+        player_list_p3_rect = player_list_p3.get_rect(
+            center=(width * 15 / 16, height * 13 / 20)
+        )
+        screen.blit(player_list_p3, player_list_p3_rect)
+
+        # 플레이어 1 보드
+        pygame.draw.rect(
+            screen, (50, 50, 50), [width * 3 / 16, 0, width * 6 / 16, height / 8]
+        )
+
+        # 플레이어 1
+        player_1 = get_font(45).render("P1", True, "White")
+        player_1_rect = player_1.get_rect(center=(width * 7 / 32, height / 16))
+        screen.blit(player_1, player_1_rect)
+
+        # 플레이어 2 보드
+        pygame.draw.rect(
+            screen, (50, 50, 50), [0, height / 8, height / 8, width * 5 / 16]
+        )
+
+        # 플레이어 2
+        player_2 = get_font(45).render("P2", True, "White")
+        player_2_rect = player_2.get_rect(center=(height / 16, height * 5 / 32))
+        screen.blit(player_2, player_2_rect)
+
+        # 플레이어 3 보드
+        pygame.draw.rect(
+            screen,
+            (50, 50, 50),
+            [width * 3 / 4 - height / 8, height / 8, height / 8, width * 5 / 16],
+        )
+
+        # 플레이어 3
+        player_3 = get_font(45).render("P3", True, "White")
+        player_3_rect = player_3.get_rect(
+            center=(width * 3 / 4 - height / 16, height * 5 / 32)
+        )
+        screen.blit(player_3, player_3_rect)
+
+        # 내 보드
+        pygame.draw.rect(
+            screen, (100, 100, 100), [0, height * 5 / 8, width * 3 / 4, height * 3 / 8]
+        )
+
+        # 내 보드 이름 표시
         my_board = get_font(45).render("My", True, "White")
         my_board_rect = my_board.get_rect(center=(width / 20, height * 11 / 16))
         screen.blit(my_board, my_board_rect)
@@ -108,31 +208,6 @@ def play():
         p_timer = get_font(45).render("personal timer", True, "White")
         p_timer_rect = p_timer.get_rect(center=(width * 4 / 20, height * 11 / 16))
         screen.blit(p_timer, p_timer_rect)
-
-        # 전체 타이머
-        e_timer = get_font(45).render("entire timer", True, "White")
-        e_timer_rect = e_timer.get_rect(center=(width * 2 / 20, height * 1 / 20))
-        screen.blit(e_timer, e_timer_rect)
-
-        # 플레이어 리스트
-        player_list = get_font(45).render("Player List", True, "White")
-        player_list_rect = player_list.get_rect(center=(width * 7 / 8, height * 4 / 20))
-        screen.blit(player_list, player_list_rect)
-
-        # 플레이어 1
-        player_1 = get_font(45).render("P1", True, "White")
-        player_1_rect = player_1.get_rect(center=(width * 3 / 8, height * 1 / 20))
-        screen.blit(player_1, player_1_rect)
-
-        # 플레이어 2
-        player_2 = get_font(45).render("P2", True, "White")
-        player_2_rect = player_2.get_rect(center=(width * 1 / 16, height * 7 / 20))
-        screen.blit(player_2, player_2_rect)
-
-        # 플레이어 3
-        player_3 = get_font(45).render("P3", True, "White")
-        player_3_rect = player_3.get_rect(center=(width * 11 / 16, height * 7 / 20))
-        screen.blit(player_3, player_3_rect)
 
         # 우노버튼
         uno_button = Button(
@@ -159,7 +234,7 @@ def play():
         )
 
         # 카드 놓을 자리
-        put_deck = Button(
+        put_card = Button(
             image=pygame.transform.scale(
                 pygame.image.load(resource_path / "highlight.png"), (130, 182)
             ),
@@ -180,7 +255,7 @@ def play():
             hovering_color="Green",
         )
 
-        for button in [uno_button, draw_deck, put_deck, PLAY_BACK]:
+        for button in [uno_button, draw_deck, put_card, PLAY_BACK]:
             button.changeColor(play_mouse_pos, screen)
             button.update(screen)
 
