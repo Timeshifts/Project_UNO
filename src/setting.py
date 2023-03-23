@@ -10,14 +10,6 @@ class Settings:
     # 기본 설정
     default_setting = { 'version': 2, 'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'enter': pygame.K_RETURN, 'colorblind': False, 'resolution': 3 }
 
-    # 싱글톤 객체 생성
-    _instance = None
-    
-    def __new__(cls, pos=(0, 0), size=(150, 50)):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-    
     def __init__(self, pos=(0, 0), size=(150, 50)):
         self.settings = Settings.default_setting
         self.setting_path = Path.cwd() / 'resources' / 'settings.ini'
