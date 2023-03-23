@@ -1,6 +1,9 @@
 import pygame, pickle
 from pathlib import Path
 
+# 리소스 폴더 경로
+resource_path = Path.cwd() / 'resources'
+
 class Settings:
 
     # 가능한 해상도 목록
@@ -12,16 +15,19 @@ class Settings:
     # 싱글톤 객체 생성
     _instance = None
     
-    def __new__(cls):
+    def __new__(cls, pos=(0, 0), size=(150, 50)):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
     
-    def __init__(self):
+    def __init__(self, pos=(0, 0), size=(150, 50)):
         self.settings = Settings.default_setting
         self.setting_path = Path.cwd() / 'resources' / 'settings.ini'
         self.load_setting()
-
+        self.pos = pos
+        self.size = size
+        self.background = (pygame.transform.scale(pygame.image.load(resource_path / 'temp_image.png'), self.size))
+    
     # 파일에 저장된 설정 불러오기
     def load_setting(self):
         try:
@@ -42,6 +48,18 @@ class Settings:
     # 설정 초기화하기
     def reset_setting(self):
         self.settings = Settings.default_setting
-    
+
     def apply_setting(self):
+        pass
+    
+    def resize(self, size):
+        self.size = size
+        self.background = (pygame.transform.scale(pygame.image.load(resource_path / 'temp_image.png'), self.size))
+        
+    # 스크린에 자신을 그리기
+    def draw(self, screen):
+        screen.blit(self.background, self.pos)
+    
+    # 이벤트 처리
+    def handle_event(self, event: pygame.event.Event):
         pass

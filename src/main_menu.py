@@ -7,6 +7,7 @@ resource_path = Path.cwd() / 'resources'
 
 EVENT_QUIT_GAME = pygame.event.custom_type()
 EVENT_START_SINGLE = pygame.event.custom_type()
+EVENT_OPEN_OPTION = pygame.event.custom_type()
 
 # 메인 메뉴
 class Main_menu():
@@ -52,7 +53,7 @@ class Main_menu():
         if self.avail_menu[index] == 'exit':
             pygame.event.post(pygame.event.Event(EVENT_QUIT_GAME)) # 게임 종료
         elif self.avail_menu[index] == 'setting':
-            pass # 설정
+            pygame.event.post(pygame.event.Event(EVENT_OPEN_OPTION)) # 옵션 열기
         elif self.avail_menu[index] == 'single':
             pygame.event.post(pygame.event.Event(EVENT_START_SINGLE)) # 싱글플레이
 
