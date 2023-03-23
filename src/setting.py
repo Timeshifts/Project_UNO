@@ -19,7 +19,7 @@ class Settings:
     
     def __init__(self):
         self.settings = Settings.default_setting
-        self.setting_path = Path.cwd() / 'resources' / 'settings.ini'
+        self.setting_path = Path.cwd() / 'UNO/resources' / 'settings.ini'
         self.load_setting()
 
     # 파일에 저장된 설정 불러오기
