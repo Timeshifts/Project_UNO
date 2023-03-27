@@ -9,19 +9,20 @@ class Settings:
 
     # 기본 설정
     default_setting = {
-        "version": 2,
+        "version": 3,
         "up": pygame.K_UP,
         "down": pygame.K_DOWN,
         "left": pygame.K_LEFT,
         "right": pygame.K_RIGHT,
         "enter": pygame.K_RETURN,
+        'pause': pygame.K_ESCAPE,
         "colorblind": False,
         "resolution": 3,
     }
 
     def __init__(self, pos=(0, 0), size=(150, 50)):
         self.settings = Settings.default_setting
-        self.setting_path = Path.cwd() / "resources" / "settings.ini"
+        self.setting_path = RESOURCE_PATH / "settings.ini"
         self.load_setting()
         self.pos = pos
         self.size = size
@@ -51,10 +52,28 @@ class Settings:
     # 설정 초기화하기
     def reset_setting(self):
         self.settings = Settings.default_setting
+        pygame.event.post(pygame.event.Event(EVENT_OPTION_CHANGED))
 
-    def apply_setting(self):
-        pass
+    # 설정 적용하기
+    def apply_setting(self, key: str, value):
+        # 이미 사용중인 키 등록 시 예외 처리
+        if (value in (self.settings['up'],
+                    self.settings['down'],
+                    self.settings['left'],
+                    self.settings['right'],
+                    self.settings['enter'],
+                    self.settings['pause']) 
+            and self.settings[key] != value):
+            raise ValueError("중복된 키가 입력되었습니다.")
+        
+        # 해당 설정 적용
+        self.settings[key] = value
 
+        # 설정 변경에 대한 이벤트 발생
+        pygame.event.post(pygame.event.Event(EVENT_OPTION_CHANGED))
+        
+
+    # 자기 자신 = 설정 창의 크기 재설정 -> 추후 바뀔 가능성 높음
     def resize(self, size):
         self.size = size
         self.background = pygame.transform.scale(
