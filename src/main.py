@@ -28,7 +28,7 @@ def main():
         ] = settings.default_setting["resolution"]
 
     # 해상도에 맞추어 object들의 크기 재설정
-    settings.resize((width - 200, height - 200))
+    settings.resize((width, height))
     screen = pygame.display.set_mode(size)
 
     clock = pygame.time.Clock()
@@ -39,6 +39,9 @@ def main():
 
     # 게임 오브젝트 배열
     game_objects = []
+
+    # 상태 - 초기 화면인지, 로비인지, 게임 중인지 등등
+    state = "main_menu"
 
     # 메인 배경
     background = pygame.transform.scale(
@@ -63,7 +66,8 @@ def main():
                 # 메인 메뉴 제거
                 game_objects.remove(main_menu)
                 background.fill("#526580")
-                # GameManager.GameManager().game_start() 게임 시작 처리
+                state = "single_lobby"
+                # TODO: 게임 로비로 이동
 
             # 스토리 모드
             if event.type == EVENT_START_STORY:
@@ -71,14 +75,23 @@ def main():
                 # 메인 메뉴 제거
                 game_objects.remove(main_menu)
                 background.fill("#526580")
-                # GameManager.GameManager().game_start() 게임 시작 처리
+                state = "story_map"
+
+                # TODO: 스토리 지도로 이동
 
             # 옵션 열기
             if event.type == EVENT_OPEN_OPTION:
                 # 메인 메뉴 제거
-                game_objects.remove(main_menu)
+                if state == "main_menu": game_objects.remove(main_menu)
                 # 설정을 게임 오브젝트에 넣어 표시되게 처리
                 game_objects.append(settings)
+
+            # 옵션 닫기
+            if event.type == EVENT_CLOSE_OPTION:
+                # 설정 제거
+                game_objects.remove(settings)
+                # 메인 메뉴로 복귀
+                if state == "main_menu": game_objects.append(main_menu)
 
             # 해상도 변경 이벤트를 받아 화면 리사이징
             if event.type == EVENT_OPTION_CHANGED:
