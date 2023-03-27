@@ -2,7 +2,7 @@ import pygame, pickle
 from pathlib import Path
 from constant import *
 from button import Button
-
+import random
 
 class Settings:
     # 가능한 해상도 목록
@@ -26,7 +26,7 @@ class Settings:
         "colorblind": False,
         "resolution": 3,
     }
-
+    
     def __init__(self, pos=(0, 0), size=(150, 50)):
         self.settings = Settings.default_setting
         self.setting_path = RESOURCE_PATH / "settings.ini"
@@ -90,6 +90,7 @@ class Settings:
 
         # 해당 설정 적용
         self.settings[key] = value
+        self.save_setting()
 
         # 설정 변경에 대한 이벤트 발생
         pygame.event.post(pygame.event.Event(EVENT_OPTION_CHANGED))
@@ -111,10 +112,11 @@ class Settings:
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
         if event.type == pygame.MOUSEMOTION:
-            #print(event.pos)
             self.options_back_hovered = self.OPTIONS_BACK.rect.collidepoint(event.pos)
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            pygame.event.post(pygame.event.Event(EVENT_CLOSE_OPTION))
+            if self.OPTIONS_BACK.rect.collidepoint(event.pos):
+                self.apply_setting('resolution', random.randint(0, 3))
+                pygame.event.post(pygame.event.Event(EVENT_CLOSE_OPTION))
 
     # 색맹 기능
     def is_blind(self, blind, ref_deck):

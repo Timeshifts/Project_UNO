@@ -28,6 +28,11 @@ class Main_menu():
         self.highlight = 0
         # 현재 선택된 대상, -1일 경우 마우스 조작 중
         self.selected = -1
+        self.init_draw()
+
+    def init_draw(self):
+        self.button = []
+        self.rect = []
 
         for i in range(self.max_menu):
             # 버튼 삽입
@@ -41,6 +46,11 @@ class Main_menu():
             self.rect.append(self.button[i].rect)
             # highlight용 오브젝트 생성
             self.highlight_obj = pygame.transform.scale(pygame.image.load(RESOURCE_PATH / 'highlight.png'), self.size)
+
+    # 크기 변경에 맞춰 재조정
+    def resize(self, size):
+        self.size = size
+        self.init_draw()
 
     # 스크린에 자신을 그리기
     def draw(self, screen):
@@ -67,7 +77,8 @@ class Main_menu():
         for i in range(self.max_menu):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.rect[i].collidepoint(event.pos):
-                    self.select_menu(i)     
+                    self.select_menu(i)
+                    break # 한 번에 여러 개의 메뉴가 눌리지 않도록 처리
             elif event.type == pygame.MOUSEMOTION:
                 if self.rect[i].collidepoint(event.pos):
                     # highlight 대상을 변경

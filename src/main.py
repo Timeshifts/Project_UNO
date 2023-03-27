@@ -12,6 +12,11 @@ except ImportError:
 settings = None
 
 
+def get_background(state, size):
+    return pygame.transform.scale(
+        pygame.image.load(RESOURCE_PATH / "main.png"), size
+    )
+
 def main():
     pygame.init()
 
@@ -44,9 +49,7 @@ def main():
     state = "main_menu"
 
     # 메인 배경
-    background = pygame.transform.scale(
-        pygame.image.load(RESOURCE_PATH / "main.png"), size
-    )
+    background = get_background(state, size)
 
     # 메인 메뉴 생성하여 게임 오브젝트에 추가
     main_menu = Main_menu((width / 2, height / 2 + 100), size)
@@ -88,21 +91,28 @@ def main():
 
             # 옵션 닫기
             if event.type == EVENT_CLOSE_OPTION:
+                print(1)
                 # 설정 제거
                 game_objects.remove(settings)
                 # 메인 메뉴로 복귀
-                if state == "main_menu": game_objects.append(main_menu)
+                print(state)
+                if state == "main_menu": 
+                    game_objects.append(main_menu)
+                    main_menu.resize(size)
 
             # 해상도 변경 이벤트를 받아 화면 리사이징
             if event.type == EVENT_OPTION_CHANGED:
                 if size != settings.settings['resolution']:
-                    size = settings.settings['resolution']
+                    size = settings.resolution[settings.settings['resolution']]
                     screen = pygame.display.set_mode(size)
+                    background = get_background(state, size)
+                    for obj in game_objects:
+                        obj.resize(size)
 
             # 오브젝트별로 이벤트 처리
             for obj in game_objects:
                 obj.handle_event(event)
-
+        
         # 기본 화면 표시
         screen.blit(background, (0, 0))
 
