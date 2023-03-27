@@ -35,7 +35,7 @@ def main():
 
     # 창 제목, 아이콘
     pygame.display.set_caption("우노 게임")
-    # pygame.display.set_icon(pygame.image.load(RESOURCE_PATH / '아이콘 파일 위치.png'))
+    pygame.display.set_icon(pygame.image.load(RESOURCE_PATH / 'logo.png'))
 
     # 게임 오브젝트 배열
     game_objects = []
