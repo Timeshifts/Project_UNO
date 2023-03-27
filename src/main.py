@@ -91,11 +91,9 @@ def main():
 
             # 옵션 닫기
             if event.type == EVENT_CLOSE_OPTION:
-                print(1)
                 # 설정 제거
                 game_objects.remove(settings)
                 # 메인 메뉴로 복귀
-                print(state)
                 if state == "main_menu": 
                     game_objects.append(main_menu)
                     main_menu.resize(size)
