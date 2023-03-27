@@ -1,4 +1,4 @@
-import sys, setting, GameManager
+import sys, setting #, GameManager
 from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN_OPTION
 from constant import *
 
