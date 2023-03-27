@@ -32,3 +32,11 @@ class Button:
             screen.blit(self.image, self.rect)
         else:
             self.text = self.font.render(self.text_input, True, self.base_color)
+
+    def forceChangeColor(self, state, screen):
+        if state:
+            self.text = self.font.render(self.text_input, True, self.hovering_color)
+            screen.blit(self.image, self.rect)
+        else:
+            self.text = self.font.render(self.text_input, True, self.base_color)
+            screen.blit(self.image, self.rect)

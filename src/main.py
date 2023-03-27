@@ -46,7 +46,7 @@ def main():
     )
 
     # 메인 메뉴 생성하여 게임 오브젝트에 추가
-    main_menu = Main_menu((width / 2, height / 2 + 100), (400, 100))
+    main_menu = Main_menu((width / 2, height / 2 + 100), size)
     game_objects.append(main_menu)
 
     while True:

@@ -1,4 +1,5 @@
 import pygame
+from button import Button
 from setting import Settings
 from constant import *
 
@@ -11,12 +12,15 @@ class Main_menu():
     # 버튼이 있어야 할 위치 반환
     get_position = lambda self, index: (self.pos[0], self.pos[1]+self.size[1]*1.2*index)
 
+    # 폰트 설정
+    get_font = lambda self, size: pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
+
     def __init__(self, pos=(0, 0), size=(150, 50)):
         self.menu = self.avail_menu
         self.max_menu = len(self.menu)
         self.button = []
         self.rect = []
-        self.pos = (pos[0]-size[0]/2, pos[1])
+        self.pos = pos
         self.size = size
         self.pressed = False
 
@@ -26,20 +30,26 @@ class Main_menu():
         self.selected = -1
 
         for i in range(self.max_menu):
-            # 각 버튼 별 이미지 조작
-            self.button.append(pygame.transform.scale(pygame.image.load(RESOURCE_PATH / 'temp_image.png'), self.size))
-            # 각 버튼 이벤트 처리용 Rect 생성
-            self.rect.append(self.button[i].get_rect())
-            (self.rect[i].x, self.rect[i].y) = self.get_position(i)
+            # 버튼 삽입
+            self.button.append(Button(pygame.image.load(RESOURCE_PATH / "main_button.png"),
+                                pos=(self.size[0] / 2, self.size[1] * (5 + i) / 8),
+                                text_input=self.menu[i],
+                                font=self.get_font(50),
+                                base_color="#3a4aab",
+                                hovering_color="White"))
+            # 각 버튼 이벤트 처리용 Rect 삽입
+            self.rect.append(self.button[i].rect)
             # highlight용 오브젝트 생성
             self.highlight_obj = pygame.transform.scale(pygame.image.load(RESOURCE_PATH / 'highlight.png'), self.size)
 
     # 스크린에 자신을 그리기
     def draw(self, screen):
         for i in range(self.max_menu):
-            screen.blit(self.button[len(self.button)-1], self.get_position(i))
-        
-        screen.blit(self.highlight_obj, self.get_position(self.highlight))
+            self.button[i].update(screen)
+            if i == self.highlight:
+                self.button[i].forceChangeColor(True, screen)
+            else:
+                self.button[i].forceChangeColor(False, screen)
     
     # 메뉴 선택 시 처리
     def select_menu(self, index):
