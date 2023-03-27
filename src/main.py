@@ -70,6 +70,12 @@ def main():
                 # 설정을 게임 오브젝트에 넣어 표시되게 처리
                 game_objects.append(settings)
 
+            # 해상도 변경 이벤트를 받아 화면 리사이징
+            if event.type == EVENT_OPTION_CHANGED:
+                if size != settings.settings['resolution']:
+                    size = settings.settings['resolution']
+                    screen = pygame.display.set_mode(size)
+
             # 오브젝트별로 이벤트 처리
             for obj in game_objects:
                 obj.handle_event(event)
