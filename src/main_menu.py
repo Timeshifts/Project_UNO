@@ -7,7 +7,7 @@ from constant import *
 class Main_menu():
     
     # 가능한 메뉴 목록
-    avail_menu = ['single', 'setting', 'exit']
+    avail_menu = ['PLAY', 'STORY', 'OPTIONS', 'QUIT']
 
     # 버튼이 있어야 할 위치 반환
     get_position = lambda self, index: (self.pos[0], self.pos[1]+self.size[1]*1.2*index)
@@ -32,7 +32,7 @@ class Main_menu():
         for i in range(self.max_menu):
             # 버튼 삽입
             self.button.append(Button(pygame.image.load(RESOURCE_PATH / "main_button.png"),
-                                pos=(self.size[0] / 2, self.size[1] * (5 + i) / 8),
+                                pos=(self.size[0] / 2, self.size[1] * (6 + i) / 10),
                                 text_input=self.menu[i],
                                 font=self.get_font(50),
                                 base_color="#3a4aab",
@@ -53,12 +53,14 @@ class Main_menu():
     
     # 메뉴 선택 시 처리
     def select_menu(self, index):
-        if self.avail_menu[index] == 'exit':
+        if self.avail_menu[index] == 'QUIT':
             pygame.event.post(pygame.event.Event(EVENT_QUIT_GAME)) # 게임 종료
-        elif self.avail_menu[index] == 'setting':
+        elif self.avail_menu[index] == 'OPTIONS':
             pygame.event.post(pygame.event.Event(EVENT_OPEN_OPTION)) # 옵션 열기
-        elif self.avail_menu[index] == 'single':
+        elif self.avail_menu[index] == 'PLAY':
             pygame.event.post(pygame.event.Event(EVENT_START_SINGLE)) # 싱글플레이
+        elif self.avail_menu[index] == 'STORY':
+            pygame.event.post(pygame.event.Event(EVENT_START_STORY)) # 스토리 모드
 
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):

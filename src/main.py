@@ -59,8 +59,18 @@ def main():
 
             # 게임 시작
             if event.type == EVENT_START_SINGLE:
+                
                 # 메인 메뉴 제거
                 game_objects.remove(main_menu)
+                background.fill("#526580")
+                # GameManager.GameManager().game_start() 게임 시작 처리
+
+            # 스토리 모드
+            if event.type == EVENT_START_STORY:
+                
+                # 메인 메뉴 제거
+                game_objects.remove(main_menu)
+                background.fill("#526580")
                 # GameManager.GameManager().game_start() 게임 시작 처리
 
             # 옵션 열기
