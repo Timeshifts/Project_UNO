@@ -63,6 +63,8 @@ class Main_menu():
     
     # 메뉴 선택 시 처리
     def select_menu(self, index):
+        se_event = pygame.event.Event(EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"})
+        pygame.event.post(se_event)
         if self.avail_menu[index] == 'QUIT':
             pygame.event.post(pygame.event.Event(EVENT_QUIT_GAME)) # 게임 종료
         elif self.avail_menu[index] == 'OPTIONS':

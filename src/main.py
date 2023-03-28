@@ -17,8 +17,15 @@ def get_background(state, size):
         pygame.image.load(RESOURCE_PATH / "main.png"), size
     )
 
+# 배경 음악 재생
+def load_bgm(path, volume=1.0):
+    pygame.mixer.music.load(path)
+    pygame.mixer.music.set_volume(volume)
+    pygame.mixer.music.play(-1) # -1 = 무한 반복 재생
+
 def main():
     pygame.init()
+    pygame.mixer.init() # 음향 mixer 초기화
 
     # 설정 불러오기
     settings = setting.Settings(pos=(100, 100))
@@ -40,7 +47,7 @@ def main():
 
     # 창 제목, 아이콘
     pygame.display.set_caption("우노 게임")
-    pygame.display.set_icon(pygame.image.load(RESOURCE_PATH / 'logo.png'))
+    pygame.display.set_icon(pygame.image.load(RESOURCE_PATH / "logo.png"))
 
     # 게임 오브젝트 배열
     game_objects = []
@@ -48,8 +55,9 @@ def main():
     # 상태 - 초기 화면인지, 로비인지, 게임 중인지 등등
     state = "main_menu"
 
-    # 메인 배경
+    # 메인 배경과 음악
     background = get_background(state, size)
+    load_bgm(RESOURCE_PATH / "sound" / "bg_main.mp3", settings.get_volume("bgm"))
 
     # 메인 메뉴 생성하여 게임 오브젝트에 추가
     main_menu = Main_menu((width / 2, height / 2 + 100), size)
@@ -63,6 +71,12 @@ def main():
                 pygame.quit()
                 sys.exit(0)
 
+            # 효과음
+            if event.type == EVENT_PLAY_SE:
+                se = pygame.mixer.Sound(event.path)
+                se.set_volume(settings.get_volume("se"))
+                se.play()
+
             # 게임 시작
             if event.type == EVENT_START_SINGLE:
                 
@@ -70,6 +84,7 @@ def main():
                 game_objects.remove(main_menu)
                 background.fill("#526580")
                 state = "single_lobby"
+                load_bgm(RESOURCE_PATH / "sound" / "bg_game.mp3", settings.get_volume("bgm"))
                 # TODO: 게임 로비로 이동
 
             # 스토리 모드
@@ -79,7 +94,7 @@ def main():
                 game_objects.remove(main_menu)
                 background.fill("#526580")
                 state = "story_map"
-
+                load_bgm(RESOURCE_PATH / "sound" / "bg_story_main.mp3", settings.get_volume("bgm"))
                 # TODO: 스토리 지도로 이동
 
             # 옵션 열기

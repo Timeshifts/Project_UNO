@@ -50,8 +50,8 @@ class Settings:
             hovering_color="Green",
         )
 
-    # 볼륨 가져오기 (전체 음량 * 종류별 음량 = 실제 음량)
-    get_volume = lambda self, type: self.settings["sound"] * self.settings[type]
+    # 볼륨 가져오기 (전체 음량 * 종류별 음량 = 실제 음량, 0~1 사이 값)
+    get_volume = lambda self, type: self.settings["sound"] * self.settings[type] / 10000
 
     # 파일에 저장된 설정 불러오기
     def load_setting(self):
