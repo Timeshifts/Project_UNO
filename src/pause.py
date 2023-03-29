@@ -28,8 +28,8 @@ class Quit_Menu(Menu):
     # x축 정렬 메뉴? y축 정렬 메뉴?
     axis = "x"
 
-    def __init__(self, pos=(0, 0), size=(150, 50)):
-        super().__init__(pos, size)
+    def __init__(self, pos=(0, 0), size=(150, 50), settings=None):
+        super().__init__(pos, size, settings)
 
     def init_draw(self):
         super().init_draw()
@@ -69,8 +69,8 @@ class Paused_Menu(Menu):
     # x축 정렬 메뉴? y축 정렬 메뉴?
     axis = "x"
 
-    def __init__(self, pos=(0, 0), size=(150, 50)):
-        super().__init__(pos, size)
+    def __init__(self, pos=(0, 0), size=(150, 50), settings=None):
+        super().__init__(pos, size, settings)
 
     def init_draw(self):
         super().init_draw()
@@ -105,7 +105,7 @@ def init_pause(setting: Settings, main_screen: pygame.Surface):
 
 def pause():
     paused = True
-    paused_menu = Paused_Menu((0, 0), pause.screen.get_size())
+    paused_menu = Paused_Menu((0, 0), pause.screen.get_size(), pause.settings)
     quit_menu = Quit_Menu((0, 0), pause.screen.get_size())
     pause.pause_object.append(paused_menu)
     size = pause.screen.get_size()

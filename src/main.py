@@ -63,7 +63,7 @@ def main():
     load_bgm(RESOURCE_PATH / "sound" / "bg_main.mp3", settings.get_volume("bgm"))
 
     # 메인 메뉴 생성하여 게임 오브젝트에 추가
-    main_menu = Main_menu((width / 2, height / 2 + 100), size)
+    main_menu = Main_menu((width / 2, height / 2 + 100), size, settings)
     game_objects.append(main_menu)
 
     while True:
@@ -77,7 +77,7 @@ def main():
             # 일시 정지
             if event.type == pygame.KEYDOWN:
                 if event.key == settings.settings["pause"]:
-                    # 추후 게임 중에만 일시정지가 작동하도록 제한
+                    # TODO: 게임 중에만 일시정지가 작동하도록 제한
                     #and state in ("single_play" or "story_play")
                     paused = True
                     pause.init_pause(settings, screen)
@@ -134,7 +134,8 @@ def main():
                 game_objects.append(main_menu)
                 main_menu.resize(size)
 
-            # 해상도 변경 이벤트를 받아 화면 리사이징
+            # 해상도 변경 이벤트를 받아 화면 리사이징 
+            # 배경음악 음량 변경 즉시 적용
             if event.type == EVENT_OPTION_CHANGED:
                 if size != settings.settings['resolution']:
                     size = settings.resolution[settings.settings['resolution']]
@@ -142,6 +143,7 @@ def main():
                     background = get_background(state, size)
                     for obj in game_objects:
                         obj.resize(size)
+                pygame.mixer.music.set_volume(settings.get_volume("bgm"))
 
             # 오브젝트별로 이벤트 처리
             for obj in game_objects:

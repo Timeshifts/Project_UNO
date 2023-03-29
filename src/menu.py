@@ -1,6 +1,5 @@
 import pygame
 from button import Button
-from setting import Settings
 from constant import *
 
 # 메인 메뉴
@@ -18,7 +17,7 @@ class Menu():
     # x축 정렬 메뉴? y축 정렬 메뉴?
     axis = "y"
 
-    def __init__(self, pos=(0, 0), size=(150, 50)):
+    def __init__(self, pos=(0, 0), size=(150, 50), settings=None):
         self.menu = self.avail_menu
         self.max_menu = len(self.menu)
         self.button = []
@@ -26,6 +25,7 @@ class Menu():
         self.pos = pos
         self.size = size
         self.pressed = False
+        self.settings = settings
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -86,14 +86,14 @@ class Menu():
                 if self.pressed == False:
                     self.pressed = True
                     # 엔터 키가 눌렸을 때
-                    if event.key == Settings().settings['enter']:
+                    if event.key == self.settings.settings['enter']:
                         # 키보드로 선택한 것이 있다면 그 메뉴를 선택
                         if self.selected != -1: self.select_menu(self.selected)
-                    elif event.key == Settings().settings['up' if self.axis == "y" else 'left']:
+                    elif event.key == self.settings.settings['up' if self.axis == "y" else 'left']:
                         # 선택을 하나 위로 이동
                         self.selected = self.selected-1 if 0 < self.selected else 0
                         self.highlight = self.selected
-                    elif event.key == Settings().settings['down' if self.axis == "y" else 'right']:
+                    elif event.key == self.settings.settings['down' if self.axis == "y" else 'right']:
                         # 선택을 하나 아래로 이동
                         self.selected = self.selected+1 if self.selected < self.max_menu-1 else self.max_menu-1
                         self.highlight = self.selected

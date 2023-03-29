@@ -13,8 +13,8 @@ class Main_menu(Menu):
     # 버튼이 있어야 할 위치 반환
     pos_formula = lambda self, i: (self.size[0] / 2, self.size[1] * (6 + i) / 10)
 
-    def __init__(self, pos=(0, 0), size=(150, 50)):
-        super().__init__(pos, size)
+    def __init__(self, pos=(0, 0), size=(150, 50), settings=None):
+        super().__init__(pos, size, settings)
     
     # 메뉴 선택 시 처리
     def select_menu(self, index):
