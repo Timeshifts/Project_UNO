@@ -126,6 +126,14 @@ def main():
                     game_objects.append(main_menu)
                     main_menu.resize(size)
 
+            # 메인 메뉴로 복귀
+            if event.type == EVENT_START_MENU:
+                state = "main_menu"
+                background = get_background(state, size)
+                load_bgm(RESOURCE_PATH / "sound" / "bg_main.mp3", settings.get_volume("bgm"))
+                game_objects.append(main_menu)
+                main_menu.resize(size)
+
             # 해상도 변경 이벤트를 받아 화면 리사이징
             if event.type == EVENT_OPTION_CHANGED:
                 if size != settings.settings['resolution']:
