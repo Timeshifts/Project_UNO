@@ -1,4 +1,4 @@
-import sys, setting #, GameManager
+import sys, setting, pause #, GameManager
 from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN_OPTION
 from constant import *
 
@@ -54,6 +54,9 @@ def main():
 
     # 상태 - 초기 화면인지, 로비인지, 게임 중인지 등등
     state = "main_menu"
+    
+    # 일시정지 중인가?
+    paused = False
 
     # 메인 배경과 음악
     background = get_background(state, size)
@@ -70,6 +73,16 @@ def main():
                 settings.save_setting()
                 pygame.quit()
                 sys.exit(0)
+
+            # 일시 정지
+            if event.type == pygame.KEYDOWN:
+                if event.key == settings.settings["pause"]:
+                    # 추후 게임 중에만 일시정지가 작동하도록 제한
+                    #and state in ("single_play" or "story_play")
+                    paused = True
+                    pause.init_pause(settings, screen)
+                    pause.pause() # pause 상태에서의 루프
+                    paused = False
 
             # 효과음
             if event.type == EVENT_PLAY_SE:
