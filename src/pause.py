@@ -14,16 +14,17 @@ EVENT_QUIT_MENU = pygame.event.custom_type()
 EVENT_PAUSE_MENU = pygame.event.custom_type()
 EVENT_RESUME = pygame.event.custom_type()
 
-'''
+"""
 일시 정지 중에 필요한 클래스 정의입니다.
-'''
+"""
+
+
 class Quit_Menu(Menu):
-    
     # 가능한 메뉴 목록
-    avail_menu = ['돌아가기', '시작 화면', '게임 종료']
+    avail_menu = ["돌아가기", "시작 화면", "게임 종료"]
 
     # 버튼이 있어야 할 위치 반환
-    pos_formula = lambda self, i: (self.size[0] * (5 + 10*i) / 30, self.size[1] / 2)
+    pos_formula = lambda self, i: (self.size[0] * (5 + 10 * i) / 30, self.size[1] / 2)
 
     # x축 정렬 메뉴? y축 정렬 메뉴?
     axis = "x"
@@ -46,25 +47,27 @@ class Quit_Menu(Menu):
     def draw(self, screen):
         super().draw(screen)
         screen.blit(self.PAUSED_TEXT, self.PAUSED_RECT)
-    
+
     # 메뉴 선택 시 처리
     def select_menu(self, index):
-        se_event = pygame.event.Event(EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"})
+        se_event = pygame.event.Event(
+            EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
+        )
         pygame.event.post(se_event)
-        if self.avail_menu[index] == '게임 종료':
-            pygame.event.post(pygame.event.Event(EVENT_QUIT_GAME)) # 게임 종료
-        elif self.avail_menu[index] == '돌아가기':
-            pygame.event.post(pygame.event.Event(EVENT_PAUSE_MENU)) # 정지 메뉴로 복귀
-        elif self.avail_menu[index] == '시작 화면':
-            pygame.event.post(pygame.event.Event(EVENT_START_MENU)) # 시작 화면으로 복귀
+        if self.avail_menu[index] == "게임 종료":
+            pygame.event.post(pygame.event.Event(EVENT_QUIT_GAME))  # 게임 종료
+        elif self.avail_menu[index] == "돌아가기":
+            pygame.event.post(pygame.event.Event(EVENT_PAUSE_MENU))  # 정지 메뉴로 복귀
+        elif self.avail_menu[index] == "시작 화면":
+            pygame.event.post(pygame.event.Event(EVENT_START_MENU))  # 시작 화면으로 복귀
+
 
 class Paused_Menu(Menu):
-    
     # 가능한 메뉴 목록
-    avail_menu = ['OPTIONS', 'RESUME', 'EXIT']
+    avail_menu = ["OPTIONS", "RESUME", "EXIT"]
 
     # 버튼이 있어야 할 위치 반환
-    pos_formula = lambda self, i: (self.size[0] * (5 + 10*i) / 30, self.size[1] / 2)
+    pos_formula = lambda self, i: (self.size[0] * (5 + 10 * i) / 30, self.size[1] / 2)
 
     # x축 정렬 메뉴? y축 정렬 메뉴?
     axis = "x"
@@ -82,26 +85,31 @@ class Paused_Menu(Menu):
     def draw(self, screen):
         super().draw(screen)
         screen.blit(self.PAUSED_TEXT, self.PAUSED_RECT)
-    
+
     # 메뉴 선택 시 처리
     def select_menu(self, index):
-        se_event = pygame.event.Event(EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"})
+        se_event = pygame.event.Event(
+            EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
+        )
         pygame.event.post(se_event)
-        if self.avail_menu[index] == 'EXIT':
-            pygame.event.post(pygame.event.Event(EVENT_QUIT_MENU)) # 게임 종료 메뉴 호출
-        elif self.avail_menu[index] == 'OPTIONS':
-            pygame.event.post(pygame.event.Event(EVENT_OPEN_OPTION)) # 옵션 열기
-        elif self.avail_menu[index] == 'RESUME':
-            pygame.event.post(pygame.event.Event(EVENT_RESUME)) # 일시정지 해제
+        if self.avail_menu[index] == "EXIT":
+            pygame.event.post(pygame.event.Event(EVENT_QUIT_MENU))  # 게임 종료 메뉴 호출
+        elif self.avail_menu[index] == "OPTIONS":
+            pygame.event.post(pygame.event.Event(EVENT_OPEN_OPTION))  # 옵션 열기
+        elif self.avail_menu[index] == "RESUME":
+            pygame.event.post(pygame.event.Event(EVENT_RESUME))  # 일시정지 해제
 
-'''
+
+"""
 일시 정지 중에 메인 루프를 대체하여 작동하는 루프입니다.
-'''
+"""
+
 
 def init_pause(setting: Settings, main_screen: pygame.Surface):
     pause.settings = setting
     pause.screen = main_screen
     pause.pause_object = []
+
 
 def pause():
     paused = True
@@ -120,7 +128,7 @@ def pause():
                 pygame.event.post(event)
 
             # 일시 정지 풀기
-            if event.type == pygame.KEYDOWN :
+            if event.type == pygame.KEYDOWN:
                 if event.key == pause.settings.settings["pause"]:
                     paused = False
                     # 실제로 설정이 바뀌지 않았을 수도 있으나,
@@ -173,8 +181,10 @@ def pause():
 
             # 해상도 변경 이벤트를 받아 화면 리사이징
             if event.type == EVENT_OPTION_CHANGED:
-                if size != pause.settings.settings['resolution']:
-                    size = pause.settings.resolution[pause.settings.settings['resolution']]
+                if size != pause.settings.settings["resolution"]:
+                    size = pause.settings.resolution[
+                        pause.settings.settings["resolution"]
+                    ]
                     pause.screen = pygame.display.set_mode(size)
                     for obj in pause.pause_object:
                         obj.resize(size)
@@ -182,7 +192,7 @@ def pause():
             # 오브젝트별로 이벤트 처리
             for obj in pause.pause_object:
                 obj.handle_event(event)
-        
+
         # 기본 화면 표시
         pause.screen.fill("White")
 

@@ -1,6 +1,7 @@
 class Player:
     def __init__(self, isComputer):
         self.isComputer = isComputer
+
     def __init__(self, is_computer):
         self.is_computer = is_computer
         self.current_card
@@ -23,26 +24,34 @@ class Player:
 
     def get_card():
         pass
+
     def get_card(self):
         GameManager.give_card(GameManager.turn)
         self.is_turn_used = True
 
+
 class User(Player):
     def __init__(self, isComputer):
         self.isComputer = isComputer
+
     def __init__(self, is_computer):
         self.is_computer = is_computer
+
 
 class Computer(Player):
     def __init__(self, isComputer):
         self.isComputer = isComputer
+
     def __init__(self, is_computer):
         self.is_computer = is_computer
 
     def computer_play(self):
         for i in range(len(self.hand)):
-            if GameManager.GraveTop.color == hand[i].color or GameManager.GraveTop.num == hand[i].num:
-                self.possible_cards.append[ self.hand[i] ]
+            if (
+                GameManager.GraveTop.color == hand[i].color
+                or GameManager.GraveTop.num == hand[i].num
+            ):
+                self.possible_cards.append[self.hand[i]]
 
         if len(self.possible_cards) != 0:
             ran = random.randrange(len(self.possible_cards))

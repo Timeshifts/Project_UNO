@@ -39,7 +39,7 @@ class GameManager:
 
         # 일단 임시로 주석처리리
         # random.shuffle(self.players)
-        
+
         self.turn = random.randint(0, self.player_num - 1)
 
         # 덱 초기화
@@ -55,9 +55,9 @@ class GameManager:
 
         # 덱에서 카드 한장 빼서 세팅해놓음
         self.setting_card(self.deck)
-        
+
         pygame.time.wait(2000)
-        
+
         self.turn_start()
 
     def game_end(self):
@@ -79,13 +79,13 @@ class GameManager:
         # 전 턴에 누가 공격 카드 썼는지 판별
         # 누가 공격 카드를 썼다면, attack_int 만큼 카드주고 6초 기다린후 턴종료
         print(f"턴 시작, 현재 {self.turn} 번 유저에게 로직 실행\n")
-        print(
-            f"현재 묘지의 탑 카드 색깔 = {self.grave_top_color}, 이름 = {self.grave_top.name}\n"
-        )
+        print(f"현재 묘지의 탑 카드 색깔 = {self.grave_top_color}, 이름 = {self.grave_top.name}\n")
 
         if self.players[self.turn].is_attacked == True:
             print("공격 카드 효과 발동\n")
-            print(f"{self.turn} 번 유저에게 카드 {self.players[self.turn].attacked_int} 장 부여\n")
+            print(
+                f"{self.turn} 번 유저에게 카드 {self.players[self.turn].attacked_int} 장 부여\n"
+            )
             for i in range(self.players[self.turn].attacked_int):
                 self.give_card(self.turn)
 
@@ -125,18 +125,18 @@ class GameManager:
                 print(f"{self.turn} 턴 유저는 핸드 갯수가 1개인데 우노를 안누름, 패널티 적용\n")
                 print(f"{self.turn} 턴 유저에게 카드 1장 지급\n")
                 self.give_card(self.turn)
-            
+
             self.players[self.turn].is_authority = False
             self.players[self.turn].is_turn_used = True
 
             if self.is_turn_reversed == False:
                 self.turn += 1 + self.turn_jump_num
-                
+
                 while self.turn >= self.player_num:
                     self.turn -= self.player_num
             else:
                 self.turn -= 1 + self.turn_jump_num
-                
+
                 while self.turn < 0:
                     self.turn += self.player_num
 
@@ -158,10 +158,9 @@ class GameManager:
         self.grave_top_color = self.grave_top.color
 
         if card.name.isdigit() == False:
-            
             if card.name == "color":
                 self.wild_color()
-            
+
             elif card.name == "four":
                 print("다음 턴 유저에게, 카드 4장 공격\n")
                 if self.is_turn_reversed == False:
@@ -172,19 +171,19 @@ class GameManager:
                     target = self.turn - 1
                     if target < 0:
                         target += self.player_num
-                
+
                 self.attack(4, target)
-            
+
             elif card.name == "target":
                 self.target_attack()
-   
+
             elif card.name == "again":
                 print("추가 턴 획득 작동함\n")
                 self.turn_jump(-1)
-                
+
             elif card.name == "defense":
                 pass
-                
+
             elif card.name == "pick":
                 print("다음 턴 유저에게, 카드 2장 공격\n")
                 if self.is_turn_reversed == False:
@@ -195,18 +194,16 @@ class GameManager:
                     target = self.turn - 1
                     if target < 0:
                         target += self.player_num
-                
+
                 self.attack(2, target)
-                
+
             elif card.name == "reverse":
                 print("턴 진행 방향 변경 작동함\n")
                 self.turn_reverse()
-                
+
             elif card.name == "skip":
                 print("턴 건너뛰기 작동함\n")
-                self.turn_jump(1)    
-                
-
+                self.turn_jump(1)
 
     def player_score_calculate(self):
         min = 100000
@@ -215,26 +212,23 @@ class GameManager:
             temp = 0
             for j in range(len(self.players[j].hand)):
                 temp += self.players[i].hand[j].score
-            
+
             if temp < min:
                 min = temp
                 winner = i
-        
+
         return winner
-            
 
     def give_authority(self, turn):
         self.players[turn].is_authority = True
         self.players[turn].is_turn_used = False
 
-    
-
-    '''
+    """
     예전 방식의 턴 리버스, 일단 주석처리
     def turn_reverse(self):
         self.players.reverse()
         self.turn = (self.player_num - 1) - self.turn
-        '''
+        """
 
     def current_game_count_down(self):
         while self.game_count_down > 0 and self.is_someone_win == False:
@@ -247,8 +241,8 @@ class GameManager:
             self.turn_count_down -= 1
 
     # 카드 셔플
-    #def card_shuffle(self, deck):
-        #random.shuffle(deck)
+    # def card_shuffle(self, deck):
+    # random.shuffle(deck)
 
     # 게임 시작시 덱에서 카드한장 꺼내기
     def setting_card(self, deck):
@@ -297,36 +291,33 @@ class GameManager:
         self.grave.append(pop_card)
         self.grave_top = self.grave[-1]  # grave 의 맨 위의 카드
         self.grave_top_color = self.grave_top.color
-    
-    
+
     # 여기 아래 부터는 기술 카드 효과들임
-    
+
     def turn_reverse(self):
         if self.is_turn_reversed == False:
             self.is_turn_reversed = True
         else:
             self.is_turn_reversed = False
-            
+
     def turn_jump(self, jump):
         self.turn_jump_num = jump
 
     def attack(self, num, target):
         self.players[target].attacked_int += num
         self.players[target].is_attacked = True
-    
+
     def wild_color(self):
         card_color = ["blue", "green", "red", "yellow"]
-        
+
         if self.players[self.turn].is_computer == True:
-            ran = random.randint(0,3)
+            ran = random.randint(0, 3)
             self.grave_top_color = card_color[ran]
         else:
             print(f"색을 선택하세요")
             for i in range(len(card_color)):
-                print(
-                    f"/{card_color[i]} {i}번"
-                )
-            
+                print(f"/{card_color[i]} {i}번")
+
             while True:
                 a = int(input())
 
@@ -335,9 +326,9 @@ class GameManager:
                 else:
                     self.grave_top_color = card_color[a]
                     break
-        
+
         print(f"묘지 탑 색깔 {self.grave_top_color} 로 설정")
-    
+
     def target_attack(self):
         target = 0
         if self.players[self.turn].is_computer == True:
@@ -345,9 +336,7 @@ class GameManager:
         else:
             print(f"플레이어를 선택하세요")
             for i in range(self.player_num):
-                print(
-                    f"/ {i}번 플레이어"
-                )
+                print(f"/ {i}번 플레이어")
             while True:
                 a = int(input())
 
@@ -356,10 +345,10 @@ class GameManager:
                 else:
                     target = a
                     break
-                
+
         self.attack(2, target)
         print(f"{target}번 유저에게, 카드 2장 공격\n")
-        
+
 
 # -------------------------------------------------------------------------------------------------
 
@@ -390,7 +379,7 @@ class Player:
         Gm.give_card(Gm.turn)
         self.is_turn_used = True
         print(f"{Gm.turn} 턴 유저는 카드를 받아옴 \n")
-        
+
     def judge_possible_cards(self):
         for i in range(len(self.hand)):
             if (
@@ -401,7 +390,9 @@ class Player:
             ):
                 self.possible_cards.append(self.hand[i])
 
+
 # -------------------------------------------------------------------------------------------------
+
 
 class User(Player):
     def __init__(self, is_computer):
