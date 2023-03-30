@@ -39,3 +39,34 @@ def score(name, color):
         return int(name)
     else:
         return 20
+
+
+
+def roulette_wheel_selection(num,deck,weights):
+    hand = []
+    card_num = [0,0]          # 일반, 기술카드 구분위한 리스트
+    for i in range(num):
+        r = random.uniform(0, sum(weights))
+        if r < weights[0]:
+            card_num[0] +=1
+        else:
+            card_num[1] +=1
+    
+        for card in deck:
+            if card.name.isdigit() and card_num[0] != 0:
+                index = deck.index(card)
+                hand.append(deck.pop(index))
+                card_num[0] -= 1
+            elif not card.name.isdigit() and card_num[1] !=0:
+                index = deck.index(card)
+                hand.append(deck.pop(index))
+                card_num[1] -= 1    
+
+            
+    for n in card_num:
+        if n != 0:
+            for j in range(n):
+                hand.append(deck.pop())
+
+
+    return hand
