@@ -1,9 +1,68 @@
 import random
 import unittest
 import GameManager
+from setting import Settings
 from card import roulette_wheel_selection,Card
 
 class TestRouletteWheelSelection(unittest.TestCase):
+    # 게임시작 전에 색맹 on/off시 파일 바뀌는지 확인
+    def test_colorblind(self):
+        gm = GameManager.GameManager()
+        gm.game_start()
+        settings = Settings()
+        settings.is_blind(True,gm.ref_deck)
+        gm.game_start()
+        self.assertEqual(gm.ref_deck[0].filename,"card_colorbilnd/"+gm.ref_deck[0].color + "_" + gm.ref_deck[0].name +".png")
+    
+    def test_colorblind_off(self):
+        gm = GameManager.GameManager()
+        gm.game_start()
+        settings = Settings()
+        settings.is_blind(False,gm.ref_deck)
+        gm.game_start()
+        self.assertEqual(gm.ref_deck[0].filename,"card/"+gm.ref_deck[0].color + "_" + gm.ref_deck[0].name +".png")
+
+    # 게임시작 후에 색맹 on/off시 파일 바뀌는지 확인
+    def test_colorblind_ingame(self):
+        gm = GameManager.GameManager()
+        gm.game_start()
+        settings = Settings()
+        settings.is_blind(False,gm.ref_deck)
+        gm.game_start()
+        hand1 = []
+        hand2 = []
+        hand1.append(gm.deck.pop())
+        hand1.append(gm.deck.pop())      
+        hand2.append(gm.deck.pop())
+        hand2.append(gm.deck.pop())
+
+        settings.is_blind(True,gm.ref_deck)        # 색맹 off
+        for card in hand1:
+            self.assertEqual(card.filename,"card_colorbilnd/"+card.color + "_" + card.name +".png")
+        
+        settings.is_blind(False,gm.ref_deck)        # 색맹 off
+
+        for card in hand2:
+            self.assertEqual(card.filename,"card/"+card.color + "_" + card.name +".png")
+    
+    # 낼 수 있는 카드들 선택
+    def test_possible_card(self):
+        gm = GameManager.GameManager()
+        gm.game_start()
+        settings = Settings()
+
+        hand1 = []
+        for i in range(30):
+            hand1.append(gm.deck.pop())
+
+        print("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ")
+        print("grave_name:{0} grave_color: {1} ".format(gm.grave_top.name,gm.grave_top.color))
+        card_sys.possible_card(gm.grave_top,hand1)
+
+        print("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ")
+        for cd in card_sys.possible_cards:
+            print(cd)
+    
     def test_card_distribution(self):
         self.test_deck = []
         def set_deck():
