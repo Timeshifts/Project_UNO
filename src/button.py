@@ -1,6 +1,11 @@
+import pygame
+
 class Button:
-    def __init__(self, image, pos, text_input, font, base_color, hovering_color):
-        self.image = image
+    def __init__(self, image, pos, text_input, font, base_color, hovering_color, size=None):
+        if size is None:
+            self.image = image
+        else:
+            self.image = pygame.transform.scale(image, size)
         self.x_pos = pos[0]
         self.y_pos = pos[1]
         self.font = font
@@ -32,3 +37,11 @@ class Button:
             screen.blit(self.image, self.rect)
         else:
             self.text = self.font.render(self.text_input, True, self.base_color)
+
+    def forceChangeColor(self, state, screen):
+        if state:
+            self.text = self.font.render(self.text_input, True, self.hovering_color)
+            screen.blit(self.image, self.rect)
+        else:
+            self.text = self.font.render(self.text_input, True, self.base_color)
+            screen.blit(self.image, self.rect)
