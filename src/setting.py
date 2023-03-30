@@ -153,7 +153,7 @@ class Setting_Menu(Menu):
             volume = int(self.avail_menu[index].split("%")[0])
             self.settings.apply_setting(self.name, volume)
         if self.name == "colorblind":
-            self.settings.apply_setting("colorblind", True if self.avail_menu[index] is "켜짐" else False)
+            self.settings.apply_setting("colorblind", True if self.avail_menu[index] == "켜짐" else False)
 
 class Settings:
     # 가능한 해상도 목록
