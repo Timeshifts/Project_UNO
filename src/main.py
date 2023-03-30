@@ -1,9 +1,8 @@
-import sys, setting, pause, story_map #, GameManager
+import sys, setting, pause, story_map  # , GameManager
 from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN_OPTION
 from single_lobby import SingleLobby, EVENT_MAIN
 from single import Single, EVENT_MAIN
 from rename import Rename
-from story_map import StoryMap, EVENT_MAIN
 from constant import *
 
 # pygame 검사
@@ -60,7 +59,7 @@ def main():
 
     # 상태 - 초기 화면인지, 로비인지, 게임 중인지 등등
     state = "main_menu"
-    
+
     # 일시정지 중인가?
     paused = False
 
@@ -87,10 +86,10 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == settings.settings["pause"]:
                     # TODO: 게임 중에만 일시정지가 작동하도록 제한
-                    #and state in ("single_play" or "story_play")
+                    # and state in ("single_play" or "story_play")
                     paused = True
                     pause.init_pause(settings, screen)
-                    pause.pause() # pause 상태에서의 루프
+                    pause.pause()  # pause 상태에서의 루프
                     paused = False
 
             # 효과음
@@ -151,10 +150,8 @@ def main():
             # 이름 변경 열기
             if event.type == EVENT_OPEN_RENAME:
                 state = "rename"
-                #########################################
                 rename = Rename((width, height), size)
                 game_objects.append(rename)
-                #########################################
 
             # 이름 변경 닫기
             if event.type == EVENT_CLOSE_RENAME:
@@ -173,8 +170,7 @@ def main():
                     RESOURCE_PATH / "sound" / "bg_story_main.mp3",
                     settings.get_volume("bgm"),
                 )
-                story_map = StoryMap((width, height), size)
-                game_objects.append(story_map)
+                game_objects.append(story_object)
 
             # 옵션 열기
             if event.type == EVENT_OPEN_OPTION:
@@ -197,11 +193,13 @@ def main():
             if event.type == EVENT_START_MENU:
                 state = "main_menu"
                 background = get_background(state, size)
-                load_bgm(RESOURCE_PATH / "sound" / "bg_main.mp3", settings.get_volume("bgm"))
+                load_bgm(
+                    RESOURCE_PATH / "sound" / "bg_main.mp3", settings.get_volume("bgm")
+                )
                 game_objects.append(main_menu)
                 main_menu.resize(size)
 
-            # 해상도 변경 이벤트를 받아 화면 리사이징 
+            # 해상도 변경 이벤트를 받아 화면 리사이징
             # 배경음악 음량 변경 즉시 적용
             if event.type == EVENT_OPTION_CHANGED:
                 if size != settings.settings["resolution"]:
@@ -215,7 +213,7 @@ def main():
             # 오브젝트별로 이벤트 처리
             for obj in game_objects:
                 obj.handle_event(event)
-        
+
         # 기본 화면 표시
         screen.blit(background, (0, 0))
 

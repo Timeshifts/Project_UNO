@@ -1,5 +1,6 @@
 import pygame
 
+
 class Button:
     def __init__(
         self, image, hovering_image, pos, text_input, font, base_color, hovering_color
@@ -46,8 +47,6 @@ class Button:
             screen.blit(self.image, self.rect)
         else:
             self.text = self.font.render(self.text_input, True, self.base_color)
-            screen.blit(self.image, self.rect)
-
             screen.blit(self.image, self.rect)
 
     def ChangeImage(self, change_image):
