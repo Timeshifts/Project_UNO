@@ -1,157 +1,54 @@
-import pygame
-from button import Button
-from setting import Settings
+import pygame, pickle
 from constant import *
+from menu import Menu
 
+class StoryMenu(Menu):
+    
+    # 현재 몇 개의 스토리?
+    story_amount = 4
 
-# 싱글플레이
-class StoryMap:
+    # x축 정렬 메뉴? y축 정렬 메뉴?
+    axis = "x"
+
     # 가능한 메뉴 목록
-    avail_menu = ["START", "BACK"]
-    computer = ["P1", "P2", "P3", "P4", "P5"]
+    avail_menu = list(str(x) for x in range(story_amount))
 
     # 버튼이 있어야 할 위치 반환
-    get_position = lambda self, index: (
-        self.pos[0],
-        self.pos[1] + self.size[1] * 1.2 * index,
-    )
+    pos_formula = lambda self, i: (self.size[0] * (3 + 2*i) / 12, self.size[1]/3*2)
 
-    # 폰트 설정
-    get_font = lambda self, size: pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
+    # 파일에 저장된 진행도 불러오기
+    def load_progress(self):
+        try:
+            with open(self.progress_path, "rb") as f:
+                self.progress = pickle.load(f)
 
-    def __init__(self, pos=(0, 0), size=(150, 50)):
-        self.menu = self.avail_menu
-        self.max_menu = len(self.menu)
-        self.max_computer = len(self.computer)
-        self.button = []
-        self.rect = []
-        self.pos = pos
-        self.size = size
-        self.pressed = False
+        # 파일이 없을 시 진행도 초기화
+        except FileNotFoundError:
+            self.progress = []
 
-        # 현재 highlight된 위치의 index
-        self.highlight = 0
-        # 현재 선택된 대상, -1일 경우 마우스 조작 중
-        self.selected = -1
-        self.init_draw()
+    # 파일에 진행도 저장하기
+    def save_progress(self):
+        with open(self.progress_path, "wb") as f:
+            pickle.dump(self.progress, f)
 
-    def init_draw(self):
-        self.button = []
-        self.rect = []
-
-        for i in range(self.max_computer):
-            # 버튼 삽입
-            self.button.append(
-                Button(
-                    pygame.image.load(RESOURCE_PATH / "single" / "list.png"),
-                    pygame.image.load(RESOURCE_PATH / "single" / "list.png"),
-                    pos=(self.size[0] * 7 / 8, self.size[1] * (2 * i + 3) / 12),
-                    text_input=self.computer[i],
-                    font=self.get_font(50),
-                    base_color="White",
-                    hovering_color="Black",
-                )
-            )
-            # 각 버튼 이벤트 처리용 Rect 삽입
-            self.rect.append(self.button[i].rect)
-
-        for i in range(self.max_menu):
-            # 버튼 삽입
-            self.button.append(
-                Button(
-                    pygame.image.load(RESOURCE_PATH / "main" / "main_button.png"),
-                    pygame.image.load(
-                        RESOURCE_PATH / "main" / "main_button_highlight.png"
-                    ),
-                    pos=(self.size[0] / 2, self.size[1] * (2 * i + 9) / 20),
-                    text_input=self.menu[i],
-                    font=self.get_font(50),
-                    base_color="#3a4aab",
-                    hovering_color="White",
-                )
-            )
-            # 각 버튼 이벤트 처리용 Rect 삽입
-            self.rect.append(self.button[i + self.max_computer].rect)
-            # highlight용 오브젝트 생성
-            # #############################
-            # self.highlight_obj = pygame.transform.scale(
-            #     pygame.image.load(RESOURCE_PATH / "highlight.png"), self.size
-            # )
-            # #############################
-
-    # 크기 변경에 맞춰 재조정
-    def resize(self, size):
-        self.size = size
-        self.init_draw()
-
-    # 스크린에 자신을 그리기
-    def draw(self, screen):
-        for i in range(self.max_computer + self.max_menu):
-            self.button[i].update(screen)
-            if i == self.highlight:
-                self.button[i].forceChangeColor(True, screen)
-            else:
-                self.button[i].forceChangeColor(False, screen)
-
+    def __init__(self, pos=(0, 0), size=(150, 50), settings=None):
+        self.progress = []
+        self.progress_path = RESOURCE_PATH / "story_progress.ini"
+        self.load_progress()
+        super().__init__(pos, size, settings)
+    
     # 메뉴 선택 시 처리
     def select_menu(self, index):
-        se_event = pygame.event.Event(
-            EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
-        )
-        pygame.event.post(se_event)
+        super().select_menu(index)
+        print(f"{index}번 스토리 시작")
 
-        if index < self.max_computer:
-            if self.computer[index] == "P1":
-                pass
-            elif self.computer[index] == "P2":
-                pass
-            elif self.computer[index] == "P3":
-                pass
-            elif self.computer[index] == "P4":
-                pass
-            elif self.computer[index] == "P5":
-                pass
-        else:
-            index -= self.max_computer
-            if self.avail_menu[index] == "START":
-                pass
-                # pygame.event.post(pygame.event.Event(EVENT_OPEN_OPTION))  # 옵션 열기
-            elif self.avail_menu[index] == "BACK":
-                pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 메인 메뉴
+class StoryMap():
 
-    # 이벤트 처리
-    def handle_event(self, event: pygame.event.Event):
-        for i in range(self.max_computer + self.max_menu):
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.rect[i].collidepoint(event.pos):
-                    self.select_menu(i)
-                    break  # 한 번에 여러 개의 메뉴가 눌리지 않도록 처리
-            elif event.type == pygame.MOUSEMOTION:
-                if self.rect[i].collidepoint(event.pos):
-                    # highlight 대상을 변경
-                    self.highlight = i
-                    # 키보드 선택 해제
-                    self.selected = -1
-            elif event.type == pygame.KEYDOWN:
-                if self.pressed == False:
-                    self.pressed = True
-                    # 엔터 키가 눌렸을 때
-                    if event.key == Settings().settings["enter"]:
-                        # 키보드로 선택한 것이 있다면 그 메뉴를 선택
-                        if self.selected != -1:
-                            self.select_menu(self.selected)
-                    elif event.key == Settings().settings["up"]:
-                        # 선택을 하나 위로 이동
-                        self.selected = self.selected - 1 if 0 < self.selected else 0
-                        self.highlight = self.selected
-                    elif event.key == Settings().settings["down"]:
-                        # 선택을 하나 아래로 이동
-                        self.selected = (
-                            self.selected + 1
-                            if self.selected < self.max_computer + self.max_menu - 1
-                            else self.max_computer + self.max_menu - 1
-                        )
-                        self.highlight = self.selected
-            # 버튼이 누르고 있어도 계속 동작하지 않게 뗄 때까지는 작동 방지
-            elif event.type == pygame.KEYUP:
-                self.pressed = False
+    def __init__(self, pos, size, settings):
+        self.STORY_MENU = StoryMenu(pos, size, settings)
+
+    def draw(self, screen):
+        self.STORY_MENU.draw(screen)
+
+    def handle_event(self, event):
+        self.STORY_MENU.handle_event(event)
