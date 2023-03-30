@@ -1,6 +1,7 @@
 import pygame, pickle
 from constant import *
 from button import Button
+import random
 from menu import Menu
 
 # 키 입력을 위한 설정
@@ -162,6 +163,9 @@ class Settings:
     # 폰트 설정
     get_font = lambda self, size: pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
 
+    # 폰트 설정
+    get_font = lambda self, size: pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
+
     # 기본 설정
     default_setting = {
         "version": 4,
@@ -200,6 +204,21 @@ class Settings:
             base_color="Black",
             hovering_color="Green",
         )
+        self.OPTIONS_RECT = self.OPTIONS_TEXT.get_rect(center=(self.size[0] / 2, 260))
+
+        self.options_back_hovered = False
+        self.OPTIONS_BACK = Button(
+            image=None,
+            hovering_image=None,
+            pos=(self.size[0] / 2, 460),
+            text_input="BACK",
+            font=self.get_font(75),
+            base_color="Black",
+            hovering_color="Green",
+        )
+
+    # 볼륨 가져오기 (전체 음량 * 종류별 음량 = 실제 음량, 0~1 사이 값)
+    get_volume = lambda self, type: self.settings["sound"] * self.settings[type] / 10000
 
         self.setting_menus = []
         self.setting_menus.append(Setting_Menu(self.pos, self.size, "resolution", self))
@@ -243,13 +262,18 @@ class Settings:
     # 설정 적용하기
     def apply_setting(self, key: str, value):
         # 이미 사용중인 키 등록 시 예외 처리
-        if (value in (self.settings['up'],
-                      self.settings['down'],
-                      self.settings['left'],
-                      self.settings['right'],
-                      self.settings['enter'],
-                      self.settings['pause'])
-            and self.settings[key] != value):
+        if (
+            value
+            in (
+                self.settings["up"],
+                self.settings["down"],
+                self.settings["left"],
+                self.settings["right"],
+                self.settings["enter"],
+                self.settings["pause"],
+            )
+            and self.settings[key] != value
+        ):
             raise ValueError("중복된 키가 입력되었습니다.")
 
         # 해당 설정 적용
@@ -265,11 +289,10 @@ class Settings:
         self.init_draw()
 
     # 스크린에 자신을 그리기
-    def draw(self, screen:pygame.Surface):
+    def draw(self, screen: pygame.Surface):
         screen.fill("white")
-        
+
         screen.blit(self.OPTIONS_TEXT, self.OPTIONS_RECT)
-        
         self.OPTIONS_BACK.forceChangeColor(self.options_back_hovered, screen)
         self.OPTIONS_BACK.update(screen)
 

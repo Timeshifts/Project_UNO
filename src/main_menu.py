@@ -4,6 +4,7 @@ from setting import Settings
 from constant import *
 from menu import Menu
 
+
 # 메인 메뉴
 class Main_menu(Menu):
     
@@ -27,3 +28,4 @@ class Main_menu(Menu):
             pygame.event.post(pygame.event.Event(EVENT_START_SINGLE)) # 싱글플레이
         elif self.avail_menu[index] == 'STORY':
             pygame.event.post(pygame.event.Event(EVENT_START_STORY)) # 스토리 모드
+            
