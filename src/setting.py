@@ -289,6 +289,6 @@ class Settings:
 
     # 색맹 기능
     def is_blind(self, blind, ref_deck):
-        self.default_setting["colorblind"] = blind
+        self.apply_setting("colorblind", blind)
         for card in ref_deck:
-            card.colorblind(self.default_setting["colorblind"])
+            card.colorblind(self.settings["colorblind"])
