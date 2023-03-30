@@ -1,6 +1,5 @@
 import random
 import pygame
-import card
 
 
 class GameManager:
@@ -41,11 +40,11 @@ class GameManager:
 
         random.shuffle(self.players)
 
-        # 덱 초기화 - 수정
-        self.set_deck()
+        # 덱 초기화
+        self.set_deck(self.deck)
 
-        # 덱 셔플   - 수정
-        self.card_shuffle()
+        # 덱 셔플
+        self.card_shuffle(self.deck)
 
         # 플레이어들에게 카드 나눠줌
         for i in range(self.start_cards_integer):
@@ -209,10 +208,10 @@ class GameManager:
         for color in card_color:
             if color == "wild":
                 for wcn in wcard_name:
-                    self.ref_deck.append(card.Card(wcn, color))
+                    self.ref_deck.append(Card(wcn, color))
             else:
                 for cn in card_name:
-                    self.ref_deck.append(card.Card(cn, color))
+                    self.ref_deck.append(Card(cn, color))
 
     # 카드 셔플
     def card_shuffle(self):
@@ -373,26 +372,25 @@ class Computer(Player):
 # -------------------------------------------------------------------------------------------------
 
 
-# class Card:
-#     def __init__(self, id, card_name, color, filename):
-#         self.id = id
-#         self.card_name = card_name
-#         self.color = color
-#         # self.card_data = pygame.image.load(filename)
-#         # self.rect = self.card_data.get_rect()               # card_data 의 위치정보를 가져온다
-#         if self.color == "wild":
-#             self.score = 50
-#         elif self.card_name.isdigit():
-#             self.score = int(card_name)
-#         else:
-#             self.score = 20
+class Card:
+    def __init__(self, id, card_name, color, filename):
+        self.id = id
+        self.card_name = card_name
+        self.color = color
+        # self.card_data = pygame.image.load(filename)
+        # self.rect = self.card_data.get_rect()               # card_data 의 위치정보를 가져온다
+        if self.color == "wild":
+            self.score = 50
+        elif self.card_name.isdigit():
+            self.score = int(card_name)
+        else:
+            self.score = 20
 
 
-# Gm = GameManager()
+Gm = GameManager()
 
-# Gm.computer_count = 3
-# Gm.start_cards_integer = 5
+Gm.computer_count = 3
+Gm.start_cards_integer = 5
 
-# Gm.game_start()
-# Gm.turn_start()
-
+Gm.game_start()
+Gm.turn_start()
