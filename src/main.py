@@ -1,4 +1,4 @@
-import sys, setting, pause #, GameManager
+import sys, setting, pause, story_map #, GameManager
 from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN_OPTION
 from constant import *
 
@@ -66,11 +66,14 @@ def main():
     main_menu = Main_menu((width / 2, height / 2 + 100), size, settings)
     game_objects.append(main_menu)
 
+    story_object = story_map.StoryMap((0, 0), size, settings)
+
     while True:
         for event in pygame.event.get():
             # 사용자가 X 버튼을 누르는 등의 동작으로 창 종료 시, 메뉴에서 종료 선택 시 종료 처리
             if event.type in (pygame.QUIT, EVENT_QUIT_GAME):
                 settings.save_setting()
+                story_object.STORY_MENU.save_progress()
                 pygame.quit()
                 sys.exit(0)
 
@@ -108,7 +111,7 @@ def main():
                 background.fill("#526580")
                 state = "story_map"
                 load_bgm(RESOURCE_PATH / "sound" / "bg_story_main.mp3", settings.get_volume("bgm"))
-                # TODO: 스토리 지도로 이동
+                game_objects.append(story_object)
 
             # 옵션 열기
             if event.type == EVENT_OPEN_OPTION:

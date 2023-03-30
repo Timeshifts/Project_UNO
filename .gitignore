@@ -1,6 +1,9 @@
 # 설정 저장 파일
 resources/settings.ini
 
+# 스토리 진행도 파일
+resources/story_progress.ini
+
 # __pycache__
 __pycache__
 src/__pycache__

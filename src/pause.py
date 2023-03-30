@@ -114,9 +114,10 @@ def pause():
         for event in pygame.event.get():
             # 사용자가 X 버튼을 누르는 등의 동작으로 창 종료 시, 메뉴에서 종료 선택 시 종료 처리
             if event.type in (pygame.QUIT, EVENT_QUIT_GAME):
-                pause.settings.save_setting()
-                pygame.quit()
-                sys.exit(0)
+                # 일시 정지를 풀고
+                paused = False
+                # Main 루프에서 이벤트를 처리하도록 다시 넘겨주기
+                pygame.event.post(event)
 
             # 일시 정지 풀기
             if event.type == pygame.KEYDOWN :
