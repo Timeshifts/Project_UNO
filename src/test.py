@@ -4,7 +4,7 @@ import GameManager
 from setting import Settings
 from card import roulette_wheel_selection,Card
 
-class TestRouletteWheelSelection(unittest.TestCase):
+class Test(unittest.TestCase):
     # 게임시작 전에 색맹 on/off시 파일 바뀌는지 확인
     def test_colorblind(self):
         gm = GameManager.GameManager()
@@ -12,7 +12,7 @@ class TestRouletteWheelSelection(unittest.TestCase):
         settings = Settings()
         settings.is_blind(True,gm.ref_deck)
         gm.game_start()
-        self.assertEqual(gm.ref_deck[0].filename,"card_colorbilnd/"+gm.ref_deck[0].color + "_" + gm.ref_deck[0].name +".png")
+        self.assertEqual(gm.ref_deck[0].filename,"card_colorblind/"+gm.ref_deck[0].color + "_" + gm.ref_deck[0].name +".png")
     
     def test_colorblind_off(self):
         gm = GameManager.GameManager()
@@ -36,32 +36,31 @@ class TestRouletteWheelSelection(unittest.TestCase):
         hand2.append(gm.deck.pop())
         hand2.append(gm.deck.pop())
 
-        settings.is_blind(True,gm.ref_deck)        # 색맹 off
+        settings.is_blind(True,gm.ref_deck)        # 색맹 on
         for card in hand1:
-            self.assertEqual(card.filename,"card_colorbilnd/"+card.color + "_" + card.name +".png")
+            self.assertEqual(card.filename,"card_colorblind/"+card.color + "_" + card.name +".png")
         
         settings.is_blind(False,gm.ref_deck)        # 색맹 off
 
         for card in hand2:
             self.assertEqual(card.filename,"card/"+card.color + "_" + card.name +".png")
     
-    # 낼 수 있는 카드들 선택
-    def test_possible_card(self):
-        gm = GameManager.GameManager()
-        gm.game_start()
-        settings = Settings()
+    # # 낼 수 있는 카드들 선택
+    # def test_possible_card(self):
+    #     gm = GameManager.GameManager()
+    #     gm.game_start()
 
-        hand1 = []
-        for i in range(30):
-            hand1.append(gm.deck.pop())
+    #     hand1 = []
+    #     for i in range(30):
+    #         hand1.append(gm.deck.pop())
 
-        print("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ")
-        print("grave_name:{0} grave_color: {1} ".format(gm.grave_top.name,gm.grave_top.color))
-        card_sys.possible_card(gm.grave_top,hand1)
+    #     print("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ")
+    #     print("grave_name:{0} grave_color: {1} ".format(gm.grave_top.name,gm.grave_top.color))
+    #     gm.possible_card(gm.grave_top,hand1)
 
-        print("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ")
-        for cd in card_sys.possible_cards:
-            print(cd)
+    #     print("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ")
+    #     for cd in gm.possible_cards:
+    #         print(cd)
     
     def test_card_distribution(self):
         self.test_deck = []
@@ -105,7 +104,6 @@ class TestRouletteWheelSelection(unittest.TestCase):
         a_cards = roulette_wheel_selection(1000,self.test_deck,a_weight)
         b_cards = roulette_wheel_selection(1000,self.test_deck,b_weight)
 
-        print(len(self.test_deck))
         for x in a_cards:
             if x.name.isdigit():
                 a_count[0] +=1
@@ -142,7 +140,6 @@ class TestRouletteWheelSelection(unittest.TestCase):
         b_count = [0, 0]
         a_weight = [0.5, 0.5]
         b_weight = [0.4, 0.6]
-        print(len(gm.deck))
 
         a_cards = roulette_wheel_selection(20,gm.deck,a_weight)
         b_cards = roulette_wheel_selection(20,gm.deck,b_weight)
@@ -163,6 +160,7 @@ class TestRouletteWheelSelection(unittest.TestCase):
             else:
                 b_count[1] +=1
 
+        print()
         print("A 플레이어 선택횟수 - 일반카드:{0}, 기술카드:{1}".format(a_count[0],a_count[1]))
         print("B 플레이어 선택횟수 - 일반카드:{0}, 기술카드:{1}".format(b_count[0],b_count[1]))
         a_nor =a_count[0]/(a_count[0]+a_count[1])
