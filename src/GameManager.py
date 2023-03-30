@@ -508,3 +508,4 @@ Gm.computer_count = 3
 Gm.start_cards_integer = 5
 
 Gm.game_start()
+Gm.turn_start()
