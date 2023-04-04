@@ -107,9 +107,9 @@ class SingleLobby:
         for i in range(self.max_computer + self.max_menu):
             self.button[i].update(screen)
             if i == self.highlight:
-                self.button[i].forceChangeColor(True, screen)
+                self.button[i].changeColor(True, screen)
             else:
-                self.button[i].forceChangeColor(False, screen)
+                self.button[i].changeColor(False, screen)
 
         # Add a Player 텍스트
         font = self.get_font(50)

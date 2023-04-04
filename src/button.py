@@ -5,7 +5,8 @@ class Button:
     def __init__(
         self, image, hovering_image, pos, text_input, font, base_color, hovering_color
     ):
-        self.image = image
+        self.base_image = image
+        self.image = self.base_image
         self.hovering_image = hovering_image
         self.x_pos = pos[0]
         self.y_pos = pos[1]
@@ -32,27 +33,25 @@ class Button:
             return True
         return False
 
-    # def changeColor(self, position, screen):
-    #     if position[0] in range(self.rect.left, self.rect.right) and position[
-    #         1
-    #     ] in range(self.rect.top, self.rect.bottom):
-    #         self.text = self.font.render(self.text_input, True, self.hovering_color)
-    #         screen.blit(self.hovering_image, self.rect)
-    #     else:
-    #         self.text = self.font.render(self.text_input, True, self.base_color)
-
-    def forceChangeColor(self, state, screen):
+    def changeColor(self, state, screen):
         if state:
             self.text = self.font.render(self.text_input, True, self.hovering_color)
-            screen.blit(self.image, self.rect)
         else:
             self.text = self.font.render(self.text_input, True, self.base_color)
-            screen.blit(self.image, self.rect)
+
+    def changeHighlight(self, state, screen):
+        if state:
+            self.image = self.hovering_image
+            self.changeColor(state, screen)
+        else:
+            self.image = self.base_image
+            self.changeColor(state, screen)
 
     def ChangeImage(self, change_image):
         self.image = change_image
 
-    def ChangeText(self, change_text, change_base_color, change_hovering_color):
+    def ChangeText(self, change_text, change_base_color=None, change_hovering_color=None):
         self.text_input = change_text
-        self.base_color, self.hovering_color = change_base_color, change_hovering_color
+        if change_hovering_color is not None:
+            self.base_color, self.hovering_color = change_base_color, change_hovering_color
         self.text = self.font.render(self.text_input, True, self.base_color)
