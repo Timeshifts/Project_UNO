@@ -457,7 +457,7 @@ class User(Player):
 # -------------------------------------------------------------------------------------------------
 
 
-class hand(Player):
+class Computer(Player):
     def __init__(self, is_computer):
         super().__init__(is_computer)
 
