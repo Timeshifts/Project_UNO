@@ -1,12 +1,11 @@
 import random
 import pygame
-
+import threading
+import time
 
 class GameManager:
     def __init__(self):
         self.turn = 0  # 지금 누구 턴인지 나타내는 정수 변수
-        self.turn_count_down = 0  # 유저의 해당 턴 몇초남았는지 나타낼 정수 변수
-        self.game_count_down = 0  # 해당 게임 몇초 남았는지 나태닐 정수 변수
         self.players = []  # 플레이어 객체들을 담을 배열
         self.real_player_count = 0  # 실제 플레이어 수가 몇 인지 나타낼 정수 변수
         self.player_num = 0  # 전체 플레이어 수
@@ -20,6 +19,8 @@ class GameManager:
         self.turn_jump_num = 0  # 누가 턴 건너뛰기를 했으면 여기에 값이 설정되는 정수 변수
         self.is_turn_reversed = False  # 누가 턴 진행방향을 바꿨는지 체크
         self.grave_top_color = ""
+        self.game_timer_end = False
+        self.turn_timer_end = False
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -28,6 +29,9 @@ class GameManager:
         # 받아와서 여기다가 붙혀넣는 것
         # for i in range(len(self.real_player_count)):
         # self.players.append[pre_enrolled_players[i]]
+        
+        self.game_timer_end = False
+        self.game_count_down()
 
         self.players.append(User(False))
 
@@ -61,6 +65,9 @@ class GameManager:
         self.turn_start()
 
     def game_end(self):
+        
+        self.game_timer_end = True
+        
         if self.is_someone_win == True:
             pass
         else:
@@ -76,6 +83,10 @@ class GameManager:
 
     # 턴 시작 함수
     def turn_start(self):
+        
+        self.turn_timer_end = False
+        self.turn_count_down()
+        
         # 전 턴에 누가 공격 카드 썼는지 판별
         # 누가 공격 카드를 썼다면, attack_int 만큼 카드주고 6초 기다린후 턴종료
         print(f"턴 시작, 현재 {self.turn} 번 유저에게 로직 실행\n")
@@ -117,6 +128,8 @@ class GameManager:
             else:
                 print(f"{self.turn} 턴 유저, 실제 플레이어 이므로 권한 지급\n")
                 self.players[self.turn].play()
+        
+        self.turn_timer_end = True
 
         pygame.time.wait(3000)
 
@@ -245,16 +258,6 @@ class GameManager:
         self.turn = (self.player_num - 1) - self.turn
         """
 
-    def current_game_count_down(self):
-        while self.game_count_down > 0 and self.is_someone_win == False:
-            self.game_count_down -= 1
-
-    def current_turn_count_down(self):
-        while (
-            self.turn_count_down > 0 and self.players[self.turn].is_turn_used == False
-        ):
-            self.turn_count_down -= 1
-
     # 카드 셔플
     # def card_shuffle(self, deck):
     # random.shuffle(deck)
@@ -306,6 +309,48 @@ class GameManager:
         self.grave.append(pop_card)
         self.grave_top = self.grave[-1]  # grave 의 맨 위의 카드
         self.grave_top_color = self.grave_top.color
+    
+    # 타이머
+    def game_timer(self, count):
+    
+        start_time = time.time()
+
+        while True:
+            remain_time = count - (int)(time.time() - start_time)
+
+            if remain_time <= 0:
+                print("game time end")
+                break
+
+            print(f"game time: {remain_time} seconds")
+
+            time.sleep(1)
+    
+    def turn_timer(self, count):
+    
+        start_time = time.time()
+
+        while True:
+            remain_time = count - (int)(time.time() - start_time)
+
+            if remain_time <= 0:
+                print("turn time end")
+                break
+            elif self.turn_timer_end == True:
+                break
+
+            print(f"turn time: {remain_time} seconds")
+            
+            time.sleep(1)
+
+    
+    def game_count_down(self):
+        thread = threading.Thread(target=self.game_timer, args=(300,))
+        thread.start()
+    
+    def turn_count_down(self):
+        thread = threading.Thread(target=self.turn_timer, args=(15,))
+        thread.start()
 
     # 여기 아래 부터는 기술 카드 효과들임
 
@@ -518,4 +563,9 @@ Gm.computer_count = 3
 Gm.start_cards_integer = 5
 
 Gm.game_start()
-Gm.turn_start()
+
+
+# --------------------------------------
+
+
+
