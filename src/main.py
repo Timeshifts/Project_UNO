@@ -12,8 +12,7 @@ except ImportError:
     print("[경고] Pygame이 설치되어 있지 않습니다.")
     sys.exit(1)
 
-settings = None
-
+setting_UI = None
 
 def get_background(state, size):
     return pygame.transform.scale(
@@ -33,7 +32,7 @@ def main():
     pygame.mixer.init()  # 음향 mixer 초기화
 
     # 설정 불러오기
-    settings = setting_menu.Setting_UI(pos=(100, 100))
+    setting_UI = setting_menu.Setting_UI(pos=(100, 100))
 
     # 기본 화면 설정 (기본 해상도 FHD)
     if setting.options["resolution"] in setting.resolution.keys():
@@ -45,7 +44,7 @@ def main():
         ] = setting.default_setting["resolution"]
 
     # 해상도에 맞추어 object들의 크기 재설정
-    settings.resize((width, height))
+    setting_UI.resize((width, height))
     screen = pygame.display.set_mode(size)
 
     clock = pygame.time.Clock()
@@ -71,11 +70,7 @@ def main():
     main_menu = Main_menu((width / 2, height / 2 + 100), size)
     game_objects.append(main_menu)
 
-    story_object = story_map.StoryMap((0, 0), size, settings)
-    
-    # TODO: 임시
-    for obj in game_objects:
-        obj.resize(size)
+    story_object = story_map.StoryMap((0, 0), size)
 
     while True:
         for event in pygame.event.get():
@@ -91,7 +86,7 @@ def main():
                 if event.key == setting.options["pause"]:
                     # TODO: 게임 중에만 일시정지가 작동하도록 제한
                     # and state in ("single_play" or "story_play")
-                    pause.init_pause(settings, screen)
+                    pause.init_pause(setting_UI, screen)
                     pause.pause()  # pause 상태에서의 루프
 
             # 효과음
@@ -144,7 +139,7 @@ def main():
                 )
                 state = "single"
                 # load_bgm(
-                #     RESOURCE_PATH / "sound" / "bg_game.mp3", settings.get_volume("bgm")
+                #     RESOURCE_PATH / "sound" / "bg_game.mp3", setting_UI.get_volume("bgm")
                 # )
                 single = Single((width, height), size, computer_count, name)
                 game_objects.append(single)
@@ -180,12 +175,12 @@ def main():
                 if state == "main_menu":
                     game_objects.remove(main_menu)
                 # 설정을 게임 오브젝트에 넣어 표시되게 처리
-                game_objects.append(settings)
+                game_objects.append(setting_UI)
 
             # 옵션 닫기
             if event.type == EVENT_CLOSE_OPTION:
                 # 설정 제거
-                game_objects.remove(settings)
+                game_objects.remove(setting_UI)
                 # 메인 메뉴로 복귀
                 if state == "main_menu":
                     game_objects.append(main_menu)

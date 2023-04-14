@@ -20,7 +20,7 @@ class Setting_Key_Bundle(Menu):
     def __init__(self, pos, size):
         self.name = "keys"
         self.screen = None
-        super().__init__(pos, size)
+        super().__init__(pos, size, (0.6, 1.0))
 
     def init_draw(self):
         self.pos = self.pos_formula
@@ -39,7 +39,7 @@ class Setting_Key_Bundle(Menu):
         key = self.avail_menu[index]
 
         # 키 설정 메시지 출력
-        font = self.get_font(70)
+        font = setting.get_font(70)
         text = font.render("바꿀 키를 입력해주세요.", True, "Black")
         pygame.draw.rect(self.screen, "White", text.get_rect(center=(self.size[0] / 2, self.size[1] / 2)))
 
@@ -54,7 +54,7 @@ class Setting_Key_Bundle(Menu):
                 if event.type == pygame.KEYDOWN:
                     # 입력된 키값 저장
                     try:
-                        setting.options.apply_setting(key, event.key)
+                        setting.apply_setting(key, event.key)
                         key_pressed = True
                     except ValueError:
                         text = font.render("중복된 키가 입력되었습니다. 다시 시도해 주세요.", True, "Black")
@@ -63,7 +63,7 @@ class Setting_Key_Bundle(Menu):
                         self.screen.blit(text, text_rect)
                         pygame.display.update()
         self.button[index].ChangeText(
-            f"{self.display_name[index]}: {pygame.key.name(setting.options.settings[key])}"
+            f"{self.display_name[index]}: {pygame.key.name(setting.options[key])}"
         )
 
 
@@ -83,59 +83,59 @@ class Setting_Menu(Menu):
         if name == "resolution":
             self.avail_menu = list(str(value) for value in setting.resolution.values())
             self.pos_formula = lambda i: (
-                self.size[0] * (5 + 7 * i) / 31,
+                self.size[0] * (7 + 6 * i) / 31,
                 self.size[1] * 0.2,
             )
-            self.name_formula = lambda: (150, self.size[1] * 0.2)
+            self.name_formula = lambda: (self.size[0] * 0.1, self.size[1] * 0.2)
             self.display_name = "해상도"
         elif name == "sound":
             self.avail_menu = ["-10%", "+10%"]
             self.pos_formula = lambda i: (
-                self.size[0] * (8 + 14 * i) / 31,
+                self.size[0] * (9 + 14 * i) / 31,
                 self.size[1] * 0.3,
             )
-            self.name_formula = lambda: (150, self.size[1] * 0.3)
+            self.name_formula = lambda: (self.size[0] * 0.1, self.size[1] * 0.3)
             self.display_name = "전체 음량"
         elif name == "bgm":
             self.avail_menu = ["-10%", "+10%"]
             self.pos_formula = lambda i: (
-                self.size[0] * (8 + 14 * i) / 31,
+                self.size[0] * (9 + 14 * i) / 31,
                 self.size[1] * 0.4,
             )
-            self.name_formula = lambda: (150, self.size[1] * 0.4)
+            self.name_formula = lambda: (self.size[0] * 0.1, self.size[1] * 0.4)
             self.display_name = "배경음악"
         elif name == "se":
             self.avail_menu = ["-10%", "+10%"]
             self.pos_formula = lambda i: (
-                self.size[0] * (8 + 14 * i) / 31,
+                self.size[0] * (9 + 14 * i) / 31,
                 self.size[1] * 0.5,
             )
-            self.name_formula = lambda: (150, self.size[1] * 0.5)
+            self.name_formula = lambda: (self.size[0] * 0.1, self.size[1] * 0.5)
             self.display_name = "효과음"
         elif name == "colorblind":
             self.avail_menu = ["켜짐", "꺼짐"]
             self.pos_formula = lambda i: (
-                self.size[0] * (8 + 14 * i) / 31,
+                self.size[0] * (9 + 14 * i) / 31,
                 self.size[1] * 0.6,
             )
-            self.name_formula = lambda: (150, self.size[1] * 0.6)
+            self.name_formula = lambda: (self.size[0] * 0.1, self.size[1] * 0.6)
             self.display_name = "색약 모드"
         elif name == "control":
             self.avail_menu = ["전체 초기화", "돌아가기"]
             self.pos_formula = lambda i: (
-                self.size[0] * (8 + 14 * i) / 31,
+                self.size[0] * (9 + 14 * i) / 31,
                 self.size[1] * 0.8,
             )
-            self.name_formula = lambda: (150, self.size[1] * 0.8)
+            self.name_formula = lambda: (self.size[0] * 0.1, self.size[1] * 0.8)
             self.display_name = ""
 
-        super().__init__(pos, size)
+        super().__init__(pos, size, (0.8, 1) if name == 'resolution' else (1, 1))
 
     def init_draw(self):
         super().init_draw()
 
         self.name_pos = self.name_formula()
-        self.NAME_TEXT = self.get_font(30).render(
+        self.NAME_TEXT = setting.get_font(45 * setting.get_screen_scale()).render(
             f"{self.display_name}: ", True, "Black"
         )
         self.NAME_RECT = self.NAME_TEXT.get_rect(center=self.name_pos)
@@ -168,8 +168,7 @@ class Setting_UI:
     # 가능한 메뉴 목록
     avail_menu = []
 
-    # 폰트 설정
-    get_font = lambda self, size: pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
+    
 
     def __init__(self, pos=(0, 0), size=(150, 50)):
         setting.options = setting.default_setting
@@ -186,9 +185,9 @@ class Setting_UI:
         self.init_draw()
 
     # init에서 draw 부분을 분리
-    def init_draw(self):
-        self.OPTIONS_TEXT = self.get_font(45).render(
-            "This is the OPTIONS screen.", True, "Black"
+    def init_draw(self,):
+        self.OPTIONS_TEXT = setting.get_font(45, True).render(
+            "설정", True, "Black"
         )
         self.OPTIONS_RECT = self.OPTIONS_TEXT.get_rect(center=(self.size[0] / 2, 50))
 
@@ -204,6 +203,7 @@ class Setting_UI:
     # 크기 변경에 맞춰 재조정
     def resize(self, size):
         self.size = size
+
         self.init_draw()
         
         for obj in self.setting_menus:
@@ -213,18 +213,18 @@ class Setting_UI:
     def draw(self, screen: pygame.Surface):
         screen.fill("white")
 
-        self.SOUND_TEXT = self.get_font(45).render(
+        self.SOUND_TEXT = setting.get_font(45).render(
             f"{setting.options['sound']}%", True, "Black"
         )
-        self.SOUND_RECT = self.OPTIONS_TEXT.get_rect(center=(self.size[0] * 0.6, self.size[1] * 0.3))
-        self.BGM_TEXT = self.get_font(45).render(
+        self.SOUND_RECT = self.SOUND_TEXT.get_rect(center=(self.size[0] / 2, self.size[1] * 0.3))
+        self.BGM_TEXT = setting.get_font(45).render(
             f"{setting.options['bgm']}%", True, "Black"
         )
-        self.BGM_RECT = self.OPTIONS_TEXT.get_rect(center=(self.size[0] * 0.6, self.size[1] * 0.4))
-        self.SE_TEXT = self.get_font(45).render(
+        self.BGM_RECT = self.BGM_TEXT.get_rect(center=(self.size[0] / 2, self.size[1] * 0.4))
+        self.SE_TEXT = setting.get_font(45).render(
             f"{setting.options['se']}%", True, "Black"
         )
-        self.SE_RECT = self.OPTIONS_TEXT.get_rect(center=(self.size[0] * 0.6, self.size[1] * 0.5))
+        self.SE_RECT = self.SE_TEXT.get_rect(center=(self.size[0] / 2, self.size[1] / 2))
 
         screen.blit(self.OPTIONS_TEXT, self.OPTIONS_RECT)
         screen.blit(self.SOUND_TEXT, self.SOUND_RECT)

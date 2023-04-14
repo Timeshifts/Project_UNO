@@ -35,13 +35,8 @@ class Quit_Menu(Menu):
     def init_draw(self):
         super().init_draw()
 
-        self.PAUSED_TEXT = self.get_font(45).render("동작을 선택해 주세요.", True, "Black")
-        self.PAUSED_RECT = self.PAUSED_TEXT.get_rect(center=(self.size[0] / 2, 260))
-
-    # 크기 변경에 맞춰 재조정
-    def resize(self, size):
-        self.size = size
-        self.init_draw()
+        self.PAUSED_TEXT = setting.get_font(45).render("동작을 선택해 주세요.", True, "Black")
+        self.PAUSED_RECT = self.PAUSED_TEXT.get_rect(center=(self.size[0] / 2, self.size[1] * 0.2))
 
     # 스크린에 자신을 그리기
     def draw(self, screen):
@@ -78,8 +73,8 @@ class Paused_Menu(Menu):
     def init_draw(self):
         super().init_draw()
 
-        self.PAUSED_TEXT = self.get_font(45).render("Game is paused.", True, "Black")
-        self.PAUSED_RECT = self.PAUSED_TEXT.get_rect(center=(self.size[0] / 2, 260))
+        self.PAUSED_TEXT = setting.get_font(45).render("Game is paused.", True, "Black")
+        self.PAUSED_RECT = self.PAUSED_TEXT.get_rect(center=(self.size[0] / 2, self.size[1] * 0.2))
 
     # 스크린에 자신을 그리기
     def draw(self, screen):
@@ -119,6 +114,10 @@ def pause(reset=True):
         pause.pause_object.append(paused_menu)
     size = pause.screen.get_size()
 
+    # TODO: 임시
+    for obj in pause_object:
+        obj.resize(size)
+    
     while paused:
         for event in pygame.event.get():
             # 사용자가 X 버튼을 누르는 등의 동작으로 창 종료 시, 메뉴에서 종료 선택 시 종료 처리
@@ -135,6 +134,7 @@ def pause(reset=True):
                     # 실제로 설정이 바뀌지 않았을 수도 있으나,
                     # 설정 변경을 메인 루프에도 적용하기 위함.
                     pygame.event.post(pygame.event.Event(EVENT_OPTION_CHANGED))
+            
             if event.type == EVENT_RESUME:
                 paused = False
                 pygame.event.post(pygame.event.Event(EVENT_OPTION_CHANGED))
@@ -186,6 +186,9 @@ def pause(reset=True):
                 if size != setting.resolution[setting.options["resolution"]]:
                     size = setting.resolution[setting.options["resolution"]]
                     pause.screen = pygame.display.set_mode(size)
+                    # TODO: 직접 setting을 뽑아올 수 있게 되면서,
+                    # resize의 역할이 굉장히 애매해졌습니다.
+                    # 조정이나 삭제가 이루어질 수도 있습니다.
                     for obj in pause.pause_object:
                         obj.resize(size)
                 pygame.mixer.music.set_volume(setting.get_volume("bgm"))

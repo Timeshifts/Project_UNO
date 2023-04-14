@@ -1,4 +1,4 @@
-import pygame
+import pygame, setting
 from constant import *
 
 
@@ -23,6 +23,7 @@ class Button:
             self.hovering_image = self.text
         self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
         self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
+        self.resize(setting.get_screen_size())
 
     def resize(self, size):
         self.base_image = pygame.transform.scale(
@@ -34,7 +35,7 @@ class Button:
                          size[1] * self.base_size[1] * self.scale[1] // 1080)
         )
     
-        self.font = pygame.font.Font(RESOURCE_PATH / 'font.ttf', 50 * size[0] // 1920)
+        self.font = setting.get_font(50 * self.scale[0])
         self.text = self.font.render(self.text_input, True, self.base_color)
         self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
         self.image = self.base_image

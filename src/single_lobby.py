@@ -96,6 +96,9 @@ class SingleLobby:
             # )
             # #############################
 
+    def resize(self, size):
+        pass
+
     # 스크린에 자신을 그리기
     def draw(self, screen):
         for i in range(self.max_computer + self.max_menu):

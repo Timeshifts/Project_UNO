@@ -47,8 +47,8 @@ class StoryMenu(Menu):
 
 
 class StoryMap:
-    def __init__(self, pos, size, settings):
-        self.STORY_MENU = StoryMenu(pos, size, settings)
+    def __init__(self, pos, size):
+        self.STORY_MENU = StoryMenu(pos, size)
 
     def draw(self, screen):
         self.STORY_MENU.draw(screen)

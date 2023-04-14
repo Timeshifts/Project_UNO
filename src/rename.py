@@ -111,7 +111,7 @@ class Rename:
                 if self.pressed == False:
                     self.pressed = True
                     # 엔터 키가 눌렸을 때
-                    if event.key == Settings().settings["enter"]:
+                    if event.key == setting.options["enter"]:
                         # 키보드로 선택한 것이 있다면 그 메뉴를 선택
                         if self.selected != -1:
                             self.select_menu(self.selected)

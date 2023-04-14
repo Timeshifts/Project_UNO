@@ -8,16 +8,13 @@ class Menu:
     # 가능한 메뉴 목록
     avail_menu = []
 
-    # 폰트 설정
-    get_font = lambda self, size: pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
-
     # 위치를 구하는 공식
     pos_formula = lambda self, i: (self.size[0] / 2, self.size[1] * (6 + i) / 10)
 
     # x축 정렬 메뉴? y축 정렬 메뉴?
     axis = "y"
 
-    def __init__(self, pos=(0, 0), size=(150, 50), settings=None):
+    def __init__(self, pos, size, scale=(1.0, 1.0)):
         self.menu = self.avail_menu
         self.max_menu = len(self.menu)
         self.button = []
@@ -25,7 +22,7 @@ class Menu:
         self.pos = pos
         self.size = size
         self.pressed = False
-        self.settings = settings
+        self.scale = scale
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -47,9 +44,10 @@ class Menu:
                     ),
                     pos=self.pos_formula(i),
                     text_input=self.menu[i],
-                    font=self.get_font(50),
+                    font=setting.get_font(50),
                     base_color="#3a4aab",
                     hovering_color="White",
+                    scale=(1, 1) if self.scale is None else self.scale
                 )
             )
             # 각 버튼 이벤트 처리용 Rect 삽입

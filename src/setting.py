@@ -8,8 +8,46 @@ setting_path = RESOURCE_PATH / "settings.ini"
 # 가능한 해상도 목록
 resolution = {0: (1024, 576), 1: (1280, 720), 2: (1600, 900), 3: (1920, 1080)}
 
+# 기본 설정
+default_setting = {
+    "version": 4,
+    "up": pygame.K_UP,
+    "down": pygame.K_DOWN,
+    "left": pygame.K_LEFT,
+    "right": pygame.K_RIGHT,
+    "enter": pygame.K_RETURN,
+    "pause": pygame.K_ESCAPE,
+    "sound": 100,
+    "bgm": 100,
+    "se": 100,
+    "colorblind": False,
+    "resolution": 3,
+}
+
+
+
+# 현재 설정: 이전 코드가 적절한 수정 없이 논리적 오류를
+# 일으키는 것을 방지하기 위해 일부러 options로 명명했습니다.
+# 설정을 읽어야 할 떄가 있다면, 이 dict를 읽어서 사용하면 됩니다.
+options = copy.deepcopy(default_setting)
+
 # 볼륨 가져오기 (전체 음량 * 종류별 음량 = 실제 음량, 0~1 사이 값)
 get_volume = lambda type: options["sound"] * options[type] / 10000
+
+# 스크린이 1920 * 1080 대비 얼마나 줄었나를 실수(0-1)로 반환합니다.
+# 1920 * 1080 크기에서 1.0이 반환됩니다.
+get_screen_scale = lambda: resolution[options['resolution']][0] / 1980
+
+# 스크린 size tuple을 (1920, 1080)과 같이 반환합니다.
+get_screen_size = lambda: resolution[options['resolution']]
+
+# 폰트를 하나만 쓰므로 여기에 몰아도 됩니다.
+# scale이 True이면 화면 크기에 따라 폰트 사이즈가 자동으로 조정됩니다.
+def get_font(size, scale=True): 
+    return pygame.font.Font(RESOURCE_PATH / "font.ttf",
+        int(size * get_screen_scale()) if scale else size)
+
+
 
 # 파일에 저장된 설정 불러오기
 def load_setting():
@@ -69,23 +107,3 @@ def apply_setting( key: str, value):
     # 설정 변경에 대한 이벤트 발생
     pygame.event.post(pygame.event.Event(EVENT_OPTION_CHANGED))
 
-# 기본 설정
-default_setting = {
-    "version": 4,
-    "up": pygame.K_UP,
-    "down": pygame.K_DOWN,
-    "left": pygame.K_LEFT,
-    "right": pygame.K_RIGHT,
-    "enter": pygame.K_RETURN,
-    "pause": pygame.K_ESCAPE,
-    "sound": 100,
-    "bgm": 100,
-    "se": 100,
-    "colorblind": False,
-    "resolution": 3,
-}
-
-# 현재 설정: 이전 코드가 적절한 수정 없이 오류를
-# 일으키는 것을 방지하기 위해 일부러 options로 명명했습니다.
-# 설정을 읽어야 할 떄가 있다면, 이 dict를 읽어서 사용하시면 됩니다.
-options = copy.deepcopy(default_setting)
