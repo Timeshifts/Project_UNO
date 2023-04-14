@@ -54,10 +54,6 @@ class Menu:
             )
             # 각 버튼 이벤트 처리용 Rect 삽입
             self.rect.append(self.button[i].rect)
-            # highlight용 오브젝트 생성
-            # self.highlight_obj = pygame.transform.scale(
-            #     pygame.image.load(RESOURCE_PATH / "highlight.png"), self.size
-            # )
 
     # 크기 변경에 맞춰 재조정
     def resize(self, size):
@@ -69,9 +65,9 @@ class Menu:
         for i in range(self.max_menu):
             self.button[i].update(screen)
             if i == self.highlight:
-                self.button[i].forceChangeColor(True, screen)
+                self.button[i].changeHighlight(True, screen)
             else:
-                self.button[i].forceChangeColor(False, screen)
+                self.button[i].changeHighlight(False, screen)
 
     # 메뉴 선택 시 처리
     def select_menu(self, index):
@@ -110,9 +106,7 @@ class Menu:
                         self.highlight = self.selected
                     elif (
                         event.key
-                        == self.settings.settings[
-                            "down" if self.axis == "y" else "right"
-                        ]
+                        == self.settings.settings["down" if self.axis == "y" else "right"]
                     ):
                         # 선택을 하나 아래로 이동
                         self.selected = (

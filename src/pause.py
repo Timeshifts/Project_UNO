@@ -111,11 +111,12 @@ def init_pause(setting: Settings, main_screen: pygame.Surface):
     pause.pause_object = []
 
 
-def pause():
+def pause(reset=True):
     paused = True
     paused_menu = Paused_Menu((0, 0), pause.screen.get_size(), pause.settings)
     quit_menu = Quit_Menu((0, 0), pause.screen.get_size())
-    pause.pause_object.append(paused_menu)
+    if reset:
+        pause.pause_object.append(paused_menu)
     size = pause.screen.get_size()
 
     while paused:
@@ -180,14 +181,14 @@ def pause():
                 pygame.event.post(pygame.event.Event(EVENT_START_MENU))
 
             # 해상도 변경 이벤트를 받아 화면 리사이징
+            # 배경음악 음량 변경 즉시 적용
             if event.type == EVENT_OPTION_CHANGED:
-                if size != pause.settings.settings["resolution"]:
-                    size = pause.settings.resolution[
-                        pause.settings.settings["resolution"]
-                    ]
+                if size != pause.settings.resolution[pause.settings.settings["resolution"]]:
+                    size = pause.settings.resolution[pause.settings.settings["resolution"]]
                     pause.screen = pygame.display.set_mode(size)
                     for obj in pause.pause_object:
                         obj.resize(size)
+                pygame.mixer.music.set_volume(pause.settings.get_volume("bgm"))
 
             # 오브젝트별로 이벤트 처리
             for obj in pause.pause_object:

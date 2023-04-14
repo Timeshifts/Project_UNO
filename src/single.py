@@ -70,9 +70,9 @@ class Single:
         for i in range(self.max_menu):
             self.button[i].update(screen)
             if i == self.highlight:
-                self.button[i].forceChangeColor(True, screen)
+                self.button[i].changeColor(True, screen)
             else:
-                self.button[i].forceChangeColor(False, screen)
+                self.button[i].changeColor(False, screen)
 
         for i in range(self.computer_count):
             # Player List 상자

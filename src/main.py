@@ -87,10 +87,8 @@ def main():
                 if event.key == settings.settings["pause"]:
                     # TODO: 게임 중에만 일시정지가 작동하도록 제한
                     # and state in ("single_play" or "story_play")
-                    paused = True
                     pause.init_pause(settings, screen)
                     pause.pause()  # pause 상태에서의 루프
-                    paused = False
 
             # 효과음
             if event.type == EVENT_PLAY_SE:
@@ -202,7 +200,7 @@ def main():
             # 해상도 변경 이벤트를 받아 화면 리사이징
             # 배경음악 음량 변경 즉시 적용
             if event.type == EVENT_OPTION_CHANGED:
-                if size != settings.settings["resolution"]:
+                if size != settings.resolution[settings.settings["resolution"]]:
                     size = settings.resolution[settings.settings["resolution"]]
                     screen = pygame.display.set_mode(size)
                     background = get_background(state, size)
