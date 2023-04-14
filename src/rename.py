@@ -1,6 +1,6 @@
 import pygame
 from button import Button
-from setting import Settings
+import setting
 from constant import *
 
 

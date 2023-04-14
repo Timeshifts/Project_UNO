@@ -15,3 +15,5 @@ EVENT_START_STORY = pygame.event.custom_type()
 EVENT_PLAY_SE = pygame.event.custom_type()
 EVENT_OPEN_RENAME = pygame.event.custom_type()
 EVENT_CLOSE_RENAME = pygame.event.custom_type()
+
+options = {}

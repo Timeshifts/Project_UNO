@@ -1,4 +1,4 @@
-import pygame
+import pygame, setting
 from button import Button
 from constant import *
 
@@ -60,6 +60,10 @@ class Menu:
         self.size = size
         self.init_draw()
 
+        for i in range(self.max_menu):
+            self.button[i].resize(size)
+            self.rect[i] = self.button[i].rect
+
     # 스크린에 자신을 그리기
     def draw(self, screen):
         for i in range(self.max_menu):
@@ -93,20 +97,20 @@ class Menu:
                 if self.pressed == False:
                     self.pressed = True
                     # 엔터 키가 눌렸을 때
-                    if event.key == self.settings.settings["enter"]:
+                    if event.key == setting.options["enter"]:
                         # 키보드로 선택한 것이 있다면 그 메뉴를 선택
                         if self.selected != -1:
                             self.select_menu(self.selected)
                     elif (
                         event.key
-                        == self.settings.settings["up" if self.axis == "y" else "left"]
+                        == setting.options["up" if self.axis == "y" else "left"]
                     ):
                         # 선택을 하나 위로 이동
                         self.selected = self.selected - 1 if 0 < self.selected else 0
                         self.highlight = self.selected
                     elif (
                         event.key
-                        == self.settings.settings["down" if self.axis == "y" else "right"]
+                        == setting.options["down" if self.axis == "y" else "right"]
                     ):
                         # 선택을 하나 아래로 이동
                         self.selected = (

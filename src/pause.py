@@ -1,6 +1,6 @@
 import pygame, sys
 from constant import *
-from setting import Settings
+import setting, setting_menu
 from button import *
 from menu import Menu
 
@@ -29,8 +29,8 @@ class Quit_Menu(Menu):
     # x축 정렬 메뉴? y축 정렬 메뉴?
     axis = "x"
 
-    def __init__(self, pos=(0, 0), size=(150, 50), settings=None):
-        super().__init__(pos, size, settings)
+    def __init__(self, pos=(0, 0), size=(150, 50)):
+        super().__init__(pos, size)
 
     def init_draw(self):
         super().init_draw()
@@ -72,8 +72,8 @@ class Paused_Menu(Menu):
     # x축 정렬 메뉴? y축 정렬 메뉴?
     axis = "x"
 
-    def __init__(self, pos=(0, 0), size=(150, 50), settings=None):
-        super().__init__(pos, size, settings)
+    def __init__(self, pos=(0, 0), size=(150, 50)):
+        super().__init__(pos, size)
 
     def init_draw(self):
         super().init_draw()
@@ -105,15 +105,15 @@ class Paused_Menu(Menu):
 """
 
 
-def init_pause(setting: Settings, main_screen: pygame.Surface):
-    pause.settings = setting
+def init_pause(settings: setting_menu.Setting_UI, main_screen: pygame.Surface):
+    pause.settings = settings
     pause.screen = main_screen
     pause.pause_object = []
 
 
 def pause(reset=True):
     paused = True
-    paused_menu = Paused_Menu((0, 0), pause.screen.get_size(), pause.settings)
+    paused_menu = Paused_Menu((0, 0), pause.screen.get_size())
     quit_menu = Quit_Menu((0, 0), pause.screen.get_size())
     if reset:
         pause.pause_object.append(paused_menu)
@@ -130,7 +130,7 @@ def pause(reset=True):
 
             # 일시 정지 풀기
             if event.type == pygame.KEYDOWN:
-                if event.key == pause.settings.settings["pause"]:
+                if event.key == setting.options["pause"]:
                     paused = False
                     # 실제로 설정이 바뀌지 않았을 수도 있으나,
                     # 설정 변경을 메인 루프에도 적용하기 위함.
@@ -142,7 +142,7 @@ def pause(reset=True):
             # 효과음
             if event.type == EVENT_PLAY_SE:
                 se = pygame.mixer.Sound(event.path)
-                se.set_volume(pause.settings.get_volume("se"))
+                se.set_volume(setting.get_volume("se"))
                 se.play()
 
             # 옵션 열기
@@ -183,12 +183,12 @@ def pause(reset=True):
             # 해상도 변경 이벤트를 받아 화면 리사이징
             # 배경음악 음량 변경 즉시 적용
             if event.type == EVENT_OPTION_CHANGED:
-                if size != pause.settings.resolution[pause.settings.settings["resolution"]]:
-                    size = pause.settings.resolution[pause.settings.settings["resolution"]]
+                if size != setting.resolution[setting.options["resolution"]]:
+                    size = setting.resolution[setting.options["resolution"]]
                     pause.screen = pygame.display.set_mode(size)
                     for obj in pause.pause_object:
                         obj.resize(size)
-                pygame.mixer.music.set_volume(pause.settings.get_volume("bgm"))
+                pygame.mixer.music.set_volume(setting.get_volume("bgm"))
 
             # 오브젝트별로 이벤트 처리
             for obj in pause.pause_object:
