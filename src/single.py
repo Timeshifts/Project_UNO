@@ -4,31 +4,25 @@ from button import Button
 from setting import Settings
 from constant import *
 
-game = GM.Gm
-game.computer_count = 3
-game.start_cards_integer = 7
-game.game_start()
+clock = pygame.time.Clock()
 
 
 class Single:
     # 가능한 메뉴 목록
-    my_card = []  # GameManager에서 self.hand 가져오기
-    for i in range(len(game.players[0].hand)):
-        my_card.append(
-            f"{game.players[0].hand[i].color}_{game.players[0].hand[i].name}")
     deck = "DECK"
     uno = "UNO"
     avail_menu = ["RESUME", "OPTIONS", "MAIN"]
 
     # 버튼이 있어야 할 위치 반환
-    def get_position(self, index): return (
-        self.pos[0],
-        self.pos[1] + self.size[1] * 1.2 * index,
-    )
+    def get_position(self, index):
+        return (
+            self.pos[0],
+            self.pos[1] + self.size[1] * 1.2 * index,
+        )
 
     # 폰트 설정
-    def get_font(self, size): return pygame.font.Font(
-        RESOURCE_PATH / "font.ttf", size)
+    def get_font(self, size):
+        return pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
 
     def __init__(self, pos=(0, 0), size=(150, 50), computer_count=1, name="ME"):
         self.menu = self.avail_menu
@@ -46,6 +40,36 @@ class Single:
         # 현재 선택된 대상, -1일 경우 마우스 조작 중
         self.selected = -1
         self.init_draw()
+        self.game_start()
+        # self.turn_start()
+
+    def update(self):
+        self.hand_card = []  # 각자 소유한 카드
+        for i in range(self.computer_count + 1):
+            self.hand_card.append([])
+            for j in range(len(self.game.players[i].hand)):
+                self.hand_card[i].append(
+                    f"{self.game.players[i].hand[j].color}_{self.game.players[i].hand[j].name}"
+                )
+        self.my_card = self.hand_card[0]  # 내가 소유한 카드
+        self.game.grave_top_color
+        self.game.grave_top.name
+        self.game.turn
+
+    def game_start(self):
+        self.game = GM.Gm
+        self.game.computer_count = self.computer_count
+        self.game.start_cards_integer = 5
+        self.game.game_start()
+
+        self.update()
+        print(f"내 카드 : {self.my_card}")
+        print(f"{self.game.grave_top_color}_{self.game.grave_top.name}")  # 카드 묘지
+        print(f"{self.game.turn}")
+
+    def turn_start(self):
+        self.game.turn_start()
+        self.update()
 
     def init_draw(self):
         self.button = []
@@ -55,8 +79,7 @@ class Single:
             # 버튼 삽입
             self.button.append(
                 Button(
-                    pygame.image.load(
-                        RESOURCE_PATH / "main" / "main_button.png"),
+                    pygame.image.load(RESOURCE_PATH / "main" / "main_button.png"),
                     pygame.image.load(
                         RESOURCE_PATH / "main" / "main_button_highlight.png"
                     ),
@@ -77,6 +100,8 @@ class Single:
 
     # 스크린에 자신을 그리기
     def draw(self, screen):
+        fontsize = 50
+        font = self.get_font(fontsize)
         for i in range(self.max_menu):
             self.button[i].update(screen)
             if i == self.highlight:
@@ -86,16 +111,13 @@ class Single:
 
         for i in range(self.computer_count):
             # Player List 상자
-            playlist_box = pygame.image.load(
-                RESOURCE_PATH / "single" / "list.png")
+            playlist_box = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
             playlist_box_rect = playlist_box.get_rect(
                 center=(self.size[0] * 7 / 8, self.size[1] * (2 * i + 3) / 12)
             )
             screen.blit(playlist_box, playlist_box_rect)
             # Player List 컴퓨터 이름
-            font = self.get_font(50)
-            playlist_player_name = font.render(
-                "Player_" + str(i + 1), True, "White")
+            playlist_player_name = font.render("Player_" + str(i + 1), True, "White")
             screen.blit(
                 playlist_player_name,
                 (
@@ -104,7 +126,7 @@ class Single:
                 ),
             )
             # Player List 컴퓨터 카드
-            for j in range(7):  # GameManager의 Computer(i)의 카드 개수
+            for j in range(len(self.hand_card[i])):  # GameManager의 Computer(i)의 카드 개수
                 card_x = 52
                 card_y = 72.8
                 playlist_player_card = pygame.image.load(
@@ -121,9 +143,109 @@ class Single:
                     ),
                 )
 
+        # 메인보드
+        # 메인보드 컴퓨터 카드
+        for i in range(self.computer_count):
+            card_x = 87.75
+            card_y = 122.85
+            board_player_card = pygame.image.load(
+                RESOURCE_PATH / "card" / "card_back.png"
+            )
+            board_player_card = pygame.transform.scale(
+                board_player_card, (card_x, card_y)
+            )
+            screen.blit(
+                board_player_card,
+                (
+                    self.size[0] * 3 / 4 * (i + 1) / (self.computer_count + 1)
+                    - card_x / 2,
+                    card_y * 2 / 3,
+                ),
+            )
+        # 메인보드 컴퓨터 이름
+        for i in range(self.computer_count):
+            board_player_name = font.render("P" + str(i + 1), True, "White")
+            screen.blit(
+                board_player_name,
+                (
+                    self.size[0] * 3 / 4 * (i + 1) / (self.computer_count + 1)
+                    - card_x / 2,
+                    self.size[1] / 50,
+                ),
+            )
+        # 메인보드 컴퓨터 카드 개수
+        for i in range(self.computer_count):
+            board_player_cardnum = font.render(
+                f"{len(self.hand_card[i])}", True, "Black"
+            )
+            screen.blit(
+                board_player_cardnum,
+                (
+                    self.size[0] * 3 / 4 * (i + 1) / (self.computer_count + 1)
+                    - card_x / 6,
+                    card_y * 5 / 3,
+                ),
+            )
+        # 카드 덱
+        deck_card_x = 130
+        deck_card_y = 182
+        deck_card = pygame.image.load(RESOURCE_PATH / "card" / "card_back.png")
+        deck_card = pygame.transform.scale(deck_card, (deck_card_x, deck_card_y))
+        screen.blit(
+            deck_card,
+            (
+                self.size[0] * 3 / 8 - deck_card_x / 2 - deck_card_x * 2 / 3,
+                self.size[1] / 2 - deck_card_y / 2,
+            ),
+        )
+        # 카드 묘지
+        grave_card_x = 130
+        grave_card_y = 182
+        grave_card = pygame.image.load(
+            str(
+                RESOURCE_PATH
+                / "card"
+                / f"{self.game.grave_top.color}_{self.game.grave_top.name}"
+            )
+            + ".png"
+        )
+        grave_card = pygame.transform.scale(grave_card, (grave_card_x, grave_card_y))
+        screen.blit(
+            grave_card,
+            (
+                self.size[0] * 3 / 8 - grave_card_x / 2 + grave_card_x * 2 / 3,
+                self.size[1] / 2 - grave_card_y / 2,
+            ),
+        )
+        # 카드 색상
+        color_card_x = 80
+        color_card_y = 80
+        color_card = pygame.image.load(
+            str(RESOURCE_PATH / "card" / f"{self.game.grave_top_color}") + ".png"
+        )
+        color_card = pygame.transform.scale(color_card, (color_card_x, color_card_y))
+        screen.blit(
+            color_card,
+            (
+                self.size[0] * 3 / 8 - color_card_x / 2 + grave_card_x * 11 / 6,
+                self.size[1] / 2 - color_card_y / 2,
+            ),
+        )
+        # 우노 버튼
+        uno_x = 200
+        uno_y = 200
+        uno = pygame.image.load(str(RESOURCE_PATH / "single" / "uno_button.png"))
+        uno = pygame.transform.scale(uno, (uno_x, uno_y))
+        screen.blit(
+            uno,
+            (
+                self.size[0] * 3 / 4 - uno_x - 20,
+                self.size[1] * 3 / 4 - uno_y - 20,
+            ),
+        )
+
         # 내 보드
         # 내 이름
-        font = self.get_font(50)
         my_name = font.render(self.name, True, "White")
         screen.blit(
             my_name,
@@ -134,8 +256,8 @@ class Single:
         )
         # 내 카드
         for i in range(len(self.my_card)):
-            card_x = 195
-            card_y = 273
+            card_x = 182
+            card_y = 254.8
             playlist_player_card = pygame.image.load(
                 str(RESOURCE_PATH / "card" / self.my_card[i]) + ".png"
             )
@@ -145,7 +267,7 @@ class Single:
             screen.blit(
                 playlist_player_card,
                 (
-                    self.size[0] / 30 + i * card_x / 3,
+                    self.size[0] / 30 + i * card_x / 2,
                     self.size[1] - card_y,
                 ),
             )

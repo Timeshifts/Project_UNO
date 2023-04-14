@@ -56,7 +56,7 @@ class GameManager:
         # 덱에서 카드 한장 빼서 세팅해놓음
         self.setting_card(self.deck)
 
-        pygame.time.wait(2000)
+        # pygame.time.wait(2000)
 
         # self.turn_start()
 
@@ -79,8 +79,7 @@ class GameManager:
         # 전 턴에 누가 공격 카드 썼는지 판별
         # 누가 공격 카드를 썼다면, attack_int 만큼 카드주고 6초 기다린후 턴종료
         print(f"턴 시작, 현재 {self.turn} 번 유저에게 로직 실행\n")
-        print(
-            f"현재 묘지의 탑 카드 색깔 = {self.grave_top_color}, 이름 = {self.grave_top.name}\n")
+        print(f"현재 묘지의 탑 카드 색깔 = {self.grave_top_color}, 이름 = {self.grave_top.name}\n")
 
         if self.players[self.turn].is_attacked == True:
             print("공격 카드 효과 발동\n")
@@ -95,17 +94,18 @@ class GameManager:
 
         # 안 썼다면, 해당 플레이어가 컴퓨터인지 유저인지 판별한다.
         else:
-            # self.count_down()
             self.give_authority(self.turn)
 
             if self.players[self.turn].is_computer == True:
                 print(f"{self.turn} 번 유저, 컴퓨터 플레이 작동\n")
+                # return (1, self.turn)
                 self.players[self.turn].computer_play()
             else:
                 print(f"{self.turn} 턴 유저, 실제 플레이어 이므로 권한 지급\n")
+                # return (0, self.turn)
                 self.players[self.turn].play()
 
-        pygame.time.wait(3000)
+        # pygame.time.wait(3000)
 
         self.turn_end()
 
@@ -113,7 +113,7 @@ class GameManager:
     def turn_end(self):
         print(f"턴 종료\n\n")
         # 현재 핸드가 0인지 판별
-        if self.players[self.turn].hand == 0:
+        if len(self.players[self.turn].hand) == 0:
             print(f"{self.turn} 턴 유저 승리\n")
             self.is_someone_win = True
             self.game_end()
@@ -145,13 +145,16 @@ class GameManager:
 
             # 턴값이 플레이어 수를 넘어가면 와일문 돌려서 빼준다.
 
-            pygame.time.wait(3000)
+            # pygame.time.wait(3000)
 
-            self.turn_start()
+            # self.turn_start()
 
     def give_card(self, a):
+        if len(self.deck) == 0:
+            self.game_end()
         # a는 해당 번호의 플레이어
-        self.players[a].hand.append(self.deck.pop())
+        else:
+            self.players[a].hand.append(self.deck.pop())
         # print(self.players[a].hand)
 
     def get_card(self, card):
