@@ -134,7 +134,7 @@ def main():
                     RESOURCE_PATH / "sound" / "bg_game.mp3", setting.get_volume("bgm")
                 )
                 game_objects.append(single_lobby)
-                single_lobby.init_draw()
+                single_lobby.resize(size) # 임시
 
             # 게임 시작
             if event.type == EVENT_START_SINGLE:

@@ -16,9 +16,6 @@ class SingleLobby:
         self.pos[1] + self.size[1] * 1.2 * index,
     )
 
-    # 폰트 설정
-    get_font = lambda self, size: pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
-
     def __init__(self, pos=(0, 0), size=(150, 50)):
         self.menu = self.avail_menu
         self.max_menu = len(self.menu)
@@ -89,19 +86,13 @@ class SingleLobby:
             )
             # 각 버튼 이벤트 처리용 Rect 삽입
             self.rect.append(self.button[i + self.max_computer].rect)
-            # highlight용 오브젝트 생성
-            # #############################
-            # self.highlight_obj = pygame.transform.scale(
-            #     pygame.image.load(RESOURCE_PATH / "highlight.png"), self.size
-            # )
-            # #############################
 
     # 크기 변경에 맞춰 재조정
     def resize(self, size):
         self.size = size
         self.init_draw()
 
-        for i in range(self.max_menu):
+        for i in range(self.max_menu + self.max_computer):
             self.button[i].resize(size)
             self.rect[i] = self.button[i].rect
 
@@ -110,9 +101,15 @@ class SingleLobby:
         for i in range(self.max_computer + self.max_menu):
             self.button[i].update(screen)
             if i == self.highlight:
-                self.button[i].changeColor(True, screen)
+                if i < self.max_computer:
+                    self.button[i].changeColor(True, screen)
+                else:
+                    self.button[i].changeHighlight(True, screen)
             else:
-                self.button[i].changeColor(False, screen)
+                if i < self.max_computer:
+                    self.button[i].changeColor(False, screen)
+                else:
+                    self.button[i].changeHighlight(False, screen)
 
         # Add a Player 텍스트
         font = setting.get_font(50)
@@ -141,13 +138,21 @@ class SingleLobby:
         if index < self.max_computer:
             if self.computer_chk[index] == True:
                 self.button[index].ChangeImage(
-                    pygame.image.load(RESOURCE_PATH / "single" / "list_unpicked.png")
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "list_unpicked.png"),
+                        (self.button[index].base_size[0] * setting.get_screen_size()[0] / 1920,
+                         self.button[index].base_size[1] * setting.get_screen_size()[1] / 1080)
+                    )
                 )
                 self.button[index].ChangeText("+", "Black", "Black")
                 self.computer_chk[index] = False
             else:
                 self.button[index].ChangeImage(
-                    pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "list.png"),
+                        (self.button[index].base_size[0] * setting.get_screen_size()[0] / 1920,
+                         self.button[index].base_size[1] * setting.get_screen_size()[1] / 1080)
+                    )
                 )
                 self.button[index].ChangeText(self.computer[index], "White", "White")
                 self.computer_chk[index] = True
