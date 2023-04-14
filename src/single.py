@@ -1,25 +1,34 @@
+import GameManager as GM
 import pygame
 from button import Button
 from setting import Settings
 from constant import *
 
+game = GM.Gm
+game.computer_count = 3
+game.start_cards_integer = 7
+game.game_start()
 
-# 싱글플레이
+
 class Single:
     # 가능한 메뉴 목록
-    my_card = ["blue_0", "green_5"]  # GameManager에서 self.hand 가져오기
+    my_card = []  # GameManager에서 self.hand 가져오기
+    for i in range(len(game.players[0].hand)):
+        my_card.append(
+            f"{game.players[0].hand[i].color}_{game.players[0].hand[i].name}")
     deck = "DECK"
     uno = "UNO"
     avail_menu = ["RESUME", "OPTIONS", "MAIN"]
 
     # 버튼이 있어야 할 위치 반환
-    get_position = lambda self, index: (
+    def get_position(self, index): return (
         self.pos[0],
         self.pos[1] + self.size[1] * 1.2 * index,
     )
 
     # 폰트 설정
-    get_font = lambda self, size: pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
+    def get_font(self, size): return pygame.font.Font(
+        RESOURCE_PATH / "font.ttf", size)
 
     def __init__(self, pos=(0, 0), size=(150, 50), computer_count=1, name="ME"):
         self.menu = self.avail_menu
@@ -46,7 +55,8 @@ class Single:
             # 버튼 삽입
             self.button.append(
                 Button(
-                    pygame.image.load(RESOURCE_PATH / "main" / "main_button.png"),
+                    pygame.image.load(
+                        RESOURCE_PATH / "main" / "main_button.png"),
                     pygame.image.load(
                         RESOURCE_PATH / "main" / "main_button_highlight.png"
                     ),
@@ -76,14 +86,16 @@ class Single:
 
         for i in range(self.computer_count):
             # Player List 상자
-            playlist_box = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+            playlist_box = pygame.image.load(
+                RESOURCE_PATH / "single" / "list.png")
             playlist_box_rect = playlist_box.get_rect(
                 center=(self.size[0] * 7 / 8, self.size[1] * (2 * i + 3) / 12)
             )
             screen.blit(playlist_box, playlist_box_rect)
             # Player List 컴퓨터 이름
             font = self.get_font(50)
-            playlist_player_name = font.render("Player_" + str(i + 1), True, "White")
+            playlist_player_name = font.render(
+                "Player_" + str(i + 1), True, "White")
             screen.blit(
                 playlist_player_name,
                 (

@@ -58,7 +58,7 @@ class GameManager:
 
         pygame.time.wait(2000)
 
-        self.turn_start()
+        # self.turn_start()
 
     def game_end(self):
         if self.is_someone_win == True:
@@ -79,7 +79,8 @@ class GameManager:
         # 전 턴에 누가 공격 카드 썼는지 판별
         # 누가 공격 카드를 썼다면, attack_int 만큼 카드주고 6초 기다린후 턴종료
         print(f"턴 시작, 현재 {self.turn} 번 유저에게 로직 실행\n")
-        print(f"현재 묘지의 탑 카드 색깔 = {self.grave_top_color}, 이름 = {self.grave_top.name}\n")
+        print(
+            f"현재 묘지의 탑 카드 색깔 = {self.grave_top_color}, 이름 = {self.grave_top.name}\n")
 
         if self.players[self.turn].is_attacked == True:
             print("공격 카드 효과 발동\n")
@@ -151,6 +152,7 @@ class GameManager:
     def give_card(self, a):
         # a는 해당 번호의 플레이어
         self.players[a].hand.append(self.deck.pop())
+        # print(self.players[a].hand)
 
     def get_card(self, card):
         self.grave.append(card)
@@ -457,7 +459,7 @@ class User(Player):
 # -------------------------------------------------------------------------------------------------
 
 
-class hand(Player):
+class Computer(Player):
     def __init__(self, is_computer):
         super().__init__(is_computer)
 
@@ -495,8 +497,8 @@ class Card:
 
 Gm = GameManager()
 
-Gm.computer_count = 3
-Gm.start_cards_integer = 5
+# Gm.computer_count = 3
+# Gm.start_cards_integer = 7
 
-Gm.game_start()
-Gm.turn_start()
+# Gm.game_start()
+# Gm.turn_start()
