@@ -34,11 +34,11 @@ class StoryMenu(Menu):
         with open(self.progress_path, "wb") as f:
             pickle.dump(self.progress, f)
 
-    def __init__(self, pos=(0, 0), size=(150, 50), settings=None):
+    def __init__(self, pos=(0, 0), size=(150, 50)):
         self.progress = []
         self.progress_path = RESOURCE_PATH / "story_progress.ini"
         self.load_progress()
-        super().__init__(pos, size, settings)
+        super().__init__(pos, size)
 
     # 메뉴 선택 시 처리
     def select_menu(self, index):

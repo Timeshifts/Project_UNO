@@ -66,10 +66,13 @@ def main():
     background = get_background(state, size)
     load_bgm(RESOURCE_PATH / "sound" / "bg_main.mp3", setting.get_volume("bgm"))
 
-    # 메인 메뉴 생성하여 게임 오브젝트에 추가
+    # 직접적으로 game_objects에 들어가는 objects는 여기서 미리 선언되어야
+    # 넣고 뺄 때 문제가 생기지 않습니다.
     main_menu = Main_menu((width / 2, height / 2 + 100), size)
-    game_objects.append(main_menu)
-
+    game_objects.append(main_menu) # 메인 메뉴 생성하여 게임 오브젝트에 추가
+    single_lobby = SingleLobby((width, height), size)
+    single = Single((width, height), size, 1, "Test")
+    rename = Rename((width, height), size)
     story_object = story_map.StoryMap((0, 0), size)
 
     while True:
@@ -124,7 +127,6 @@ def main():
                 load_bgm(
                     RESOURCE_PATH / "sound" / "bg_game.mp3", setting.get_volume("bgm")
                 )
-                single_lobby = SingleLobby((width, height), size)
                 game_objects.append(single_lobby)
 
             # 게임 시작
@@ -141,13 +143,13 @@ def main():
                 # load_bgm(
                 #     RESOURCE_PATH / "sound" / "bg_game.mp3", setting_UI.get_volume("bgm")
                 # )
-                single = Single((width, height), size, computer_count, name)
+                #
                 game_objects.append(single)
 
             # 이름 변경 열기
             if event.type == EVENT_OPEN_RENAME:
                 state = "rename"
-                rename = Rename((width, height), size)
+                game_objects.remove(single_lobby)
                 game_objects.append(rename)
 
             # 이름 변경 닫기

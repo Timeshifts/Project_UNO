@@ -16,9 +16,6 @@ class Rename:
         self.pos[1] + self.size[1] * 1.2 * index,
     )
 
-    # 폰트 설정
-    get_font = lambda self, size: pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
-
     def __init__(self, pos=(0, 0), size=(150, 50)):
         self.menu = self.avail_menu
         self.max_menu = len(self.menu)
@@ -35,7 +32,7 @@ class Rename:
         self.init_draw()
 
         # 본인 이름 수정
-        self.text_name = self.get_font(50).render(self.name, True, "White")
+        self.text_name = setting.get_font(50).render(self.name, True, "White")
         self.text_name_rect = self.text_name.get_rect(
             center=(self.size[0] / 2, self.size[1] / 12)
         )
@@ -54,7 +51,7 @@ class Rename:
                     ),
                     pos=(self.size[0] / 2, self.size[1] * (2 * i + 13) / 20),
                     text_input=self.menu[i],
-                    font=self.get_font(50),
+                    font=setting.get_font(50),
                     base_color="#3a4aab",
                     hovering_color="White",
                 )
@@ -120,7 +117,7 @@ class Rename:
                             self.name = self.name[:-1]
                     else:
                         self.name += event.unicode
-                    self.text_name = self.get_font(50).render(self.name, True, "BLACK")
+                    self.text_name = setting.get_font(50).render(self.name, True, "BLACK")
                     self.text_name_rect.size = self.text_name.get_size()
 
             # 버튼이 누르고 있어도 계속 동작하지 않게 뗄 때까지는 작동 방지

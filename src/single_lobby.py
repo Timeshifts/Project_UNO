@@ -37,7 +37,7 @@ class SingleLobby:
         self.init_draw()
 
         # 본인 이름 수정
-        self.text_name = self.get_font(50).render(self.name, True, "White")
+        self.text_name = setting.get_font(50).render(self.name, True, "White")
         self.text_name_rect = self.text_name.get_rect(
             center=(self.size[0] / 2, self.size[1] / 3)
         )
@@ -64,7 +64,7 @@ class SingleLobby:
                     pygame.image.load(RESOURCE_PATH / "single" / "list_hovering.png"),
                     pos=(self.size[0] * 7 / 8, self.size[1] * (2 * i + 3) / 12),
                     text_input=text,
-                    font=self.get_font(50),
+                    font=setting.get_font(50),
                     base_color=color,
                     hovering_color=color,
                 )
@@ -82,7 +82,7 @@ class SingleLobby:
                     ),
                     pos=(self.size[0] / 2, self.size[1] * (2 * i + 13) / 20),
                     text_input=self.menu[i],
-                    font=self.get_font(50),
+                    font=setting.get_font(50),
                     base_color="#3a4aab",
                     hovering_color="White",
                 )
@@ -96,6 +96,7 @@ class SingleLobby:
             # )
             # #############################
 
+    # TODO: 오류 방지용 임시
     def resize(self, size):
         pass
 
@@ -109,7 +110,7 @@ class SingleLobby:
                 self.button[i].changeColor(False, screen)
 
         # Add a Player 텍스트
-        font = self.get_font(50)
+        font = setting.get_font(50)
         text_player = font.render("Add a Player", True, "White")
         text_player_rect = text_player.get_rect(
             center=(self.size[0] * 7 / 8, self.size[1] / 12)
