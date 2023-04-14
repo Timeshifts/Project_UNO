@@ -119,7 +119,13 @@ def main():
             # 게임 로비
             if event.type == EVENT_START_LOBBY:
                 # 메인 메뉴 제거
-                game_objects.remove(main_menu)
+                if state == "main_menu":
+                    game_objects.remove(main_menu)
+                elif state == "rename":
+                    # 변경 창에서 바꾼 이름을 싱글 로비에 반영
+                    if "name" in event.dict.keys():
+                        single_lobby.name = event.name
+                    game_objects.remove(rename)
                 background = pygame.image.load(
                     RESOURCE_PATH / "single" / "single_robby_background.png"
                 )
@@ -128,6 +134,7 @@ def main():
                     RESOURCE_PATH / "sound" / "bg_game.mp3", setting.get_volume("bgm")
                 )
                 game_objects.append(single_lobby)
+                single_lobby.init_draw()
 
             # 게임 시작
             if event.type == EVENT_START_SINGLE:

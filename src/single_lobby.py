@@ -36,13 +36,13 @@ class SingleLobby:
         self.selected = -1
         self.init_draw()
 
+    def init_draw(self):
         # 본인 이름 수정
         self.text_name = setting.get_font(50).render(self.name, True, "White")
         self.text_name_rect = self.text_name.get_rect(
             center=(self.size[0] / 2, self.size[1] / 3)
         )
 
-    def init_draw(self):
         self.button = []
         self.rect = []
 
@@ -96,9 +96,14 @@ class SingleLobby:
             # )
             # #############################
 
-    # TODO: 오류 방지용 임시
+    # 크기 변경에 맞춰 재조정
     def resize(self, size):
-        pass
+        self.size = size
+        self.init_draw()
+
+        for i in range(self.max_menu):
+            self.button[i].resize(size)
+            self.rect[i] = self.button[i].rect
 
     # 스크린에 자신을 그리기
     def draw(self, screen):
