@@ -174,7 +174,7 @@ class GameManager:
 
     def give_card(self, a):
         
-        if self.deck.size() == 0:
+        if len(self.deck) == 0:
             self.set_deck_from_grave()
         
         self.players[a].is_uno = False
