@@ -36,12 +36,6 @@ class SingleLobby:
         self.selected = -1
         self.init_draw()
 
-        # 본인 이름 수정
-        self.text_name = self.get_font(50).render(self.name, True, "White")
-        self.text_name_rect = self.text_name.get_rect(
-            center=(self.size[0] / 2, self.size[1] / 3)
-        )
-
     def init_draw(self):
         self.button = []
         self.rect = []
@@ -89,12 +83,12 @@ class SingleLobby:
             )
             # 각 버튼 이벤트 처리용 Rect 삽입
             self.rect.append(self.button[i + self.max_computer].rect)
-            # highlight용 오브젝트 생성
-            # #############################
-            # self.highlight_obj = pygame.transform.scale(
-            #     pygame.image.load(RESOURCE_PATH / "highlight.png"), self.size
-            # )
-            # #############################
+            
+            # 본인 이름 수정
+            self.text_name = self.get_font(50).render(self.name, True, "White")
+            self.text_name_rect = self.text_name.get_rect(
+                center=(self.size[0] / 2, self.size[1] / 3)
+            )
 
     # 크기 변경에 맞춰 재조정
     def resize(self, size):
@@ -106,9 +100,9 @@ class SingleLobby:
         for i in range(self.max_computer + self.max_menu):
             self.button[i].update(screen)
             if i == self.highlight:
-                self.button[i].changeColor(True, screen)
+                self.button[i].changeHighlight(True, screen)
             else:
-                self.button[i].changeColor(False, screen)
+                self.button[i].changeHighlight(False, screen)
 
         # Add a Player 텍스트
         font = self.get_font(50)
