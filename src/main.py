@@ -15,9 +15,20 @@ except ImportError:
 setting_UI = None
 
 def get_background(state, size):
-    return pygame.transform.scale(
-        pygame.image.load(RESOURCE_PATH / "main" / "main_background.png"), size
-    )
+    if state == "main_menu":
+        return pygame.transform.scale(
+            pygame.image.load(RESOURCE_PATH / "main" / "main_background.png"), size
+        )
+    elif state == "story_map":
+        try:
+            path = RESOURCE_PATH / "story" / f"story_background_{story_map.StoryMenu.story_progress+1}.png"
+        except FileNotFoundError:
+            # 스토리를 다 깨면 +1번까지 열려있는 지도 = 없으므로 오류
+            # 따라서, 다 열린 지도로 예외 처리
+            path = RESOURCE_PATH / "story" / f"story_background_{story_map.StoryMenu.story_amount}.png"
+        background = pygame.transform.scale(pygame.image.load(path), size)
+        return background
+    
 
 
 # 배경 음악 재생
@@ -105,13 +116,13 @@ def main():
                 elif state == "single":
                     game_objects.remove(single)  # 스토리 모드 제거
                 elif state == "story_map":
-                    game_objects.remove(story_map)  # 스토리 모드 제거
+                    game_objects.remove(story_object)  # 스토리 모드 제거
                 # 메인 메뉴로 복귀
                 game_objects.append(main_menu)
                 main_menu.resize(size)
                 # 메인 배경 및 음악
-                background = get_background(state, size)
                 state = "main_menu"
+                background = get_background(state, size)
                 load_bgm(
                     RESOURCE_PATH / "sound" / "bg_main.mp3", setting.get_volume("bgm")
                 )
@@ -168,10 +179,8 @@ def main():
             if event.type == EVENT_START_STORY:
                 # 메인 메뉴 제거
                 game_objects.remove(main_menu)
-                background = pygame.image.load(
-                    RESOURCE_PATH / "story" / "story_background_1.png"
-                )
                 state = "story_map"
+                background = get_background(state, size)
                 load_bgm(
                     RESOURCE_PATH / "sound" / "bg_story_main.mp3",
                     setting.get_volume("bgm"),

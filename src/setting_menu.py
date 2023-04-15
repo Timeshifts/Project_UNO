@@ -20,7 +20,7 @@ class Setting_Key_Bundle(Menu):
     def __init__(self, pos, size):
         self.name = "keys"
         self.screen = None
-        super().__init__(pos, size, (0.6, 1.0))
+        super().__init__(pos, size, scale=(0.6, 1.0))
 
     def init_draw(self):
         self.pos = self.pos_formula
@@ -129,7 +129,7 @@ class Setting_Menu(Menu):
             self.name_formula = lambda: (self.size[0] * 0.1, self.size[1] * 0.8)
             self.display_name = ""
 
-        super().__init__(pos, size, (0.8, 1) if name == 'resolution' else (1, 1))
+        super().__init__(pos, size, scale=((0.8, 1) if name == 'resolution' else (1, 1)))
 
     def init_draw(self):
         super().init_draw()

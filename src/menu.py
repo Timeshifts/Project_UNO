@@ -14,7 +14,8 @@ class Menu:
     # x축 정렬 메뉴? y축 정렬 메뉴?
     axis = "y"
 
-    def __init__(self, pos, size, scale=(1.0, 1.0)):
+    # argument 급증을 막기 위해 kwargs화
+    def __init__(self, pos, size, **kwargs):
         self.menu = self.avail_menu
         self.max_menu = len(self.menu)
         self.button = []
@@ -22,7 +23,22 @@ class Menu:
         self.pos = pos
         self.size = size
         self.pressed = False
-        self.scale = scale
+        if "scale" in kwargs:
+            self.scale = kwargs["scale"]
+        else:  
+            self.scale = (1.0, 1.0)
+
+        # button_img에는 단일 이미지나 이미지 tuple을 넣을 수 있으며,
+        # 이미지 tuple을 통해 각 버튼마다 다른 이미지를 구현할 수 있습니다.
+        if "button_img" in kwargs:
+            self.button_img = kwargs["button_img"]
+        else:  
+            self.button_img = RESOURCE_PATH / "main" / "main_button.png"
+
+        if "hovering_img" in kwargs:
+            self.hovering_img = kwargs["hovering_img"]
+        else:  
+            self.hovering_img = RESOURCE_PATH / "main" / "main_button_highlight.png"
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -35,13 +51,29 @@ class Menu:
         self.rect = []
 
         for i in range(self.max_menu):
+
+            if isinstance(self.button_img, Path):
+                button_img = self.button_img 
+            else:
+                try:
+                    button_img = self.button_img[i]
+                except IndexError:
+                    button_img = RESOURCE_PATH / "main" / "main_button.png"
+            
+            if isinstance(self.hovering_img, Path):
+                hovering_img = self.hovering_img 
+            else:
+                try:
+                    hovering_img = self.hovering_img[i]
+                except IndexError:
+                    hovering_img = RESOURCE_PATH / "main" / "main_button_highlight.png"
+
             # 버튼 삽입
             self.button.append(
+                
                 Button(
-                    pygame.image.load(RESOURCE_PATH / "main" / "main_button.png"),
-                    pygame.image.load(
-                        RESOURCE_PATH / "main" / "main_button_highlight.png"
-                    ),
+                    pygame.image.load(button_img),
+                    pygame.image.load(hovering_img),
                     pos=self.pos_formula(i),
                     text_input=self.menu[i],
                     font=setting.get_font(50),
