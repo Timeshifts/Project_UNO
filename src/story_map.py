@@ -76,8 +76,8 @@ class StoryMenu(Menu):
         for i in range(self.story_amount):
             if i > StoryMenu.story_progress:
                 screen.blit(shadow_image, 
-                            (self.pos_formula(i)[0] * setting.get_screen_size()[0] / 1920 - shadow_x / 2,
-                            self.pos_formula(i)[1] * setting.get_screen_size()[1] / 1080 - shadow_y / 2))
+                            (self.pos_formula(i)[0] - shadow_x / 2,
+                            self.pos_formula(i)[1] - shadow_y / 2))
 
     # 파일에 저장된 진행도 불러오기
     def load_progress(self):
