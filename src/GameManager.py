@@ -533,6 +533,9 @@ class User(Player):
                 elif a == 'Y':
                     print("우노 버튼 작동\n")
                     self.press_uno()
+                    break
+                else:
+                    break
                 
 
 
