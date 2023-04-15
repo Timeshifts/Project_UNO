@@ -109,7 +109,7 @@ class StoryMenu(Menu):
         
         super().__init__(pos, size, scale=(0.75, 0.75),
                          button_img=story_img(self.story_amount),
-                         hovering_img=story_img(self.story_amount))
+                         hovering_img=RESOURCE_PATH / "main" / "main_button_highlight.png")
 
     # 메뉴 선택 시 처리
     def select_menu(self, index):
@@ -130,6 +130,59 @@ class StoryMenu(Menu):
         # 스토리 확인 창이 나오는 중에는 스토리 선택은 작동하지 않게 처리
         global enter_story
         if enter_story == -1: super().handle_event(event)
+
+    # 이벤트 처리 - 미개방 지역 선택을 방지하기 위해 재정의
+    def handle_event(self, event: pygame.event.Event):
+        for i in range(self.max_menu):
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.rect[i].collidepoint(event.pos):
+                    self.select_menu(i)
+                    break  # 한 번에 여러 개의 메뉴가 눌리지 않도록 처리
+            elif event.type == pygame.MOUSEMOTION:
+                if self.rect[i].collidepoint(event.pos):
+                    # 해금되지 않은 스토리에는 반응하지 않되, '돌아가기'에는 반응
+                    if (i <= StoryMenu.story_progress) or i == self.max_menu -1:
+                        # highlight 대상을 변경
+                        self.highlight = i
+                        # 키보드 선택 해제
+                        self.selected = -1
+            elif event.type == pygame.KEYDOWN:
+                if self.pressed == False:
+                    self.pressed = True
+                    # 엔터 키가 눌렸을 때
+                    if event.key == setting.options["enter"]:
+                        # 키보드로 선택한 것이 있다면 그 메뉴를 선택
+                        if self.selected != -1:
+                            self.select_menu(self.selected)
+                    elif (
+                        event.key
+                        == setting.options["up" if self.axis == "y" else "left"]
+                    ):
+                        # 선택을 하나 위로 이동
+                        self.selected = self.selected - 1 if 0 < self.selected else 0
+                        # 돌아가기에서 미해금 스토리로 이동 시, (예: 돌아가기 -> 5번)
+                        # 해금된 가장 마지막 스토리로 이동 (예: 5번 -> 3번)
+                        if self.selected > StoryMenu.story_progress:
+                            self.selected = StoryMenu.story_progress
+                        self.highlight = self.selected
+                    elif (
+                        event.key
+                        == setting.options["down" if self.axis == "y" else "right"]
+                    ):
+                        # 선택을 하나 아래로 이동
+                        self.selected = (
+                            self.selected + 1
+                            if self.selected < self.max_menu - 1
+                            else self.max_menu - 1
+                        )
+                        # 해금된 마지막 스토리에서 미해금으로 이동 시, (예: 3번 -> 4번)
+                        # 돌아가기로 이동 (예: 4번 -> 돌아가기)
+                        if self.selected > StoryMenu.story_progress:
+                            self.selected = self.max_menu -1
+                        self.highlight = self.selected
+            # 버튼이 누르고 있어도 계속 동작하지 않게 뗄 때까지는 작동 방지
+            elif event.type == pygame.KEYUP:
+                self.pressed = False
 
 
 class StoryMap:
