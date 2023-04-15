@@ -126,13 +126,11 @@ class StoryMenu(Menu):
         if index > StoryMenu.story_progress: return
         enter_story = index
 
+    # 이벤트 처리 - 미개방 지역 선택을 방지하기 위해 재정의
     def handle_event(self, event: pygame.event.Event):
         # 스토리 확인 창이 나오는 중에는 스토리 선택은 작동하지 않게 처리
         global enter_story
-        if enter_story == -1: super().handle_event(event)
-
-    # 이벤트 처리 - 미개방 지역 선택을 방지하기 위해 재정의
-    def handle_event(self, event: pygame.event.Event):
+        if enter_story != -1: return
         for i in range(self.max_menu):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.rect[i].collidepoint(event.pos):
