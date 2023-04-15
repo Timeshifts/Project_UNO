@@ -73,6 +73,7 @@ def main():
 
     story_object = story_map.StoryMap((0, 0), size, settings)
 
+    # 싱글게임 진행 중인지 확인
     single_turn = 0
 
     while True:
@@ -230,6 +231,7 @@ def main():
         # 싱글 게임 진행중 확인
         if single_turn == 1:
             single.turn_start()
+            single.update_card()
             pygame.time.wait(3000)
             # if single.:
             #     single_turn=0
