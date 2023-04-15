@@ -97,9 +97,7 @@ def main():
 
             # 일시 정지
             if event.type == pygame.KEYDOWN:
-                if event.key == setting.options["pause"]:
-                    # TODO: 게임 중에만 일시정지가 작동하도록 제한
-                    # and state in ("single_play" or "story_play")
+                if event.key == setting.options["pause"] and state in ("single_play" or "story_play"):
                     pause.init_pause(setting_UI, screen)
                     pause.pause()  # pause 상태에서의 루프
 
@@ -113,8 +111,6 @@ def main():
             if event.type == EVENT_MAIN:
                 if state == "single_lobby":  # 싱글 플레이 제거
                     game_objects.remove(single_lobby)
-                elif state == "single":
-                    game_objects.remove(single)  # 스토리 모드 제거
                 elif state == "story_map":
                     game_objects.remove(story_object)  # 스토리 모드 제거
                 # 메인 메뉴로 복귀
