@@ -24,6 +24,7 @@ class GameManager:
         self.turn_timer_end = False # 턴 타이머 다 되거나, 유저 행동하면 True 되는 불린변수
         self.game_timer_integer = 0 # 게임 타이머 체크할 정수변수
         self.turn_timer_integer = 0 # 턴 타이머 체크할 정수변수
+        self.is_setting = False
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -266,10 +267,10 @@ class GameManager:
 
     # 게임 시작시 덱에서 카드한장 꺼내기
     def setting_card(self, deck):
+        self.is_setting = True
         pop_card = deck.pop()
-        self.grave.append(pop_card)
-        self.grave_top = self.grave[-1]  # grave 의 맨 위의 카드
-        self.grave_top_color = self.grave_top.color
+        self.get_card(pop_card)
+        self.is_setting = False
 
     # 맨 처음에 덱에 카드넣기
     def set_deck(self):
@@ -393,22 +394,26 @@ class GameManager:
         print(f"묘지 탑 색깔 {self.grave_top_color} 로 설정")
 
     def target_attack(self):
-        target = 0
-        if self.players[self.turn].is_computer == True:
-            target = random.randint(0, self.player_num - 1)
-        else:
-            print(f"플레이어를 선택하세요")
-            for i in range(self.player_num):
-                print(f"/ {i}번 플레이어")
-            while True:
-                a = int(input())
+        target = target = random.randint(0, self.player_num - 1)
+        if self.is_setting == False:
+            if self.players[self.turn].is_computer == True:
+                target = random.randint(0, self.player_num - 1)
+                
+                while target == self.turn:
+                    target = random.randint(0, self.player_num - 1)
+            else:
+                print(f"플레이어를 선택하세요")
+                for i in range(self.player_num):
+                    print(f"/ {i}번 플레이어")
+                while True:
+                    a = int(input())
 
-                if a < 0 or a >= self.player_num:
-                    print("다시 입력하세요\n")
-                else:
-                    target = a
-                    break
-
+                    if a < 0 or a >= self.player_num:
+                        print("다시 입력하세요\n")
+                    else:
+                        target = a
+                        break
+        
         self.attack(2, target)
         print(f"{target}번 유저에게, 카드 2장 공격\n")
     
