@@ -6,6 +6,7 @@ import time
 class GameManager:
     def __init__(self):
         self.turn = 0  # 지금 누구 턴인지 나타내는 정수 변수
+        self.turn_count = 0 # 총 몇번의 턴이 진행되었는지
         self.players = []  # 플레이어 객체들을 담을 배열
         self.real_player_count = 0  # 실제 플레이어 수가 몇 인지 나타낼 정수 변수
         self.player_num = 0  # 전체 플레이어 수
@@ -24,7 +25,11 @@ class GameManager:
         self.turn_timer_end = False # 턴 타이머 다 되거나, 유저 행동하면 True 되는 불린변수
         self.game_timer_integer = 0 # 게임 타이머 체크할 정수변수
         self.turn_timer_integer = 0 # 턴 타이머 체크할 정수변수
-        self.is_setting = False
+        self.is_setting = False # 맨 처음 덱세팅 후에 카드 한장 빼서 놓을 때 쓰는 불린변수
+        self.is_top_card_change = False # 스토리모드 지역 C 특성 쓸껀지 불린변수
+        self.top_card_change_num = 100 # 스토리모드 지역 C 특성, 몇 턴마다 바뀔껀지
+        self.is_hand_change = False # 스토리모드 지역 D 특성 쓸껀지 불린변수
+        self.hand_change_num = 100 # 스토리모드 지역 D 특성, 몇턴마다 바뀔껀지
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -80,6 +85,14 @@ class GameManager:
 
     # 턴 시작 함수
     def turn_start(self):
+        
+        self.turn_count += 1
+        
+        if self.is_top_card_change == True:
+            self.top_card_change()
+            
+        if self.is_hand_change == True:
+            self.hand_change()
         
         self.turn_timer_end = False
         self.turn_count_down()
@@ -319,9 +332,7 @@ class GameManager:
         self.grave.append(pop_card)
         self.grave_top = self.grave[-1]  # grave 의 맨 위의 카드
         self.grave_top_color = self.grave_top.color
-    
-    
-    
+        
     # 타이머
     def game_timer(self, count):
         start_time = time.time()
@@ -355,6 +366,23 @@ class GameManager:
     def turn_count_down(self):
         thread = threading.Thread(target=self.turn_timer, args=(15,))
         thread.start()
+    
+    def top_card_change(self):
+        if self.turn_count % self.top_card_change_num == 0:
+            random_color = ["blue","green","red","yellow"]
+            self.grave_top_color = random.choice(random_color)
+    
+    def hand_change(self):
+        if self.turn_count % self.hand_change_num == 0:
+            hands = []
+            for i in range(self.player_num):
+                hands.append(self.players[i].hand)
+                
+            random.shuffle(hands)
+            
+            for j in range(self.player_num):
+                self.players[j].hand = hands.pop()
+            
 
     # 여기 아래 부터는 기술 카드 효과들임
 
