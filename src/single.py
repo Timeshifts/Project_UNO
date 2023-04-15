@@ -7,11 +7,6 @@ clock = pygame.time.Clock()
 
 
 class Single:
-    # 가능한 메뉴 목록
-    deck = "DECK"
-    uno = "UNO"
-    avail_menu = ["RESUME", "OPTIONS", "MAIN"]
-
     # 폰트 설정
     def get_font(self, size):
         return pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
@@ -29,6 +24,9 @@ class Single:
         self.hand_card = []  # 각자 소유한 카드
         self.my_card = []  # 내가 소유한 카드
         self.max_card = 0  # 내가 소유한 카드 개수
+        self.possible_cards_num = []  # 선택이 가능한 카드
+        self.game_timer = 0
+        self.first = 0
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -48,7 +46,8 @@ class Single:
                 )
         self.my_card = self.hand_card[0]  # 내가 소유한 카드
         self.max_card = len(self.my_card)  # 내가 소유한 카드 개수
-        self.init_draw()
+        self.game_timer = self.game.game_timer_integer
+        # self.init_draw()
 
     def game_start(self):
         self.game = GM.Gm
@@ -57,57 +56,171 @@ class Single:
         self.game.game_start()
 
         self.update_card()
-        print(f"내 카드 : {self.my_card}")
-        print(f"{self.game.grave_top_color}_{self.game.grave_top.name}")  # 카드 묘지
-        print(f"{self.game.turn}")
+        # print(f"내 카드 : {self.my_card}")
+        # print(f"묘지 : {self.game.grave_top_color}_{self.game.grave_top.name}")  # 카드 묘지
+        # print(f"게임 턴 : {self.game.turn}")
 
     def turn_start(self):
         self.game.turn_start()
+        self.update_card()
+        # self.init_draw()
         if self.game.turn == 0:  # 플레이어인 경우
-            self.game.players[0].play()
-            # print(self.game.players[0].play().possible_cards_num)
-            # 가능한 카드 하이라이팅, 아닌 카드 쉐도우로 바꾸기
-            # 여기에다가 버튼 클릭 이벤트 넣기
-
-            # 버튼 클릭 이벤트 추가
+            self.possible_cards_num = self.game.players[0].play()
+            if self.first == 0:
+                self.init_draw()
+                self.first = 1
         else:  # 컴퓨터인 경우
+            self.first = 0
             self.game.players[self.game.turn].computer_play()
-        self.game.turn_end()
+            self.game.turn_end()
+            self.update_card()
+            pygame.time.wait(2000)
+        if self.game.end == 1:  # 게임 종료
+            return 0
+        else:
+            return 1
 
     def init_draw(self):
-        # self.update_card()
         self.button = []
         self.rect = []
 
         # 내 카드
-        card_x = 182
-        card_y = 254.8
+        card_x = 130
+        card_y = 182
         for i in range(self.max_card):
             # 버튼 삽입
-            self.button.append(
-                Button(
-                    pygame.transform.scale(
-                        pygame.image.load(
-                            str(RESOURCE_PATH / "card" / self.my_card[i]) + ".png"
+            if self.game.turn == 0:
+                if i in self.possible_cards_num:
+                    self.button.append(
+                        Button(
+                            pygame.transform.scale(
+                                pygame.image.load(
+                                    str(RESOURCE_PATH / "card" / self.my_card[i])
+                                    + ".png"
+                                ),
+                                (card_x, card_y),
+                            ),
+                            pygame.transform.scale(
+                                pygame.image.load(
+                                    RESOURCE_PATH / "card" / "highlight.png"
+                                ),
+                                (card_x, card_y),
+                            ),
+                            pos=(
+                                (i + 1.5) * card_x * 3 / 4,
+                                self.size[1] - card_y,
+                            ),
+                            text_input="",
+                            font=self.get_font(50),
+                            base_color="Black",
+                            hovering_color="Black",
+                        )
+                    )
+                else:
+                    self.button.append(
+                        Button(
+                            pygame.transform.scale(
+                                pygame.image.load(
+                                    str(RESOURCE_PATH / "card" / self.my_card[i])
+                                    + ".png"
+                                ),
+                                (card_x, card_y),
+                            ),
+                            pygame.transform.scale(
+                                pygame.image.load(
+                                    RESOURCE_PATH / "card" / "shadow.png"
+                                ),
+                                (card_x, card_y),
+                            ),
+                            pos=(
+                                (i + 1.5) * card_x * 3 / 4,
+                                self.size[1] - card_y / 2,
+                            ),
+                            text_input="",
+                            font=self.get_font(50),
+                            base_color="Black",
+                            hovering_color="Black",
+                        )
+                    )
+            else:
+                self.button.append(
+                    Button(
+                        pygame.transform.scale(
+                            pygame.image.load(
+                                str(RESOURCE_PATH / "card" / self.my_card[i]) + ".png"
+                            ),
+                            (card_x, card_y),
                         ),
-                        (card_x, card_y),
-                    ),
-                    pygame.transform.scale(
-                        pygame.image.load(RESOURCE_PATH / "card" / "highlight.png"),
-                        (card_x, card_y),
-                    ),
-                    pos=(
-                        self.size[0] / 30 + (i + 1) * card_x / 2,
-                        self.size[1] - card_y / 2,
-                    ),
-                    text_input="",
-                    font=self.get_font(50),
-                    base_color="Black",
-                    hovering_color="Black",
+                        pygame.transform.scale(
+                            pygame.image.load(
+                                str(RESOURCE_PATH / "card" / self.my_card[i]) + ".png"
+                            ),
+                            (card_x, card_y),
+                        ),
+                        pos=(
+                            (i + 1.5) * card_x * 3 / 4,
+                            self.size[1] - card_y / 2,
+                        ),
+                        text_input="",
+                        font=self.get_font(50),
+                        base_color="Black",
+                        hovering_color="Black",
+                    )
                 )
-            )
-            # 각 버튼 이벤트 처리용 Rect 삽입
             self.rect.append(self.button[i].rect)
+        # 덱 버튼
+        deck_card_x = 130
+        deck_card_y = 182
+        self.button.append(
+            Button(
+                pygame.transform.scale(
+                    pygame.image.load(
+                        str(RESOURCE_PATH / "card" / "card_back") + ".png"
+                    ),
+                    (deck_card_x, deck_card_y),
+                ),
+                pygame.transform.scale(
+                    pygame.image.load(RESOURCE_PATH / "card" / "highlight.png"),
+                    (deck_card_x, deck_card_y),
+                ),
+                pos=(
+                    self.size[0] * 3 / 8 - deck_card_x * 2 / 3,
+                    self.size[1] / 2,
+                ),
+                text_input="",
+                font=self.get_font(50),
+                base_color="Black",
+                hovering_color="Black",
+            )
+        )
+        self.rect.append(self.button[self.max_card].rect)
+        # 우노 버튼
+        uno_x = 200
+        uno_y = 200
+        self.button.append(
+            Button(
+                pygame.transform.scale(
+                    pygame.image.load(RESOURCE_PATH / "single" / "uno_button.png"),
+                    (uno_x, uno_y),
+                ),
+                pygame.transform.scale(
+                    pygame.image.load(
+                        RESOURCE_PATH / "single" / "uno_button_highlight.png"
+                    ),
+                    (uno_x, uno_y),
+                ),
+                pos=(
+                    self.size[0] * 3 / 4 - uno_x / 2,
+                    self.size[1] / 2,
+                ),
+                text_input="",
+                font=self.get_font(50),
+                base_color="Black",
+                hovering_color="Black",
+            )
+        )
+        # 각 버튼 이벤트 처리용 Rect 삽입
+        self.rect.append(self.button[self.max_card + 1].rect)
 
     # 크기 변경에 맞춰 재조정
     # def resize(self, size):
@@ -118,12 +231,12 @@ class Single:
     def draw(self, screen):
         fontsize = 50
         font = self.get_font(fontsize)
-        for i in range(self.max_card):
+        for i in range(self.max_card + 2):
             self.button[i].update(screen)
             if i == self.highlight:
-                self.button[i].changeColor(True, screen)
+                self.button[i].changeHighlight1(True, screen)
             else:
-                self.button[i].changeColor(False, screen)
+                self.button[i].changeHighlight1(False, screen)
 
         for i in range(self.computer_count):
             # Player List 상자
@@ -182,7 +295,10 @@ class Single:
             )
         # 메인보드 컴퓨터 이름
         for i in range(self.computer_count):
-            board_player_name = font.render("P" + str(i + 1), True, "White")
+            color = "White"
+            if self.game.turn == i + 1:
+                color = "Blue"
+            board_player_name = font.render("P" + str(i + 1), True, color)
             screen.blit(
                 board_player_name,
                 (
@@ -204,18 +320,6 @@ class Single:
                     card_y * 5 / 3,
                 ),
             )
-        # 카드 덱
-        deck_card_x = 130
-        deck_card_y = 182
-        deck_card = pygame.image.load(RESOURCE_PATH / "card" / "card_back.png")
-        deck_card = pygame.transform.scale(deck_card, (deck_card_x, deck_card_y))
-        screen.blit(
-            deck_card,
-            (
-                self.size[0] * 3 / 8 - deck_card_x / 2 - deck_card_x * 2 / 3,
-                self.size[1] / 2 - deck_card_y / 2,
-            ),
-        )
         # 카드 묘지
         grave_card_x = 130
         grave_card_y = 182
@@ -249,22 +353,12 @@ class Single:
                 self.size[1] / 2 - color_card_y / 2,
             ),
         )
-        # 우노 버튼
-        uno_x = 200
-        uno_y = 200
-        uno = pygame.image.load(str(RESOURCE_PATH / "single" / "uno_button.png"))
-        uno = pygame.transform.scale(uno, (uno_x, uno_y))
-        screen.blit(
-            uno,
-            (
-                self.size[0] * 3 / 4 - uno_x - 20,
-                self.size[1] * 3 / 4 - uno_y - 20,
-            ),
-        )
-
         # 내 보드
         # 내 이름
-        my_name = font.render(self.name, True, "White")
+        color = "White"
+        if self.game.turn == 0:
+            color = "Blue"
+        my_name = font.render(self.name, True, color)
         screen.blit(
             my_name,
             (
@@ -289,6 +383,16 @@ class Single:
         #             self.size[1] - card_y,
         #         ),
         #     )
+        # 전체 타이머
+        font = self.get_font(100)
+        game_timer = font.render(f"{self.game_timer}", True, "White")
+        screen.blit(
+            game_timer,
+            (
+                self.size[0] * 61 / 80,
+                self.size[1] / 24,
+            ),
+        )
 
     # 메뉴 선택 시 처리
     def select_card(self, index):
@@ -296,49 +400,58 @@ class Single:
             EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
         )
         pygame.event.post(se_event)
+        print(f"---{index}---")
 
-        if self.avail_menu[index] == "RESUME":
-            pass
-        elif self.avail_menu[index] == "OPTIONS":
-            pass
-        elif self.avail_menu[index] == "MAIN":
-            pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 메인 메뉴
+        if index in self.possible_cards_num:
+            self.game.players[0].use_card(index)
+            self.game.turn_end()
+            self.update_card()
+            self.init_draw()
+        if index == self.max_card:  # 덱
+            self.game.players[0].get_card()
+            self.game.turn_end()
+            self.update_card()
+            self.init_draw()
+        if index == self.max_card:  # 우노버튼
+            self.game.players[0].press_uno()
 
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
-        self.update_card()
-        for i in range(self.max_card):
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.rect[i].collidepoint(event.pos):
-                    self.select_card(i)
-                    break  # 한 번에 여러 개의 메뉴가 눌리지 않도록 처리
-            elif event.type == pygame.MOUSEMOTION:
-                if self.rect[i].collidepoint(event.pos):
-                    # highlight 대상을 변경
-                    self.highlight = i
-                    # 키보드 선택 해제
-                    self.selected = -1
-            elif event.type == pygame.KEYDOWN:
-                if self.pressed == False:
-                    self.pressed = True
-                    # 엔터 키가 눌렸을 때
-                    if event.key == setting.options["enter"]:
-                        # 키보드로 선택한 것이 있다면 그 메뉴를 선택
-                        if self.selected != -1:
-                            self.select_menu(self.selected)
-                    elif event.key == setting.options["up"]:
-                        # 선택을 하나 위로 이동
-                        self.selected = self.selected - 1 if 0 < self.selected else 0
-                        self.highlight = self.selected
-                    elif event.key == setting.options["down"]:
-                        # 선택을 하나 아래로 이동
-                        self.selected = (
-                            self.selected + 1
-                            if self.selected < self.max_menu - 1
-                            else self.max_menu - 1
-                        )
-                        self.highlight = self.selected
+        if self.game.turn == 0:
+            for i in range(self.max_card + 2):
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.rect[i].collidepoint(event.pos):
+                        self.select_card(i)
+                        break  # 한 번에 여러 개의 메뉴가 눌리지 않도록 처리
+                elif event.type == pygame.MOUSEMOTION:
+                    if self.rect[i].collidepoint(event.pos):
+                        # highlight 대상을 변경
+                        self.highlight = i
+                        # 키보드 선택 해제
+                        self.selected = -1
+                elif event.type == pygame.KEYDOWN:
+                    if self.pressed == False:
+                        self.pressed = True
+                        # 엔터 키가 눌렸을 때
+                        if event.key == setting.options["enter"]:
+                            # 키보드로 선택한 것이 있다면 그 메뉴를 선택
+                            if self.selected != -1:
+                                self.select_card(self.selected)
+                        elif event.key == setting.options["left"]:
+                            # 선택을 하나 왼쪽으로 이동
+                            self.selected = (
+                                self.selected - 1 if 0 < self.selected else 0
+                            )
+                            self.highlight = self.selected
+                        elif event.key == setting.options["right"]:
+                            # 선택을 하나 오른쪽으로 이동
+                            self.selected = (
+                                self.selected + 1
+                                if self.selected < self.max_card + 1
+                                else self.max_card + 1
+                            )
+                            self.highlight = self.selected
 
-            # 버튼이 누르고 있어도 계속 동작하지 않게 뗄 때까지는 작동 방지
-            elif event.type == pygame.KEYUP:
-                self.pressed = False
+                # 버튼이 누르고 있어도 계속 동작하지 않게 뗄 때까지는 작동 방지
+                elif event.type == pygame.KEYUP:
+                    self.pressed = False
