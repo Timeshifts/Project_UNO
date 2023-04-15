@@ -51,16 +51,23 @@ class StoryMenu(Menu):
     # 가능한 메뉴 목록
     avail_menu = ("", "", "", "", "돌아가기")
 
+    # 2차 요구사항 - '지도 화면에서는 각 지역별 특색을 선택시 미리 확인할 수 있어야 합니다.'
+    local_rule = ("첫 분배 시 컴퓨터가 기술 카드를 50% 더 높은 확률로 받게 됩니다. 컴퓨터가 기술카드를 조합하여 2장 이상의 카드를 한번에 내는 콤보를 사용합니다.",
+                  "2명의 컴퓨터 플레이어와 대전하여, 첫 카드를 제외한 모든 카드가 같은 수만큼 플레이어들에게 분배됩니다.",
+                  "1명의 컴퓨터 플레이어와 대전하여, 매 5턴마다 낼 수 있는 카드의 색상이 무작위로 변경됩니다.",
+                  "3명의 컴퓨터 플레이어와 대전하여, 매 20턴마다 플레이어들이 손에 든 카드가 서로 뒤바뀝니다.",
+                  "" ) # 돌아가기 버튼 오류 방지 placeholder
+
     # 버튼이 있어야 할 위치 반환
     def pos_formula(self, i):
         if i == 0:
             return (self.size[0] * 0.1, self.size[1] * 0.7)
         elif i == 1:
-            return (self.size[0] * 0.4, self.size[1] * 0.25)
+            return (self.size[0] * 0.4, self.size[1] * 0.28)
         elif i == 2:
             return (self.size[0] * 0.6, self.size[1] * 0.6)
         elif i == 3:
-            return (self.size[0] * 0.9, self.size[1] * 0.15)
+            return (self.size[0] * 0.9, self.size[1] * 0.2)
         else:
             return (self.size[0] * 0.5, self.size[1] * 0.8)
     
@@ -78,6 +85,15 @@ class StoryMenu(Menu):
                 screen.blit(shadow_image, 
                             (self.pos_formula(i)[0] - shadow_x / 2,
                             self.pos_formula(i)[1] - shadow_y / 2))
+        
+        # 특색 표시
+        font = setting.get_font(30)
+        local_rule_id = self.highlight if self.selected == -1 else self.selected
+        local_rule_text = f"특색: {self.local_rule[local_rule_id]}"
+        if local_rule_text == "특색: ": local_rule_text = ""
+        local_rule_text = font.render(local_rule_text, True, "White")
+        local_rule_rect = local_rule_text.get_rect(center=(self.size[0] / 2, self.size[1] * 0.05))
+        screen.blit(local_rule_text, local_rule_rect)
 
     # 파일에 저장된 진행도 불러오기
     def load_progress(self):
@@ -192,13 +208,16 @@ class StoryMap:
         self.STORY_CONFIRM = StoryConfirm(pos, size)
 
     def draw(self, screen):
-        self.STORY_MENU.draw(screen)
-        if enter_story != -1:
+        if enter_story == -1:
+            self.STORY_MENU.draw(screen)
+        else:
             self.STORY_CONFIRM.draw(screen)
 
     def handle_event(self, event):
-        self.STORY_MENU.handle_event(event)
-        self.STORY_CONFIRM.handle_event(event)
+        if enter_story == -1:
+            self.STORY_MENU.handle_event(event)
+        else:
+            self.STORY_CONFIRM.handle_event(event)
     
     def resize(self, size):
         self.STORY_MENU.resize(size)
