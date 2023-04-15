@@ -30,6 +30,7 @@ class GameManager:
         self.top_card_change_num = 100 # 스토리모드 지역 C 특성, 몇 턴마다 바뀔껀지
         self.is_hand_change = False # 스토리모드 지역 D 특성 쓸껀지 불린변수
         self.hand_change_num = 100 # 스토리모드 지역 D 특성, 몇턴마다 바뀔껀지
+        self.story_A_computer_count = 0 # story A 특성 유저를 얼마나? 넣을지
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -47,6 +48,9 @@ class GameManager:
         # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
         for i in range(self.computer_count):
             self.players.append(Computer(True))
+
+        for i in range(self.computer_count):
+            self.players.append(StoryA_User(True))
 
         self.player_num = len(self.players)
 
@@ -453,22 +457,25 @@ class GameManager:
         card_num = [0, 0]  # 일반, 기술카드 구분위한 리스트
         for i in range(self.start_cards_integer):
             
-            r = random.randint(1, 200 + weights)
-            
-            if r < 100:
-                card_num[0] += 1
+            if weights == 0:
+                hand.append(self.deck.pop())
             else:
-                card_num[1] += 1
+                r = random.randint(1, 200 + weights)
+            
+                if r < 100:
+                    card_num[0] += 1
+                else:
+                    card_num[1] += 1
 
-            for card in self.deck:
-                if card.name.isdigit() and card_num[0] != 0:
-                    index = self.deck.index(card)
-                    hand.append(self.deck.pop(index))
-                    card_num[0] -= 1
-                elif not card.name.isdigit() and card_num[1] != 0:
-                    index = self.deck.index(card)
-                    hand.append(self.deck.pop(index))
-                    card_num[1] -= 1
+                for card in self.deck:
+                    if card.name.isdigit() and card_num[0] != 0:
+                        index = self.deck.index(card)
+                        hand.append(self.deck.pop(index))
+                        card_num[0] -= 1
+                    elif not card.name.isdigit() and card_num[1] != 0:
+                        index = self.deck.index(card)
+                        hand.append(self.deck.pop(index))
+                        card_num[1] -= 1
 
         for n in card_num:
             if n != 0:
@@ -625,6 +632,31 @@ class Computer(Player):
 
 # -------------------------------------------------------------------------------------------------
 
+class StoryA_User(Player):
+    def __init__(self, is_computer):
+        super().__init__(is_computer)
+        self.skill_card_weight = 50
+
+    def story_user_play(self):
+        self.possible_cards.clear()
+        self.judge_possible_cards()
+        idx = []
+        if len(self.possible_cards) != 0:
+            for i in range(len(self.possible_cards)):
+                if "again" in self.possible_cards[i].name or "skip" in self.possible_cards[i].name:
+                    idx.append(i)
+            if len(idx):
+                self.use_card(idx.pop())
+            else:
+                ran = random.randrange(len(self.possible_cards))
+                self.use_card(ran)
+        else:
+            self.get_card()
+
+        if len(self.hand) == 1:
+            self.press_uno()
+
+# -------------------------------------------------------------------------------------------------
 
 class Card:
     def __init__(self, id, color, name, filename):
