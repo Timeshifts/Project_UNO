@@ -183,7 +183,7 @@ def main():
                 game_objects.remove(rename)
 
             # 스토리 모드
-            if event.type == EVENT_START_STORY:
+            if event.type == EVENT_OPEN_STORYMAP:
                 # 메인 메뉴 제거
                 game_objects.remove(main_menu)
                 state = "story_map"
