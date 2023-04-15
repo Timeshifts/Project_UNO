@@ -16,11 +16,14 @@ class GameManager:
         self.grave = []  # 묘지, Top 부분은 플레이어들에게 색과 숫자가 보인다.
         self.grave_top = 0  # 묘지의 탑을 참조하는 Card 타입 변수
         self.is_someone_win = 0  # 누가 핸드 갯수가 0이 되서 우승한 건지 판별하는 불린변수
+        self.winner_index = 0 # 누가 우승자인지 값을 담는 정수변수
         self.turn_jump_num = 0  # 누가 턴 건너뛰기를 했으면 여기에 값이 설정되는 정수 변수
         self.is_turn_reversed = False  # 누가 턴 진행방향을 바꿨는지 체크
-        self.grave_top_color = ""
-        self.game_timer_end = False
-        self.turn_timer_end = False
+        self.grave_top_color = "" # 묘지의 top 카드 색깔
+        self.game_timer_end = False # 게임 타이머 다 되면 True 되는 불린변수
+        self.turn_timer_end = False # 턴 타이머 다 되거나, 유저 행동하면 True 되는 불린변수
+        self.game_timer_integer = 0 # 게임 타이머 체크할 정수변수
+        self.turn_timer_integer = 0 # 턴 타이머 체크할 정수변수
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -65,21 +68,14 @@ class GameManager:
         self.turn_start()
 
     def game_end(self):
-        
         self.game_timer_end = True
         
         if self.is_someone_win == True:
-            pass
+            self.winner_index = self.turn
         else:
-            min = 100000
-            minIndex = 0
-
-            for i in range(self.player_num):
-                temp = self.player_score_calculate(i)
-
-                if temp < min:
-                    min = temp
-                    minIndex = i
+            self.winner_index = self.player_score_calculate()
+        
+        print(f"{self.winner_index} 번 유저 승리!!\n")
 
     # 턴 시작 함수
     def turn_start(self):
@@ -119,7 +115,6 @@ class GameManager:
 
         # 안 썼다면, 해당 플레이어가 컴퓨터인지 유저인지 판별한다.
         else:
-            # self.count_down()
             self.give_authority(self.turn)
 
             if self.players[self.turn].is_computer == True:
@@ -131,7 +126,7 @@ class GameManager:
         
         self.turn_timer_end = True
 
-        pygame.time.wait(3000)
+        pygame.time.wait(2000)
 
         self.turn_end()
 
@@ -140,10 +135,14 @@ class GameManager:
         print(f"턴 종료\n\n")
         # 현재 핸드가 0인지 판별
         if self.players[self.turn].hand == 0:
-            print(f"{self.turn} 턴 유저 승리\n")
+            
             self.is_someone_win = True
             self.game_end()
-        # 아니면 턴 1 증가시키고 다음 턴 스타트
+            
+        elif self.game_timer_integer == 0:
+            print(f"시간 다 됐으므로 게임 종료\n")
+            self.game_end()
+            
         else:
             if (
                 len(self.players[self.turn].hand) == 1
@@ -169,14 +168,16 @@ class GameManager:
 
             self.turn_jump_num = 0
 
-            # 턴값이 플레이어 수를 넘어가면 와일문 돌려서 빼준다.
-
             pygame.time.wait(3000)
 
             self.turn_start()
 
     def give_card(self, a):
-        # a는 해당 번호의 플레이어
+        
+        if self.deck.size() == 0:
+            self.set_deck_from_grave()
+        
+        self.players[a].is_uno = False
         self.players[a].hand.append(self.deck.pop())
 
     def get_card(self, card):
@@ -238,9 +239,11 @@ class GameManager:
         winner = 0
         for i in range(self.player_num):
             temp = 0
-            for j in range(len(self.players[j].hand)):
+            for j in range(len(self.players[i].hand)):
                 temp += self.players[i].hand[j].score
-
+                
+            print(f"{i} 번 유저의 점수는 {temp} 점")
+            
             if temp < min:
                 min = temp
                 winner = i
@@ -297,6 +300,13 @@ class GameManager:
             else:
                 for cn in card_name:
                     self.ref_deck.append(Card(0, color, cn, 0))
+    
+    # 덱 사이즈 0되면 묘지에 있는거 top 빼고 deck에 넣어서 랜덤 돌리기
+    def set_deck_from_grave(self):
+        for i in range(len(self.grave)-1):
+            self.deck.append(self.grave.pop(i))
+        
+        random.shuffle(self.deck)
 
     # 카드 셔플
     def card_shuffle(self):
@@ -310,37 +320,31 @@ class GameManager:
         self.grave_top = self.grave[-1]  # grave 의 맨 위의 카드
         self.grave_top_color = self.grave_top.color
     
+    
+    
     # 타이머
     def game_timer(self, count):
-    
         start_time = time.time()
-
         while True:
-            remain_time = count - (int)(time.time() - start_time)
-
-            if remain_time <= 0:
+            self.game_timer_integer = count - (int)(time.time() - start_time)
+            if self.game_timer_integer <= 0:
                 print("game time end")
                 break
-
-            print(f"game time: {remain_time} seconds")
-
+            
+            print(f"game time: {self.game_timer_integer} seconds")
             time.sleep(1)
     
     def turn_timer(self, count):
-    
         start_time = time.time()
-
         while True:
-            remain_time = count - (int)(time.time() - start_time)
-
-            if remain_time <= 0:
+            self.turn_timer_integer = count - (int)(time.time() - start_time)
+            if self.turn_timer_integer <= 0:
                 print("turn time end")
                 break
             elif self.turn_timer_end == True:
                 break
 
-            print(f"turn time: {remain_time} seconds")
-            
+            print(f"turn time: {self.turn_timer_integer} seconds")
             time.sleep(1)
 
     
@@ -516,6 +520,18 @@ class User(Player):
                 self.get_card()
                 print(f"받은 카드는 {self.hand[-1].color} {self.hand[-1].name}\n")
                 break
+        
+        if len(self.hand) == 1 and self.is_uno == False:
+            print("우노 버튼을 누른다? Y/N \n")
+            while True:
+                a = input()
+                
+                if a != 'Y' and a != 'N':
+                    print("다시 입력하세요\n")
+                elif a == 'Y':
+                    print("우노 버튼 작동\n")
+                    self.press_uno()
+                
 
 
 # -------------------------------------------------------------------------------------------------
