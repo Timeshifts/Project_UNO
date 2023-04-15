@@ -62,9 +62,8 @@ class GameManager:
         self.card_shuffle()
 
         # 플레이어들에게 카드 나눠줌
-        for i in range(self.start_cards_integer):
-            for j in range(len(self.players)):
-                self.give_card(j)
+        for i in range(len(self.players)):
+            self.players[i].hand = self.roulette_wheel_selection(self.players[i].skill_card_weight)
 
         # 덱에서 카드 한장 빼서 세팅해놓음
         self.setting_card(self.deck)
@@ -447,6 +446,36 @@ class GameManager:
     
     def defence(self):
         self.players[self.turn].defence_int += 2
+    
+    
+    def roulette_wheel_selection(self, weights):
+        hand = []
+        card_num = [0, 0]  # 일반, 기술카드 구분위한 리스트
+        for i in range(self.start_cards_integer):
+            
+            r = random.randint(1, 200 + weights)
+            
+            if r < 100:
+                card_num[0] += 1
+            else:
+                card_num[1] += 1
+
+            for card in self.deck:
+                if card.name.isdigit() and card_num[0] != 0:
+                    index = self.deck.index(card)
+                    hand.append(self.deck.pop(index))
+                    card_num[0] -= 1
+                elif not card.name.isdigit() and card_num[1] != 0:
+                    index = self.deck.index(card)
+                    hand.append(self.deck.pop(index))
+                    card_num[1] -= 1
+
+        for n in card_num:
+            if n != 0:
+                for j in range(n):
+                    hand.append(self.deck.pop())
+
+        return hand
 
 
 # -------------------------------------------------------------------------------------------------
@@ -464,6 +493,7 @@ class Player:
         self.attacked_int = 0
         self.defence_int = 0
         self.possible_cards_num = []
+        self.skill_card_weight = 0
 
     def press_uno(self):
         if self.is_authority == True and len(self.hand) == 1:
@@ -610,5 +640,7 @@ class Card:
         else:
             self.score = 20
 
-
 Gm = GameManager()
+
+
+
