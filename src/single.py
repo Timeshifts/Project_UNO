@@ -12,10 +12,6 @@ class Single:
     uno = "UNO"
     avail_menu = ["RESUME", "OPTIONS", "MAIN"]
 
-    # 폰트 설정
-    def get_font(self, size):
-        return pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
-
     def __init__(self, pos=(0, 0), size=(150, 50), computer_count=1, name="ME"):
         # self.menu = self.avail_menu
         # self.max_menu = len(self.menu)
@@ -37,6 +33,15 @@ class Single:
 
         self.game_start()
         self.init_draw()
+
+    # 크기 변경에 맞춰 재조정
+    def resize(self, size):
+        self.size = size
+        self.init_draw()
+
+        for i in range(len(self.button)):
+            self.button[i].resize(size)
+            self.rect[i] = self.button[i].rect
 
     def update_card(self):
         self.hand_card = []  # 각자 소유한 카드
@@ -80,8 +85,8 @@ class Single:
         self.rect = []
 
         # 내 카드
-        card_x = 182
-        card_y = 254.8
+        card_x = 182 * setting.get_screen_scale()
+        card_y = 254.8 * setting.get_screen_scale()
         for i in range(self.max_card):
             # 버튼 삽입
             self.button.append(
@@ -101,7 +106,7 @@ class Single:
                         self.size[1] - card_y / 2,
                     ),
                     text_input="",
-                    font=self.get_font(50),
+                    font=setting.get_font(50),
                     base_color="Black",
                     hovering_color="Black",
                 )
@@ -109,15 +114,10 @@ class Single:
             # 각 버튼 이벤트 처리용 Rect 삽입
             self.rect.append(self.button[i].rect)
 
-    # 크기 변경에 맞춰 재조정
-    # def resize(self, size):
-    #     self.size = size
-    #     self.init_draw()
-
     # 스크린에 자신을 그리기
     def draw(self, screen):
         fontsize = 50
-        font = self.get_font(fontsize)
+        font = setting.get_font(fontsize)
         for i in range(self.max_card):
             self.button[i].update(screen)
             if i == self.highlight:
@@ -127,9 +127,15 @@ class Single:
 
         for i in range(self.computer_count):
             # Player List 상자
+            playlist_x = 480 * setting.get_screen_scale()
+            playlist_y = 180 * setting.get_screen_scale()
             playlist_box = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+            playlist_box = pygame.transform.scale(
+                    playlist_box, (playlist_x, playlist_y)
+                )
             playlist_box_rect = playlist_box.get_rect(
-                center=(self.size[0] * 7 / 8, self.size[1] * (2 * i + 3) / 12)
+                center=(self.size[0] * 7 / 8, 
+                        self.size[1] * (2 * i + 3) / 12)
             )
             screen.blit(playlist_box, playlist_box_rect)
             # Player List 컴퓨터 이름
@@ -145,8 +151,8 @@ class Single:
             for j in range(
                 len(self.hand_card[i + 1])
             ):  # GameManager의 Computer(i)의 카드 개수
-                card_x = 52
-                card_y = 72.8
+                card_x = 52 * setting.get_screen_scale()
+                card_y = 72.8 * setting.get_screen_scale()
                 playlist_player_card = pygame.image.load(
                     RESOURCE_PATH / "card" / "card_back.png"
                 )
@@ -164,8 +170,8 @@ class Single:
         # 메인보드
         # 메인보드 컴퓨터 카드
         for i in range(self.computer_count):
-            card_x = 87.75
-            card_y = 122.85
+            card_x = 87.75 * setting.get_screen_scale()
+            card_y = 122.85 * setting.get_screen_scale()
             board_player_card = pygame.image.load(
                 RESOURCE_PATH / "card" / "card_back.png"
             )
@@ -205,8 +211,8 @@ class Single:
                 ),
             )
         # 카드 덱
-        deck_card_x = 130
-        deck_card_y = 182
+        deck_card_x = 130 * setting.get_screen_scale()
+        deck_card_y = 182 * setting.get_screen_scale() 
         deck_card = pygame.image.load(RESOURCE_PATH / "card" / "card_back.png")
         deck_card = pygame.transform.scale(deck_card, (deck_card_x, deck_card_y))
         screen.blit(
@@ -217,8 +223,8 @@ class Single:
             ),
         )
         # 카드 묘지
-        grave_card_x = 130
-        grave_card_y = 182
+        grave_card_x = 130 * setting.get_screen_scale()
+        grave_card_y = 182 * setting.get_screen_scale()
         grave_card = pygame.image.load(
             str(
                 RESOURCE_PATH
@@ -236,8 +242,8 @@ class Single:
             ),
         )
         # 카드 색상
-        color_card_x = 80
-        color_card_y = 80
+        color_card_x = 80 * setting.get_screen_scale()
+        color_card_y = 80 * setting.get_screen_scale()
         color_card = pygame.image.load(
             str(RESOURCE_PATH / "card" / f"{self.game.grave_top_color}") + ".png"
         )
@@ -250,8 +256,8 @@ class Single:
             ),
         )
         # 우노 버튼
-        uno_x = 200
-        uno_y = 200
+        uno_x = 200 * setting.get_screen_scale()
+        uno_y = 200 * setting.get_screen_scale()
         uno = pygame.image.load(str(RESOURCE_PATH / "single" / "uno_button.png"))
         uno = pygame.transform.scale(uno, (uno_x, uno_y))
         screen.blit(

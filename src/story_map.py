@@ -79,3 +79,6 @@ class StoryMap:
 
     def handle_event(self, event):
         self.STORY_MENU.handle_event(event)
+    
+    def resize(self, size):
+        self.STORY_MENU.resize(size)
