@@ -56,9 +56,9 @@ class GameManager:
         # 덱에서 카드 한장 빼서 세팅해놓음
         self.setting_card(self.deck)
 
-        pygame.time.wait(2000)
+        # pygame.time.wait(2000)
 
-        self.turn_start()
+        # self.turn_start()
 
     def game_end(self):
         if self.is_someone_win == True:
@@ -94,25 +94,24 @@ class GameManager:
 
         # 안 썼다면, 해당 플레이어가 컴퓨터인지 유저인지 판별한다.
         else:
-            # self.count_down()
             self.give_authority(self.turn)
 
-            if self.players[self.turn].is_computer == True:
-                print(f"{self.turn} 번 유저, 컴퓨터 플레이 작동\n")
-                self.players[self.turn].computer_play()
-            else:
-                print(f"{self.turn} 턴 유저, 실제 플레이어 이므로 권한 지급\n")
-                self.players[self.turn].play()
+            # if self.players[self.turn].is_computer == True:
+            #     print(f"{self.turn} 번 유저, 컴퓨터 플레이 작동\n")
+            #     self.players[self.turn].computer_play()
+            # else:
+            #     print(f"{self.turn} 턴 유저, 실제 플레이어 이므로 권한 지급\n")
+            #     self.players[self.turn].play()
 
-        pygame.time.wait(3000)
+        # pygame.time.wait(3000)
 
-        self.turn_end()
+        # self.turn_end()
 
     # 턴 끝 함수
     def turn_end(self):
         print(f"턴 종료\n\n")
         # 현재 핸드가 0인지 판별
-        if self.players[self.turn].hand == 0:
+        if len(self.players[self.turn].hand) == 0:
             print(f"{self.turn} 턴 유저 승리\n")
             self.is_someone_win = True
             self.game_end()
@@ -144,13 +143,17 @@ class GameManager:
 
             # 턴값이 플레이어 수를 넘어가면 와일문 돌려서 빼준다.
 
-            pygame.time.wait(3000)
+            # pygame.time.wait(3000)
 
-            self.turn_start()
+            # self.turn_start()
 
     def give_card(self, a):
+        if len(self.deck) == 0:
+            self.game_end()
         # a는 해당 번호의 플레이어
-        self.players[a].hand.append(self.deck.pop())
+        else:
+            self.players[a].hand.append(self.deck.pop())
+        # print(self.players[a].hand)
 
     def get_card(self, card):
         self.grave.append(card)
@@ -363,6 +366,7 @@ class Player:
         self.is_uno = False
         self.is_attacked = False
         self.attacked_int = 0
+        self.possible_cards_num = []
 
     def press_uno(self):
         if self.is_authority == True and len(self.hand) == 1:
@@ -389,6 +393,7 @@ class Player:
                 or Gm.grave_top.name == self.hand[i].name
             ):
                 self.possible_cards.append(self.hand[i])
+                self.possible_cards_num.append(i)
 
 
 # -------------------------------------------------------------------------------------------------
@@ -401,6 +406,7 @@ class User(Player):
     def play(self):
         self.possible_cards.clear()
         self.judge_possible_cards()
+        self.possible_cards_num
 
         print("1 : 보유한 카드들 보기\n")
         print("2 : 낼 수 있는 카드들 보기\n")
@@ -410,14 +416,14 @@ class User(Player):
         while True:
             a = int(input())
 
-            if a < 0 or a > 4:
-                print("다시 입력하세요\n")
+            # if a < 0 or a > 4:
+            #     print("다시 입력하세요\n")
 
-            elif a == 1:
-                for i in range(len(self.hand)):
-                    print(f"/{self.hand[i].color} {self.hand[i].name}")
+            # elif a == 1:
+            #     for i in range(len(self.hand)):
+            #         print(f"/{self.hand[i].color} {self.hand[i].name}")
 
-            elif a == 2:
+            if a == 2:
                 if len(self.possible_cards) != 0:
                     for i in range(len(self.possible_cards)):
                         print(
@@ -494,9 +500,3 @@ class Card:
 
 
 Gm = GameManager()
-
-Gm.computer_count = 3
-Gm.start_cards_integer = 5
-
-Gm.game_start()
-Gm.turn_start()
