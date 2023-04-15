@@ -73,6 +73,9 @@ def main():
 
     story_object = story_map.StoryMap((0, 0), size, settings)
 
+    # 싱글게임 진행 중인지 확인
+    single_turn = 0
+
     while True:
         for event in pygame.event.get():
             # 사용자가 X 버튼을 누르는 등의 동작으로 창 종료 시, 메뉴에서 종료 선택 시 종료 처리
@@ -144,6 +147,7 @@ def main():
                 # )
                 single = Single((width, height), size, computer_count, name)
                 game_objects.append(single)
+                single_turn = 1
 
             # 이름 변경 열기
             if event.type == EVENT_OPEN_RENAME:
@@ -222,6 +226,15 @@ def main():
         # 화면 갱신, FPS 60
         pygame.display.flip()
         clock.tick(60)
+        # print(clock.get_fps())
+
+        # 싱글 게임 진행중 확인
+        if single_turn == 1:
+            single.turn_start()
+            single.update_card()
+            pygame.time.wait(3000)
+            # if single.:
+            #     single_turn=0
 
 
 if __name__ == "__main__":
