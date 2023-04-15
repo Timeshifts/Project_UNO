@@ -83,6 +83,8 @@ class Single:
         # self.update_card()
         self.button = []
         self.rect = []
+        # 색약 모드 적용을 위한 폴더명
+        card_folder = "card_colorblind" if setting.options["colorblind"] else "card"
 
         # 내 카드
         card_x = 182 * setting.get_screen_scale()
@@ -93,12 +95,12 @@ class Single:
                 Button(
                     pygame.transform.scale(
                         pygame.image.load(
-                            str(RESOURCE_PATH / "card" / self.my_card[i]) + ".png"
+                            str(RESOURCE_PATH / card_folder / self.my_card[i]) + ".png"
                         ),
                         (card_x, card_y),
                     ),
                     pygame.transform.scale(
-                        pygame.image.load(RESOURCE_PATH / "card" / "highlight.png"),
+                        pygame.image.load(RESOURCE_PATH / card_folder / "highlight.png"),
                         (card_x, card_y),
                     ),
                     pos=(
@@ -116,6 +118,9 @@ class Single:
 
     # 스크린에 자신을 그리기
     def draw(self, screen):
+        # 색약 모드 적용을 위한 폴더명
+        card_folder = "card_colorblind" if setting.options["colorblind"] else "card"
+
         fontsize = 50
         font = setting.get_font(fontsize)
         for i in range(self.max_card):
@@ -154,7 +159,7 @@ class Single:
                 card_x = 52 * setting.get_screen_scale()
                 card_y = 72.8 * setting.get_screen_scale()
                 playlist_player_card = pygame.image.load(
-                    RESOURCE_PATH / "card" / "card_back.png"
+                    RESOURCE_PATH / card_folder / "card_back.png"
                 )
                 playlist_player_card = pygame.transform.scale(
                     playlist_player_card, (card_x, card_y)
@@ -173,7 +178,7 @@ class Single:
             card_x = 87.75 * setting.get_screen_scale()
             card_y = 122.85 * setting.get_screen_scale()
             board_player_card = pygame.image.load(
-                RESOURCE_PATH / "card" / "card_back.png"
+                RESOURCE_PATH / card_folder / "card_back.png"
             )
             board_player_card = pygame.transform.scale(
                 board_player_card, (card_x, card_y)
@@ -213,7 +218,7 @@ class Single:
         # 카드 덱
         deck_card_x = 130 * setting.get_screen_scale()
         deck_card_y = 182 * setting.get_screen_scale() 
-        deck_card = pygame.image.load(RESOURCE_PATH / "card" / "card_back.png")
+        deck_card = pygame.image.load(RESOURCE_PATH / card_folder / "card_back.png")
         deck_card = pygame.transform.scale(deck_card, (deck_card_x, deck_card_y))
         screen.blit(
             deck_card,
@@ -228,7 +233,7 @@ class Single:
         grave_card = pygame.image.load(
             str(
                 RESOURCE_PATH
-                / "card"
+                / card_folder
                 / f"{self.game.grave_top.color}_{self.game.grave_top.name}"
             )
             + ".png"
@@ -245,7 +250,7 @@ class Single:
         color_card_x = 80 * setting.get_screen_scale()
         color_card_y = 80 * setting.get_screen_scale()
         color_card = pygame.image.load(
-            str(RESOURCE_PATH / "card" / f"{self.game.grave_top_color}") + ".png"
+            str(RESOURCE_PATH / card_folder / f"{self.game.grave_top_color}") + ".png"
         )
         color_card = pygame.transform.scale(color_card, (color_card_x, color_card_y))
         screen.blit(
@@ -283,7 +288,7 @@ class Single:
         #     card_x = 182
         #     card_y = 254.8
         #     playlist_player_card = pygame.image.load(
-        #         str(RESOURCE_PATH / "card" / self.my_card[i]) + ".png"
+        #         str(RESOURCE_PATH / card_folder / self.my_card[i]) + ".png"
         #     )
         #     playlist_player_card = pygame.transform.scale(
         #         playlist_player_card, (card_x, card_y)
