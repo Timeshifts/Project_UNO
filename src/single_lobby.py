@@ -1,6 +1,5 @@
-import pygame
+import pygame, setting
 from button import Button
-from setting import Settings
 from constant import *
 
 
@@ -16,9 +15,6 @@ class SingleLobby:
         self.pos[0],
         self.pos[1] + self.size[1] * 1.2 * index,
     )
-
-    # 폰트 설정
-    get_font = lambda self, size: pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
 
     def __init__(self, pos=(0, 0), size=(150, 50)):
         self.menu = self.avail_menu
@@ -37,13 +33,13 @@ class SingleLobby:
         self.selected = -1
         self.init_draw()
 
+    def init_draw(self):
         # 본인 이름 수정
-        self.text_name = self.get_font(50).render(self.name, True, "White")
+        self.text_name = setting.get_font(50).render(self.name, True, "White")
         self.text_name_rect = self.text_name.get_rect(
             center=(self.size[0] / 2, self.size[1] / 3)
         )
 
-    def init_draw(self):
         self.button = []
         self.rect = []
 
@@ -65,7 +61,7 @@ class SingleLobby:
                     pygame.image.load(RESOURCE_PATH / "single" / "list_hovering.png"),
                     pos=(self.size[0] * 7 / 8, self.size[1] * (2 * i + 3) / 12),
                     text_input=text,
-                    font=self.get_font(50),
+                    font=setting.get_font(50),
                     base_color=color,
                     hovering_color=color,
                 )
@@ -83,36 +79,40 @@ class SingleLobby:
                     ),
                     pos=(self.size[0] / 2, self.size[1] * (2 * i + 13) / 20),
                     text_input=self.menu[i],
-                    font=self.get_font(50),
+                    font=setting.get_font(50),
                     base_color="#3a4aab",
                     hovering_color="White",
                 )
             )
             # 각 버튼 이벤트 처리용 Rect 삽입
             self.rect.append(self.button[i + self.max_computer].rect)
-            # highlight용 오브젝트 생성
-            # #############################
-            # self.highlight_obj = pygame.transform.scale(
-            #     pygame.image.load(RESOURCE_PATH / "highlight.png"), self.size
-            # )
-            # #############################
 
     # 크기 변경에 맞춰 재조정
     def resize(self, size):
         self.size = size
         self.init_draw()
 
+        for i in range(self.max_menu + self.max_computer):
+            self.button[i].resize(size)
+            self.rect[i] = self.button[i].rect
+
     # 스크린에 자신을 그리기
     def draw(self, screen):
         for i in range(self.max_computer + self.max_menu):
             self.button[i].update(screen)
             if i == self.highlight:
-                self.button[i].changeColor(True, screen)
+                if i < self.max_computer:
+                    self.button[i].changeColor(True, screen)
+                else:
+                    self.button[i].changeHighlight(True, screen)
             else:
-                self.button[i].changeColor(False, screen)
+                if i < self.max_computer:
+                    self.button[i].changeColor(False, screen)
+                else:
+                    self.button[i].changeHighlight(False, screen)
 
         # Add a Player 텍스트
-        font = self.get_font(50)
+        font = setting.get_font(50)
         text_player = font.render("Add a Player", True, "White")
         text_player_rect = text_player.get_rect(
             center=(self.size[0] * 7 / 8, self.size[1] / 12)
@@ -138,13 +138,21 @@ class SingleLobby:
         if index < self.max_computer:
             if self.computer_chk[index] == True:
                 self.button[index].ChangeImage(
-                    pygame.image.load(RESOURCE_PATH / "single" / "list_unpicked.png")
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "list_unpicked.png"),
+                        (self.button[index].base_size[0] * setting.get_screen_size()[0] / 1920,
+                         self.button[index].base_size[1] * setting.get_screen_size()[1] / 1080)
+                    )
                 )
                 self.button[index].ChangeText("+", "Black", "Black")
                 self.computer_chk[index] = False
             else:
                 self.button[index].ChangeImage(
-                    pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "list.png"),
+                        (self.button[index].base_size[0] * setting.get_screen_size()[0] / 1920,
+                         self.button[index].base_size[1] * setting.get_screen_size()[1] / 1080)
+                    )
                 )
                 self.button[index].ChangeText(self.computer[index], "White", "White")
                 self.computer_chk[index] = True
@@ -177,15 +185,15 @@ class SingleLobby:
                 if self.pressed == False:
                     self.pressed = True
                     # 엔터 키가 눌렸을 때
-                    if event.key == Settings().settings["enter"]:
+                    if event.key == setting.options["enter"]:
                         # 키보드로 선택한 것이 있다면 그 메뉴를 선택
                         if self.selected != -1:
                             self.select_menu(self.selected)
-                    elif event.key == Settings().settings["up"]:
+                    elif event.key == setting.options["up"]:
                         # 선택을 하나 위로 이동
                         self.selected = self.selected - 1 if 0 < self.selected else 0
                         self.highlight = self.selected
-                    elif event.key == Settings().settings["down"]:
+                    elif event.key == setting.options["down"]:
                         # 선택을 하나 아래로 이동
                         self.selected = (
                             self.selected + 1

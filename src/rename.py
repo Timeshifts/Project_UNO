@@ -1,14 +1,14 @@
 import pygame
 from button import Button
-from setting import Settings
+import setting
 from constant import *
-
+from menu import Menu
 
 # 싱글플레이
-class Rename:
+class Rename(Menu):
     # 가능한 메뉴 목록
     avail_menu = ["DONE", "CANCEL"]
-    name = "ME"
+    name = "My Name"
 
     # 버튼이 있어야 할 위치 반환
     get_position = lambda self, index: (
@@ -16,69 +16,39 @@ class Rename:
         self.pos[1] + self.size[1] * 1.2 * index,
     )
 
-    # 폰트 설정
-    get_font = lambda self, size: pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
-
     def __init__(self, pos=(0, 0), size=(150, 50)):
-        self.menu = self.avail_menu
-        self.max_menu = len(self.menu)
-        self.button = []
-        self.rect = []
-        self.pos = pos
-        self.size = size
-        self.pressed = False
-
-        # 현재 highlight된 위치의 index
-        self.highlight = 0
-        # 현재 선택된 대상, -1일 경우 마우스 조작 중
-        self.selected = -1
+        super().__init__(pos, size)
         self.init_draw()
 
+        self.prompt_text = setting.get_font(50).render("Enter New Name (max 8 chars):", True, "White")
+        self.prompt_text_rect = self.prompt_text.get_rect(
+            center=(self.size[0] / 2, self.size[1] * 0.15)
+        )
         # 본인 이름 수정
-        self.text_name = self.get_font(50).render(self.name, True, "White")
+        self.text_name = setting.get_font(50).render(self.name, True, "White")
         self.text_name_rect = self.text_name.get_rect(
-            center=(self.size[0] / 2, self.size[1] / 12)
+            center=(self.size[0] / 2, self.size[1] * 0.3)
         )
 
-    def init_draw(self):
-        self.button = []
-        self.rect = []
-
-        for i in range(self.max_menu):
-            # 버튼 삽입
-            self.button.append(
-                Button(
-                    pygame.image.load(RESOURCE_PATH / "main" / "main_button.png"),
-                    pygame.image.load(
-                        RESOURCE_PATH / "main" / "main_button_highlight.png"
-                    ),
-                    pos=(self.size[0] / 2, self.size[1] * (2 * i + 13) / 20),
-                    text_input=self.menu[i],
-                    font=self.get_font(50),
-                    base_color="#3a4aab",
-                    hovering_color="White",
-                )
-            )
-            # 각 버튼 이벤트 처리용 Rect 삽입
-            self.rect.append(self.button[i].rect)
-
-    # 크기 변경에 맞춰 재조정
     def resize(self, size):
-        self.size = size
-        self.init_draw()
+        super().resize(size)
+
+        self.text_name = setting.get_font(50).render(self.name, True, "White")
+        self.text_name_rect = self.text_name.get_rect(
+            center=(self.size[0] / 2, self.size[1] * 0.3)
+        )
 
     # 스크린에 자신을 그리기
     def draw(self, screen):
-        for i in range(self.max_menu):
-            self.button[i].update(screen)
-            if i == self.highlight:
-                self.button[i].changeColor(True, screen)
-            else:
-                self.button[i].changeColor(False, screen)
+        super().draw(screen)
 
         screen.blit(
             self.text_name,
             self.text_name_rect,
+        )
+        screen.blit(
+            self.prompt_text,
+            self.prompt_text_rect,
         )
 
     # 메뉴 선택 시 처리
@@ -89,10 +59,10 @@ class Rename:
         pygame.event.post(se_event)
 
         if self.avail_menu[index] == "DONE":
-            pass
-            # pygame.event.post(pygame.event.Event(EVENT_OPEN_OPTION))  # 옵션 열기
-        elif self.avail_menu[index] == "CANCLE":
-            pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 메인 메뉴
+            pygame.event.post(pygame.event.Event(EVENT_START_LOBBY, {"name": self.name}))
+        elif self.avail_menu[index] == "CANCEL":
+            # 싱글플레이 로비로 복귀
+            pygame.event.post(pygame.event.Event(EVENT_START_LOBBY))  
 
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
@@ -111,16 +81,32 @@ class Rename:
                 if self.pressed == False:
                     self.pressed = True
                     # 엔터 키가 눌렸을 때
-                    if event.key == Settings().settings["enter"]:
+                    if event.key == setting.options["enter"]:
                         # 키보드로 선택한 것이 있다면 그 메뉴를 선택
                         if self.selected != -1:
                             self.select_menu(self.selected)
+                    elif (event.key == setting.options["up"]):
+                        # 선택을 하나 위로 이동
+                        self.selected = self.selected - 1 if 0 < self.selected else 0
+                        self.highlight = self.selected
+                    elif (event.key == setting.options["down"]):
+                        # 선택을 하나 아래로 이동
+                        self.selected = (
+                            self.selected + 1
+                            if self.selected < self.max_menu - 1
+                            else self.max_menu - 1
+                        )
+                        self.highlight = self.selected
                     elif event.key == pygame.K_BACKSPACE:
                         if len(self.name) > 0:
                             self.name = self.name[:-1]
+                            self.resize(self.size) # 입력 중인 이름 중앙으로 다시 가져오기
                     else:
-                        self.name += event.unicode
-                    self.text_name = self.get_font(50).render(self.name, True, "BLACK")
+                        if len(self.name) < 8:
+                            if event.unicode != 0: # 글자가 없는(예: F1) 키 제외
+                                self.name += event.unicode
+                            self.resize(self.size) # 입력 중인 이름 중앙으로 다시 가져오기
+                    self.text_name = setting.get_font(50).render(self.name, True, "BLACK")
                     self.text_name_rect.size = self.text_name.get_size()
 
             # 버튼이 누르고 있어도 계속 동작하지 않게 뗄 때까지는 작동 방지
