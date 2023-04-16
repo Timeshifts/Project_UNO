@@ -22,10 +22,10 @@ class Single:
         self.max_card = 0  # 내가 소유한 카드 개수
         self.possible_cards_num = []  # 선택이 가능한 카드
         self.game_timer = 0
-        self.first = 0
+        self.set_first = 0  # 내 턴일때 화면 갱신 한번만 하는 용도
+        self.set_again = 0  # 컴퓨터 턴일때 화면 갱신 하는 용도
         self.is_turn_reversed = False  # 턴 방향
-        self.effect = 0
-        self.start = 0
+        self.effect = 0  # 애니메이션
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -66,37 +66,37 @@ class Single:
         self.update_card()
 
     def turn_start(self):
-        # self.game.turn_start()
-        self.update_card()
-        # self.init_draw()
-        if self.game.turn == 0:  # 플레이어인 경우
-            print(self.possible_cards_num)
-            if self.first == 0:
-                self.game.turn_start()
-                # self.update_card()
-                self.possible_cards_num = self.game.players[0].play()
-                self.init_draw()
-                self.first = 1
-        else:  # 컴퓨터인 경우
-            if self.start == 0:
-                pygame.time.wait(2000)
-                self.game.turn_start()
-                self.update_card()
-                self.first == 0
-                self.effect = self.game.players[self.game.turn].computer_play()
-                self.start = 1
-            else:
-                self.game.turn_end()
-                self.update_card()
-                se_event = pygame.event.Event(
-                    EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"}
-                )
-                pygame.event.post(se_event)
-                self.start = 0
-
         if self.game.end == 1:  # 게임 종료
             return 0
         else:
+            # self.game.turn_start()
+            self.update_card()
+            # self.init_draw()
+            if self.game.turn == 0:  # 플레이어인 경우
+                self.possible_cards_num = self.game.players[0].play()
+                # print(self.possible_cards_num)
+                if self.set_first == 0:
+                    self.game.turn_start()
+                    # self.update_card()
+                    # self.possible_cards_num = self.game.players[0].play()
+                    self.init_draw()
+                    self.set_first = 1
+            else:  # 컴퓨터인 경우
+                if self.set_again == 0:
+                    pygame.time.wait(2000)
+                    self.game.turn_start()
+                    self.update_card()
+                    self.set_first == 0
+                    self.effect = self.game.players[self.game.turn].computer_play()
+                    self.set_again = 1
+                else:
+                    self.game.turn_end()
+                    self.update_card()
+                    se_event = pygame.event.Event(
+                        EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"}
+                    )
+                    pygame.event.post(se_event)
+                    self.set_again = 0
             return 1
 
     def init_draw(self):
@@ -264,9 +264,8 @@ class Single:
                     hovering_color="Black",
                 )
             )
-        # 각 버튼 이벤트 처리용 Rect 삽입
         self.rect.append(self.button[self.max_card + 1].rect)
-        # wild 카드 선택시 색 선택 버튼 추가
+        # wild 색 선택 버튼
         if self.game.wild == True:
             card_color = ["blue", "green", "red", "yellow"]
             for i in range(4):
@@ -290,7 +289,7 @@ class Single:
                         ),
                         pos=(
                             # self.size[0] * ((i * 2) + 1) / 16,
-                            0,
+                            self.size[0] / 2,
                             self.size[1] / 2,
                         ),
                         text_input="",
@@ -299,7 +298,7 @@ class Single:
                         hovering_color="Black",
                     )
                 )
-                self.rect.append(self.button[self.max_card + 1 + i].rect)
+            self.rect.append(self.button[self.max_card + 1 + i].rect)
 
     # 스크린에 자신을 그리기
     def draw(self, screen):
@@ -536,23 +535,29 @@ class Single:
                 pass
             else:
                 self.game.turn_end()
-                self.first = 0
+                self.set_first = 0
             self.update_card()
             self.init_draw()
+            self.highlight = 0
         if index == self.max_card:  # 덱
             self.game.players[0].get_card()
             self.game.turn_end()
             self.update_card()
             self.init_draw()
+            self.highlight = 0
         if index == self.max_card + 1:  # 우노버튼
             self.game.players[0].press_uno()
         if self.game.wild == True:
-            if index > self.max_card + 2:
+            if index >= self.max_card + 2:
                 card_color = ["blue", "green", "red", "yellow"]
-                print(f"선택색1 : {card_color[index - (self.max_card + 2)]}")
-                self.game.grave_top_color = card_color[index - (self.max_card + 2)]
                 print(f"선택색 : {card_color[index - (self.max_card + 2)]}")
+                self.game.grave_top_color = card_color[index - (self.max_card + 2)]
                 self.game.wild = False
+                self.game.turn_end()
+                self.set_first = 0
+                self.update_card()
+                self.init_draw()
+                self.highlight = 0
 
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
