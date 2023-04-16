@@ -213,8 +213,8 @@ def main():
                 single = Single((width, height), size, computer_count, name)
 
                 game_objects.append(single)
-                single.name = name
-                single.computer_count = computer_count
+                # single.name = name
+                # single.computer_count = computer_count
                 single_turn = 1
 
             # 이름 변경 열기

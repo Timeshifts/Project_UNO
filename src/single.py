@@ -7,7 +7,6 @@ clock = pygame.time.Clock()
 
 
 class Single:
-
     def __init__(self, pos=(0, 0), size=(150, 50), computer_count=1, name="ME"):
         # self.menu = self.avail_menu
         # self.max_menu = len(self.menu)
@@ -25,6 +24,8 @@ class Single:
         self.game_timer = 0
         self.first = 0
         self.is_turn_reversed = False  # 턴 방향
+        self.effect = 0
+        self.start = 0
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -55,7 +56,7 @@ class Single:
         self.max_card = len(self.my_card)  # 내가 소유한 카드 개수
         self.game_timer = self.game.game_timer_integer
         self.is_turn_reversed = self.game.is_turn_reversed
-        # self.init_draw()
+        self.init_draw()
 
     def game_start(self):
         self.game = GM.Gm
@@ -69,6 +70,7 @@ class Single:
         self.update_card()
         # self.init_draw()
         if self.game.turn == 0:  # 플레이어인 경우
+            print(self.possible_cards_num)
             if self.first == 0:
                 self.game.turn_start()
                 # self.update_card()
@@ -76,17 +78,21 @@ class Single:
                 self.init_draw()
                 self.first = 1
         else:  # 컴퓨터인 경우
-            pygame.time.wait(2000)
-            self.game.turn_start()
-            self.update_card()
-            self.first = 0
-            self.game.players[self.game.turn].computer_play()
-            self.game.turn_end()
-            self.update_card()
-            se_event = pygame.event.Event(
-                EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
-            )
-            pygame.event.post(se_event)
+            if self.start == 0:
+                pygame.time.wait(2000)
+                self.game.turn_start()
+                self.update_card()
+                self.first == 0
+                self.effect = self.game.players[self.game.turn].computer_play()
+                self.start = 1
+            else:
+                self.game.turn_end()
+                self.update_card()
+                se_event = pygame.event.Event(
+                    EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"}
+                )
+                pygame.event.post(se_event)
+                self.start = 0
 
         if self.game.end == 1:  # 게임 종료
             return 0
@@ -162,13 +168,15 @@ class Single:
                     Button(
                         pygame.transform.scale(
                             pygame.image.load(
-                                str(RESOURCE_PATH / card_folder / self.my_card[i]) + ".png"
+                                str(RESOURCE_PATH / card_folder / self.my_card[i])
+                                + ".png"
                             ),
                             (card_x, card_y),
                         ),
                         pygame.transform.scale(
                             pygame.image.load(
-                                str(RESOURCE_PATH / card_folder / self.my_card[i]) + ".png"
+                                str(RESOURCE_PATH / card_folder / self.my_card[i])
+                                + ".png"
                             ),
                             (card_x, card_y),
                         ),
@@ -212,30 +220,86 @@ class Single:
         # 우노 버튼
         uno_x = 200
         uno_y = 200
-        self.button.append(
-            Button(
-                pygame.transform.scale(
-                    pygame.image.load(RESOURCE_PATH / "single" / "uno_button.png"),
-                    (uno_x, uno_y),
-                ),
-                pygame.transform.scale(
-                    pygame.image.load(
-                        RESOURCE_PATH / "single" / "uno_button_highlight.png"
+        if self.game.players[0].is_uno == False:
+            self.button.append(
+                Button(
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "uno_button.png"),
+                        (uno_x, uno_y),
                     ),
-                    (uno_x, uno_y),
-                ),
-                pos=(
-                    self.size[0] * 3 / 4 - uno_x * setting.get_screen_scale() / 2,
-                    self.size[1] / 2,
-                ),
-                text_input="",
-                font=setting.get_font(50),
-                base_color="Black",
-                hovering_color="Black",
+                    pygame.transform.scale(
+                        pygame.image.load(
+                            RESOURCE_PATH / "single" / "uno_button_highlight.png"
+                        ),
+                        (uno_x, uno_y),
+                    ),
+                    pos=(
+                        self.size[0] * 3 / 4 - uno_x * setting.get_screen_scale() / 2,
+                        self.size[1] / 2,
+                    ),
+                    text_input="",
+                    font=setting.get_font(50),
+                    base_color="Black",
+                    hovering_color="Black",
+                )
             )
-        )
+        else:
+            self.button.append(
+                Button(
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "uno_effect.png"),
+                        (uno_x, uno_y),
+                    ),
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "uno_effect.png"),
+                        (uno_x, uno_y),
+                    ),
+                    pos=(
+                        self.size[0] * 3 / 4 - uno_x * setting.get_screen_scale() / 2,
+                        self.size[1] / 2,
+                    ),
+                    text_input="",
+                    font=setting.get_font(50),
+                    base_color="Black",
+                    hovering_color="Black",
+                )
+            )
         # 각 버튼 이벤트 처리용 Rect 삽입
         self.rect.append(self.button[self.max_card + 1].rect)
+        # wild 카드 선택시 색 선택 버튼 추가
+        if self.game.wild == True:
+            card_color = ["blue", "green", "red", "yellow"]
+            for i in range(4):
+                color_x = 200
+                color_y = 200
+                self.button.append(
+                    Button(
+                        pygame.transform.scale(
+                            pygame.image.load(
+                                str(RESOURCE_PATH / card_folder / f"{card_color[i]}")
+                                + ".png"
+                            ),
+                            (color_x, color_y),
+                        ),
+                        pygame.transform.scale(
+                            pygame.image.load(
+                                str(RESOURCE_PATH / card_folder / f"{card_color[i]}")
+                                + ".png"
+                            ),
+                            (color_x, color_y),
+                        ),
+                        pos=(
+                            # self.size[0] * ((i * 2) + 1) / 16,
+                            0,
+                            self.size[1] / 2,
+                        ),
+                        text_input="",
+                        font=setting.get_font(50),
+                        base_color="Black",
+                        hovering_color="Black",
+                    )
+                )
+                self.rect.append(self.button[self.max_card + 1 + i].rect)
 
     # 스크린에 자신을 그리기
     def draw(self, screen):
@@ -257,11 +321,10 @@ class Single:
             playlist_y = 180 * setting.get_screen_scale()
             playlist_box = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
             playlist_box = pygame.transform.scale(
-                    playlist_box, (playlist_x, playlist_y)
-                )
+                playlist_box, (playlist_x, playlist_y)
+            )
             playlist_box_rect = playlist_box.get_rect(
-                center=(self.size[0] * 7 / 8, 
-                        self.size[1] * (2 * i + 3) / 12)
+                center=(self.size[0] * 7 / 8, self.size[1] * (2 * i + 3) / 12)
             )
             screen.blit(playlist_box, playlist_box_rect)
             # Player List 컴퓨터 이름
@@ -289,7 +352,8 @@ class Single:
                     playlist_player_card,
                     (
                         self.size[0] * (7 / 8 - 1 / 8) + 30 + j * card_x / 3,
-                        self.size[1] * ((2 * i + 3) / 12 - 1 / 12) + 80 * setting.get_screen_scale(),
+                        self.size[1] * ((2 * i + 3) / 12 - 1 / 12)
+                        + 80 * setting.get_screen_scale(),
                     ),
                 )
 
@@ -339,6 +403,21 @@ class Single:
                     card_y * 5 / 3,
                 ),
             )
+        # 메인보드 컴퓨터 쉴드
+        for i in range(self.computer_count):
+            if self.game.players[i + 1].defence_int > 0:
+                shield_x = 49 * setting.get_screen_scale()
+                shield_y = 53 * setting.get_screen_scale()
+                shield = pygame.image.load(RESOURCE_PATH / "single" / "shield.png")
+                shield = pygame.transform.scale(shield, (shield_x, shield_y))
+                screen.blit(
+                    shield,
+                    (
+                        self.size[0] * 3 / 4 * (i + 1) / (self.computer_count + 1)
+                        + card_x / 2,
+                        card_y * 5 / 3 - shield_y,
+                    ),
+                )
         # 카드 묘지
         grave_card_x = 130 * setting.get_screen_scale()
         grave_card_y = 182 * setting.get_screen_scale()
@@ -403,23 +482,19 @@ class Single:
                 self.size[1] * 2 / 3,
             ),
         )
-        # 내 카드
-        # for i in range(len(self.my_card)):
-        #     card_x = 182
-        #     card_y = 254.8
-        #     playlist_player_card = pygame.image.load(
-        #         str(RESOURCE_PATH / card_folder / self.my_card[i]) + ".png"
-        #     )
-        #     playlist_player_card = pygame.transform.scale(
-        #         playlist_player_card, (card_x, card_y)
-        #     )
-        #     screen.blit(
-        #         playlist_player_card,
-        #         (
-        #             self.size[0] / 30 + i * card_x / 2,
-        #             self.size[1] - card_y,
-        #         ),
-        #     )
+        # 내 쉴드
+        if self.game.players[0].defence_int > 0:
+            shield_x = 49 * setting.get_screen_scale()
+            shield_y = 53 * setting.get_screen_scale()
+            shield = pygame.image.load(RESOURCE_PATH / "single" / "shield.png")
+            shield = pygame.transform.scale(shield, (shield_x, shield_y))
+            screen.blit(
+                shield,
+                (
+                    0,
+                    self.size[1] * 2 / 3,
+                ),
+            )
         # 전체 타이머
         font = setting.get_font(100)
         game_timer = font.render(f"{self.game_timer}", True, "White")
@@ -430,18 +505,38 @@ class Single:
                 self.size[1] / 24,
             ),
         )
+        # 애니메이션
+        if self.effect == "get":
+            get_card_x = 130 * setting.get_screen_scale()
+            get_card_y = 182 * setting.get_screen_scale()
+            get_card = pygame.image.load(
+                RESOURCE_PATH / card_folder / "card_back_effect.png"
+            )
+            get_card = pygame.transform.scale(get_card, (get_card_x, get_card_y))
+            screen.blit(
+                get_card,
+                (
+                    self.size[0] * 3 / 8 - get_card_x / 2 - get_card_x * 2 / 3,
+                    self.size[1] / 2 - get_card_y,
+                ),
+            )
+            self.effect = 0
 
     # 메뉴 선택 시 처리
     def select_card(self, index):
-        se_event = pygame.event.Event(
-            EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
-        )
-        pygame.event.post(se_event)
+        # se_event = pygame.event.Event(
+        #     EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
+        # )
+        # pygame.event.post(se_event)
         print(f"---{index}---")
 
         if index in self.possible_cards_num:
             self.game.players[0].use_card(index)
-            self.game.turn_end()
+            if self.game.wild == True:
+                pass
+            else:
+                self.game.turn_end()
+                self.first = 0
             self.update_card()
             self.init_draw()
         if index == self.max_card:  # 덱
@@ -449,11 +544,21 @@ class Single:
             self.game.turn_end()
             self.update_card()
             self.init_draw()
-        if index == self.max_card:  # 우노버튼
+        if index == self.max_card + 1:  # 우노버튼
             self.game.players[0].press_uno()
+        if self.game.wild == True:
+            if index > self.max_card + 2:
+                card_color = ["blue", "green", "red", "yellow"]
+                print(f"선택색1 : {card_color[index - (self.max_card + 2)]}")
+                self.game.grave_top_color = card_color[index - (self.max_card + 2)]
+                print(f"선택색 : {card_color[index - (self.max_card + 2)]}")
+                self.game.wild = False
 
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
+        self.color = 0
+        if self.game.wild == True:
+            self.color = 4
         if self.game.turn == 0:
             # 겹친 구간에서 위에 있는 카드가 선택되게 하기 위한 조정
             for i in range(self.max_card + 1, -1, -1):
@@ -466,13 +571,16 @@ class Single:
                         # 2차 요구사항 - 카드 선택을 위한 효과음 추가
                         if i != self.highlight:
                             pygame.event.post(
-                                pygame.event.Event(EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"})
+                                pygame.event.Event(
+                                    EVENT_PLAY_SE,
+                                    {"path": RESOURCE_PATH / "sound" / "select.mp3"},
+                                )
                             )
                         # highlight 대상을 변경
                         self.highlight = i
                         # 키보드 선택 해제
                         self.selected = -1
-                        return # 겹친 구간에서 카드 여러 개 선택 방지
+                        return  # 겹친 구간에서 카드 여러 개 선택 방지
                 elif event.type == pygame.KEYDOWN:
                     if self.pressed == False:
                         self.pressed = True
@@ -484,7 +592,10 @@ class Single:
                         elif event.key == setting.options["left"]:
                             # 2차 요구사항 - 카드 선택을 위한 효과음 추가
                             pygame.event.post(
-                                pygame.event.Event(EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"})
+                                pygame.event.Event(
+                                    EVENT_PLAY_SE,
+                                    {"path": RESOURCE_PATH / "sound" / "select.mp3"},
+                                )
                             )
                             # 선택을 하나 왼쪽으로 이동
                             self.selected = (
@@ -494,13 +605,16 @@ class Single:
                         elif event.key == setting.options["right"]:
                             # 2차 요구사항 - 카드 선택을 위한 효과음 추가
                             pygame.event.post(
-                                pygame.event.Event(EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"})
+                                pygame.event.Event(
+                                    EVENT_PLAY_SE,
+                                    {"path": RESOURCE_PATH / "sound" / "select.mp3"},
+                                )
                             )
                             # 선택을 하나 오른쪽으로 이동
                             self.selected = (
                                 self.selected + 1
-                                if self.selected < self.max_card + 1
-                                else self.max_card + 1
+                                if self.selected < self.max_card + 1 + self.color
+                                else self.max_card + 1 + self.color
                             )
                             self.highlight = self.selected
 
