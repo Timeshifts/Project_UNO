@@ -12,7 +12,7 @@ def roulette_wheel_selection(weights):
         else:
             r = random.randint(1, 200 + weights)
             
-            if r < 100:
+            if r <= 100:
                 card_num[0] += 1
             else:
                 card_num[1] += 1
