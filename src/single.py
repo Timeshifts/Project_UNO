@@ -342,18 +342,6 @@ class Single:
                     card_y * 5 / 3,
                 ),
             )
-        # 카드 덱
-        deck_card_x = 130 * setting.get_screen_scale()
-        deck_card_y = 182 * setting.get_screen_scale() 
-        deck_card = pygame.image.load(RESOURCE_PATH / card_folder / "card_back.png")
-        deck_card = pygame.transform.scale(deck_card, (deck_card_x, deck_card_y))
-        screen.blit(
-            deck_card,
-            (
-                self.size[0] * 3 / 8 - deck_card_x / 2 - deck_card_x * 2 / 3,
-                self.size[1] / 2 - deck_card_y / 2,
-            ),
-        )
         # 카드 묘지
         grave_card_x = 130 * setting.get_screen_scale()
         grave_card_y = 182 * setting.get_screen_scale()
