@@ -146,7 +146,7 @@ def main():
                     game_objects.remove(single_lobby)
                 elif state == "story_map":
                     game_objects.remove(story_object)  # 스토리 모드 제거
-                elif state == "single":
+                elif state in ("single", "end_game"):
                     del single  # single 객체 삭제
                     single_turn = 0  # single 진행 X
                     game_objects.remove(single)
