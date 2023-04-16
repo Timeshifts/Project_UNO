@@ -16,9 +16,6 @@ class SingleLobby:
         self.pos[1] + self.size[1] * 1.2 * index,
     )
 
-    # 폰트 설정
-    get_font = lambda self, size: pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
-
     def __init__(self, pos=(0, 0), size=(150, 50)):
         self.menu = self.avail_menu
         self.max_menu = len(self.menu)
@@ -58,7 +55,7 @@ class SingleLobby:
                     image,
                     pos=(self.size[0] * 7 / 8, self.size[1] * (2 * i + 3) / 12),
                     text_input=text,
-                    font=self.get_font(50),
+                    font=setting.get_font(50),
                     base_color=color,
                     hovering_color=color,
                 )
@@ -76,7 +73,7 @@ class SingleLobby:
                     ),
                     pos=(self.size[0] / 2, self.size[1] * (2 * i + 13) / 20),
                     text_input=self.menu[i],
-                    font=self.get_font(50),
+                    font=setting.get_font(50),
                     base_color="#3a4aab",
                     hovering_color="White",
                 )
@@ -85,7 +82,7 @@ class SingleLobby:
             self.rect.append(self.button[i + self.max_computer].rect)
 
             # 본인 이름 수정
-            self.text_name = self.get_font(50).render(self.name, True, "White")
+            self.text_name = setting.get_font(50).render(self.name, True, "White")
             self.text_name_rect = self.text_name.get_rect(
                 center=(self.size[0] / 2, self.size[1] / 3)
             )
@@ -107,7 +104,7 @@ class SingleLobby:
                     self.button[i].changeHighlight(False, screen)
 
         # Add a Player 텍스트
-        font = self.get_font(50)
+        font = setting.get_font(50)
         text_player = font.render("Add a Player", True, "White")
         text_player_rect = text_player.get_rect(
             center=(self.size[0] * 7 / 8, self.size[1] / 12)

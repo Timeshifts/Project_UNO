@@ -146,7 +146,7 @@ def main():
                     game_objects.remove(single_lobby)
                 elif state == "story_map":
                     game_objects.remove(story_object)  # 스토리 모드 제거
-                elif state == "single":
+                elif state in ("single", "end_game"):
                     del single  # single 객체 삭제
                     single_turn = 0  # single 진행 X
                     game_objects.remove(single)
@@ -202,6 +202,7 @@ def main():
             if event.type == EVENT_OPEN_RENAME:
                 state = "rename"
                 game_objects.remove(single_lobby)
+                rename.resize(size)
                 game_objects.append(rename)
 
             # 이름 변경 닫기
@@ -262,6 +263,10 @@ def main():
                     background = get_background(state, size)
                     for obj in game_objects:
                         obj.resize(size)
+                # 일시 정지 이후 색약 모드 변경 결과 즉시 반영
+                if state in ("single_play" or "story_play"):
+                    single.update_card()
+                    single.init_draw()
                 pygame.mixer.music.set_volume(setting.get_volume("bgm"))
 
             # 오브젝트별로 이벤트 처리

@@ -20,6 +20,8 @@ class Rename(Menu):
         super().__init__(pos, size)
         self.init_draw()
 
+    def init_draw(self):
+        super().init_draw()
         self.prompt_text = setting.get_font(50).render("Enter New Name (max 8 chars):", True, "White")
         self.prompt_text_rect = self.prompt_text.get_rect(
             center=(self.size[0] / 2, self.size[1] * 0.15)
