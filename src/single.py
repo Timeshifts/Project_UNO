@@ -462,6 +462,11 @@ class Single:
                         break  # 한 번에 여러 개의 메뉴가 눌리지 않도록 처리
                 elif event.type == pygame.MOUSEMOTION:
                     if self.rect[i].collidepoint(event.pos):
+                        # 2차 요구사항 - 카드 선택을 위한 효과음 추가
+                        if i != self.highlight:
+                            pygame.event.post(
+                                pygame.event.Event(EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"})
+                            )
                         # highlight 대상을 변경
                         self.highlight = i
                         # 키보드 선택 해제
@@ -475,12 +480,20 @@ class Single:
                             if self.selected != -1:
                                 self.select_card(self.selected)
                         elif event.key == setting.options["left"]:
+                            # 2차 요구사항 - 카드 선택을 위한 효과음 추가
+                            pygame.event.post(
+                                pygame.event.Event(EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"})
+                            )
                             # 선택을 하나 왼쪽으로 이동
                             self.selected = (
                                 self.selected - 1 if 0 < self.selected else 0
                             )
                             self.highlight = self.selected
                         elif event.key == setting.options["right"]:
+                            # 2차 요구사항 - 카드 선택을 위한 효과음 추가
+                            pygame.event.post(
+                                pygame.event.Event(EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"})
+                            )
                             # 선택을 하나 오른쪽으로 이동
                             self.selected = (
                                 self.selected + 1
