@@ -21,15 +21,21 @@ class GameManager:
         self.turn_jump_num = 0  # 누가 턴 건너뛰기를 했으면 여기에 값이 설정되는 정수 변수
         self.is_turn_reversed = False  # 누가 턴 진행방향을 바꿨는지 체크
         self.grave_top_color = "" # 묘지의 top 카드 색깔
+        
         self.game_timer_end = False # 게임 타이머 다 되면 True 되는 불린변수
         self.turn_timer_end = False # 턴 타이머 다 되거나, 유저 행동하면 True 되는 불린변수
+        
         self.game_timer_integer = 0 # 게임 타이머 체크할 정수변수
         self.turn_timer_integer = 0 # 턴 타이머 체크할 정수변수
+        
         self.is_setting = False # 맨 처음 덱세팅 후에 카드 한장 빼서 놓을 때 쓰는 불린변수
+        
         self.is_top_card_change = False # 스토리모드 지역 C 특성 쓸껀지 불린변수
         self.top_card_change_num = 100 # 스토리모드 지역 C 특성, 몇 턴마다 바뀔껀지
+        
         self.is_hand_change = False # 스토리모드 지역 D 특성 쓸껀지 불린변수
         self.hand_change_num = 100 # 스토리모드 지역 D 특성, 몇턴마다 바뀔껀지
+        
         self.story_A_computer_count = 0 # story A 특성 유저를 얼마나? 넣을지
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
@@ -344,6 +350,8 @@ class GameManager:
             if self.game_timer_integer <= 0:
                 print("game time end")
                 break
+            elif self.game_timer_end == True:
+                break
             
             print(f"game time: {self.game_timer_integer} seconds")
             time.sleep(1)
@@ -637,7 +645,7 @@ class StoryA_User(Player):
         super().__init__(is_computer)
         self.skill_card_weight = 50
 
-    def story_user_play(self):
+    def computer_play(self):
         self.possible_cards.clear()
         self.judge_possible_cards()
         idx = []
@@ -671,6 +679,7 @@ class Card:
             self.score = int(name)
         else:
             self.score = 20
+
 
 Gm = GameManager()
 
