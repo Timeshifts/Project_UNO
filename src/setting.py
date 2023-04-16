@@ -36,7 +36,7 @@ get_volume = lambda type: options["sound"] * options[type] / 10000
 
 # 스크린이 1920 * 1080 대비 얼마나 줄었나를 실수(0-1)로 반환합니다.
 # 1920 * 1080 크기에서 1.0이 반환됩니다.
-get_screen_scale = lambda: resolution[options['resolution']][0] / 1980
+get_screen_scale = lambda: resolution[options['resolution']][0] / 1920
 
 # 스크린 size tuple을 (1920, 1080)과 같이 반환합니다.
 get_screen_size = lambda: resolution[options['resolution']]

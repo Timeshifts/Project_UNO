@@ -90,6 +90,7 @@ class Button:
 
     def ChangeImage(self, change_image):
         self.image = change_image
+        self.hovering_image = change_image
 
     def ChangeText(
         self, change_text, change_base_color=None, change_hovering_color=None

@@ -99,10 +99,12 @@ class SingleLobby:
     def draw(self, screen):
         for i in range(self.max_computer + self.max_menu):
             self.button[i].update(screen)
-            if i == self.highlight:
+            # 컴퓨터 추가 영역 호버링 중지
+            if i == self.highlight and i >= self.max_computer:
                 self.button[i].changeHighlight(True, screen)
             else:
-                self.button[i].changeHighlight(False, screen)
+                if i >= self.max_computer:
+                    self.button[i].changeHighlight(False, screen)
 
         # Add a Player 텍스트
         font = self.get_font(50)
@@ -128,16 +130,25 @@ class SingleLobby:
         )
         pygame.event.post(se_event)
 
+        list_x = 480 * setting.get_screen_scale()
+        list_y = 180 * setting.get_screen_scale()
+
         if index < self.max_computer:
             if self.computer_chk[index] == True:
                 self.button[index].ChangeImage(
-                    pygame.image.load(RESOURCE_PATH / "single" / "list_unpicked.png")
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "list_unpicked.png"),
+                        (list_x, list_y)
+                    )
                 )
                 self.button[index].ChangeText("+", "Black", "Black")
                 self.computer_chk[index] = False
             else:
                 self.button[index].ChangeImage(
-                    pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "list.png"),
+                        (list_x, list_y)
+                    )
                 )
                 self.button[index].ChangeText(self.computer[index], "White", "White")
                 self.computer_chk[index] = True
