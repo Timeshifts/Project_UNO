@@ -124,9 +124,6 @@ class GameManager:
                 for i in range(self.players[self.turn].attacked_int):
                     self.give_card(self.turn)
 
-            self.players[self.turn].is_attacked = False
-            self.attacked_int = 0
-
         # 안 썼다면, 해당 플레이어가 컴퓨터인지 유저인지 판별한다.
         else:
             self.give_authority(self.turn)
@@ -138,8 +135,6 @@ class GameManager:
             #     print(f"{self.turn} 턴 유저, 실제 플레이어 이므로 권한 지급\n")
             #     self.players[self.turn].play()
 
-        self.turn_timer_end = True
-
         #  pygame.time.wait(2000)
 
         # self.turn_end()
@@ -147,6 +142,11 @@ class GameManager:
     # 턴 끝 함수
     def turn_end(self):
         print(f"턴 종료\n\n")
+        
+        self.players[self.turn].is_attacked = False
+        self.players[self.turn].attacked_int = 0
+        self.turn_timer_end = True
+        
         # 현재 핸드가 0인지 판별
         if len(self.players[self.turn].hand) == 0:
             print(f"{self.turn} 턴 유저 승리\n")
