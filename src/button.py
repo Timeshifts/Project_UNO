@@ -4,10 +4,18 @@ from constant import *
 
 class Button:
     def __init__(
-        self, image, hovering_image, pos, text_input, font, base_color, hovering_color, scale = (1.0, 1.0)
+        self,
+        image,
+        hovering_image,
+        pos,
+        text_input,
+        font,
+        base_color,
+        hovering_color,
+        scale=(1.0, 1.0),
     ):
         self.base_image = image
-        self.base_size = self.base_image.get_size() # 원래 이미지의 크기
+        self.base_size = self.base_image.get_size()  # 원래 이미지의 크기
         self.image = self.base_image
         self.hovering_image = hovering_image
         self.x_pos = pos[0]
@@ -16,7 +24,7 @@ class Button:
         self.base_color, self.hovering_color = base_color, hovering_color
         self.text_input = text_input
         self.text = self.font.render(self.text_input, True, self.base_color)
-        self.scale = scale # 추가 조정을 위한 실수 배율
+        self.scale = scale  # 추가 조정을 위한 실수 배율
         if self.image is None:
             self.image = self.text
         if self.hovering_image is None:
@@ -27,14 +35,20 @@ class Button:
 
     def resize(self, size):
         self.base_image = pygame.transform.scale(
-            self.base_image, (size[0]* self.base_size[0] * self.scale[0] / 1920,
-                         size[1] * self.base_size[1] * self.scale[1] / 1080)
+            self.base_image,
+            (
+                size[0] * self.base_size[0] * self.scale[0] / 1920,
+                size[1] * self.base_size[1] * self.scale[1] / 1080,
+            ),
         )
         self.hovering_image = pygame.transform.scale(
-            self.hovering_image, (size[0] * self.base_size[0] * self.scale[0] / 1920,
-                         size[1] * self.base_size[1] * self.scale[1] / 1080)
+            self.hovering_image,
+            (
+                size[0] * self.base_size[0] * self.scale[0] / 1920,
+                size[1] * self.base_size[1] * self.scale[1] / 1080,
+            ),
         )
-    
+
         self.font = setting.get_font(50 * self.scale[0])
         self.text = self.font.render(self.text_input, True, self.base_color)
         self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
@@ -67,12 +81,23 @@ class Button:
             self.image = self.base_image
             self.changeColor(state, screen)
 
+    def changeHighlight1(self, state, screen):
+        if state:
+            screen.blit(self.image, self.rect)
+            screen.blit(self.hovering_image, self.rect)
+        else:
+            screen.blit(self.image, self.rect)
+
     def ChangeImage(self, change_image):
         self.image = change_image
 
-
-    def ChangeText(self, change_text, change_base_color=None, change_hovering_color=None):
+    def ChangeText(
+        self, change_text, change_base_color=None, change_hovering_color=None
+    ):
         self.text_input = change_text
         if change_hovering_color is not None:
-            self.base_color, self.hovering_color = change_base_color, change_hovering_color
+            self.base_color, self.hovering_color = (
+                change_base_color,
+                change_hovering_color,
+            )
         self.text = self.font.render(self.text_input, True, self.base_color)

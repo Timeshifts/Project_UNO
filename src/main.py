@@ -1,4 +1,4 @@
-import sys, setting, pause, story_map, setting_menu# , GameManager
+import sys, setting, pause, story_map, setting_menu  # , GameManager
 from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN_OPTION
 from single_lobby import SingleLobby, EVENT_MAIN
 from single import Single, EVENT_MAIN
@@ -14,6 +14,7 @@ except ImportError:
 
 setting_UI = None
 
+
 def get_background(state, size):
     if state == "main_menu":
         return pygame.transform.scale(
@@ -21,14 +22,30 @@ def get_background(state, size):
         )
     elif state == "story_map":
         try:
-            path = RESOURCE_PATH / "story" / f"story_background_{story_map.StoryMenu.story_progress+1}.png"
+            path = (
+                RESOURCE_PATH
+                / "story"
+                / f"story_background_{story_map.StoryMenu.story_progress+1}.png"
+            )
         except FileNotFoundError:
             # 스토리를 다 깨면 +1번까지 열려있는 지도 = 없으므로 오류
             # 따라서, 다 열린 지도로 예외 처리
-            path = RESOURCE_PATH / "story" / f"story_background_{story_map.StoryMenu.story_amount}.png"
+            path = (
+                RESOURCE_PATH
+                / "story"
+                / f"story_background_{story_map.StoryMenu.story_amount}.png"
+            )
         background = pygame.transform.scale(pygame.image.load(path), size)
         return background
-    
+    elif state == "single":
+        return pygame.transform.scale(
+            pygame.image.load(RESOURCE_PATH / "single" / "single_background.png"), size
+        )
+    elif state == "single_lobby":
+        return pygame.transform.scale(
+            pygame.image.load(RESOURCE_PATH / "single" / "single_robby_background.png"),
+            size,
+        )
 
 
 # 배경 음악 재생
@@ -50,9 +67,9 @@ def main():
         size = width, height = setting.resolution[setting.options["resolution"]]
     else:
         # 지정된 해상도 범위 초과 시 초기화
-        size = width, height = setting.options[
+        size = width, height = setting.options["resolution"] = setting.default_setting[
             "resolution"
-        ] = setting.default_setting["resolution"]
+        ]
 
     # 해상도에 맞추어 object들의 크기 재설정
     setting_UI.resize((width, height))
@@ -80,9 +97,9 @@ def main():
     # 직접적으로 game_objects에 들어가는 objects는 여기서 미리 선언되어야
     # 넣고 뺄 때 문제가 생기지 않습니다.
     main_menu = Main_menu((width / 2, height / 2 + 100), size)
-    game_objects.append(main_menu) # 메인 메뉴 생성하여 게임 오브젝트에 추가
+    game_objects.append(main_menu)  # 메인 메뉴 생성하여 게임 오브젝트에 추가
     single_lobby = SingleLobby((width, height), size)
-    single = Single((width, height), size, 1, "Test")
+    # single = Single((width, height), size, 1, "Test")
     rename = Rename((width, height), size)
     story_object = story_map.StoryMap((0, 0), size)
 
@@ -98,9 +115,22 @@ def main():
                 pygame.quit()
                 sys.exit(0)
 
+            # 게임 종료 상황에 이 Event를 post해 주세요.
+            # 요구 사항 '플레이어가 마우스 클릭하거나 키를 누르면 시작 메뉴로'를 위해 필요합니다.
+            if event.type == EVENT_END_GAME:
+                state = "end_game"
+            # 게임 종료 상황에
+            if state == "end_game":
+                # 플레이어가 마우스를 클릭하거나 아무 키나 누르면
+                if event.type in (pygame.MOUSEBUTTONDOWN, pygame.KEYDOWN):
+                    # 메인으로 돌아가기
+                    pygame.event.post(pygame.event.Event(EVENT_MAIN))
+
             # 일시 정지
             if event.type == pygame.KEYDOWN:
-                if event.key == setting.options["pause"] and state in ("single_play" or "story_play"):
+                if event.key == setting.options["pause"] and state in (
+                    "single_play" or "story_play"
+                ):
                     pause.init_pause(setting_UI, screen)
                     pause.pause()  # pause 상태에서의 루프
 
@@ -116,6 +146,10 @@ def main():
                     game_objects.remove(single_lobby)
                 elif state == "story_map":
                     game_objects.remove(story_object)  # 스토리 모드 제거
+                elif state == "single":
+                    del single  # single 객체 삭제
+                    single_turn = 0  # single 진행 X
+                    game_objects.remove(single)
                 # 메인 메뉴로 복귀
                 game_objects.append(main_menu)
                 main_menu.resize(size)
@@ -136,15 +170,13 @@ def main():
                     if "name" in event.dict.keys():
                         single_lobby.name = event.name
                     game_objects.remove(rename)
-                background = pygame.image.load(
-                    RESOURCE_PATH / "single" / "single_robby_background.png"
-                )
                 state = "single_lobby"
+                background = get_background(state, size)
                 load_bgm(
                     RESOURCE_PATH / "sound" / "bg_game.mp3", setting.get_volume("bgm")
                 )
                 game_objects.append(single_lobby)
-                single_lobby.resize(size) # 임시
+                single_lobby.resize(size)  # 임시
 
             # 게임 시작
             if event.type == EVENT_START_SINGLE:
@@ -153,15 +185,17 @@ def main():
                 name = single_lobby.name
                 # 게임 로비 제거
                 game_objects.remove(single_lobby)
-                background = pygame.image.load(
-                    RESOURCE_PATH / "single" / "single_background.png"
-                )
                 state = "single"
+                background = get_background(state, size)
                 # load_bgm(
                 #     RESOURCE_PATH / "sound" / "bg_game.mp3", setting_UI.get_volume("bgm")
                 # )
                 #
+                single = Single((width, height), size, computer_count, name)
+
                 game_objects.append(single)
+                single.name = name
+                single.computer_count = computer_count
                 single_turn = 1
 
             # 이름 변경 열기
@@ -176,7 +210,7 @@ def main():
                 game_objects.remove(rename)
 
             # 스토리 모드
-            if event.type == EVENT_START_STORY:
+            if event.type == EVENT_OPEN_STORYMAP:
                 # 메인 메뉴 제거
                 game_objects.remove(main_menu)
                 state = "story_map"
@@ -185,6 +219,7 @@ def main():
                     RESOURCE_PATH / "sound" / "bg_story_main.mp3",
                     setting.get_volume("bgm"),
                 )
+                story_object.resize(size)
                 game_objects.append(story_object)
 
             # 옵션 열기
@@ -206,6 +241,10 @@ def main():
 
             # 메인 메뉴로 복귀
             if event.type == EVENT_START_MENU:
+                if state == "single":
+                    del single  # single 객체 삭제
+                    single_turn = 0  # single 진행 X
+                    game_objects.clear()
                 state = "main_menu"
                 background = get_background(state, size)
                 load_bgm(
@@ -243,11 +282,9 @@ def main():
 
         # 싱글 게임 진행중 확인
         if single_turn == 1:
-            single.turn_start()
-            single.update_card()
-            pygame.time.wait(3000)
-            # if single.:
-            #     single_turn=0
+            single_turn = single.turn_start()
+            # single.update_card()
+            # pygame.time.wait(3000)
 
 
 if __name__ == "__main__":

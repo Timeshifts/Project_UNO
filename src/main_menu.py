@@ -24,4 +24,4 @@ class Main_menu(Menu):
         elif self.avail_menu[index] == "PLAY":
             pygame.event.post(pygame.event.Event(EVENT_START_LOBBY))  # 싱글플레이 로비
         elif self.avail_menu[index] == "STORY":
-            pygame.event.post(pygame.event.Event(EVENT_START_STORY))  # 스토리 모드
+            pygame.event.post(pygame.event.Event(EVENT_OPEN_STORYMAP))  # 스토리 모드
