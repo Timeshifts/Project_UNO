@@ -7,6 +7,7 @@ import time
 class GameManager:
     def __init__(self):
         self.turn = 0  # 지금 누구 턴인지 나타내는 정수 변수
+        self.turn_count = 0 # 총 몇번의 턴이 진행되었는지
         self.players = []  # 플레이어 객체들을 담을 배열
         self.real_player_count = 0  # 실제 플레이어 수가 몇 인지 나타낼 정수 변수
         self.player_num = 0  # 전체 플레이어 수
@@ -20,11 +21,17 @@ class GameManager:
         self.winner_index = 0  # 누가 우승자인지 값을 담는 정수변수
         self.turn_jump_num = 0  # 누가 턴 건너뛰기를 했으면 여기에 값이 설정되는 정수 변수
         self.is_turn_reversed = False  # 누가 턴 진행방향을 바꿨는지 체크
-        self.grave_top_color = ""  # 묘지의 top 카드 색깔
-        self.game_timer_end = False  # 게임 타이머 다 되면 True 되는 불린변수
-        self.turn_timer_end = False  # 턴 타이머 다 되거나, 유저 행동하면 True 되는 불린변수
-        self.game_timer_integer = 0  # 게임 타이머 체크할 정수변수
-        self.turn_timer_integer = 0  # 턴 타이머 체크할 정수변수
+        self.grave_top_color = "" # 묘지의 top 카드 색깔
+        self.game_timer_end = False # 게임 타이머 다 되면 True 되는 불린변수
+        self.turn_timer_end = False # 턴 타이머 다 되거나, 유저 행동하면 True 되는 불린변수
+        self.game_timer_integer = 0 # 게임 타이머 체크할 정수변수
+        self.turn_timer_integer = 0 # 턴 타이머 체크할 정수변수
+        self.is_setting = False # 맨 처음 덱세팅 후에 카드 한장 빼서 놓을 때 쓰는 불린변수
+        self.is_top_card_change = False # 스토리모드 지역 C 특성 쓸껀지 불린변수
+        self.top_card_change_num = 100 # 스토리모드 지역 C 특성, 몇 턴마다 바뀔껀지
+        self.is_hand_change = False # 스토리모드 지역 D 특성 쓸껀지 불린변수
+        self.hand_change_num = 100 # 스토리모드 지역 D 특성, 몇턴마다 바뀔껀지
+        self.story_A_computer_count = 0 # story A 특성 유저를 얼마나? 넣을지
         self.end = 0  # 게임 종료 여부
         self.game_timer_thread = 0
 
@@ -45,6 +52,9 @@ class GameManager:
         for i in range(self.computer_count):
             self.players.append(Computer(True))
 
+        for i in range(self.computer_count):
+            self.players.append(StoryA_User(True))
+
         self.player_num = len(self.players)
 
         # 일단 임시로 주석처리리
@@ -59,9 +69,8 @@ class GameManager:
         self.card_shuffle()
 
         # 플레이어들에게 카드 나눠줌
-        for i in range(self.start_cards_integer):
-            for j in range(len(self.players)):
-                self.give_card(j)
+        for i in range(len(self.players)):
+            self.players[i].hand = self.roulette_wheel_selection(self.players[i].skill_card_weight)
 
         # 덱에서 카드 한장 빼서 세팅해놓음
         self.setting_card(self.deck)
@@ -84,6 +93,14 @@ class GameManager:
 
     # 턴 시작 함수
     def turn_start(self):
+        self.turn_count += 1
+        
+        if self.is_top_card_change == True:
+            self.top_card_change()
+            
+        if self.is_hand_change == True:
+            self.hand_change()
+        
         self.turn_timer_end = False
         self.turn_count_down()
 
@@ -276,10 +293,10 @@ class GameManager:
 
     # 게임 시작시 덱에서 카드한장 꺼내기
     def setting_card(self, deck):
+        self.is_setting = True
         pop_card = deck.pop()
-        self.grave.append(pop_card)
-        self.grave_top = self.grave[-1]  # grave 의 맨 위의 카드
-        self.grave_top_color = self.grave_top.color
+        self.get_card(pop_card)
+        self.is_setting = False
 
     # 맨 처음에 덱에 카드넣기
     def set_deck(self):
@@ -337,7 +354,9 @@ class GameManager:
             if self.game_timer_integer <= 0:
                 print("game time end")
                 break
-
+            elif self.game_timer_end == True:
+                break
+            
             print(f"game time: {self.game_timer_integer} seconds")
             time.sleep(1)
 
@@ -361,6 +380,23 @@ class GameManager:
     def turn_count_down(self):
         thread = threading.Thread(target=self.turn_timer, args=(15,))
         thread.start()
+    
+    def top_card_change(self):
+        if self.turn_count % self.top_card_change_num == 0:
+            random_color = ["blue","green","red","yellow"]
+            self.grave_top_color = random.choice(random_color)
+    
+    def hand_change(self):
+        if self.turn_count % self.hand_change_num == 0:
+            hands = []
+            for i in range(self.player_num):
+                hands.append(self.players[i].hand)
+                
+            random.shuffle(hands)
+            
+            for j in range(self.player_num):
+                self.players[j].hand = hands.pop()
+            
 
     # 여기 아래 부터는 기술 카드 효과들임
 
@@ -400,27 +436,64 @@ class GameManager:
         print(f"묘지 탑 색깔 {self.grave_top_color} 로 설정")
 
     def target_attack(self):
-        target = 0
-        if self.players[self.turn].is_computer == True:
-            target = random.randint(0, self.player_num - 1)
-        else:
-            print(f"플레이어를 선택하세요")
-            for i in range(self.player_num):
-                print(f"/ {i}번 플레이어")
-            while True:
-                a = int(input())
+        target = target = random.randint(0, self.player_num - 1)
+        if self.is_setting == False:
+            if self.players[self.turn].is_computer == True:
+                target = random.randint(0, self.player_num - 1)
+                
+                while target == self.turn:
+                    target = random.randint(0, self.player_num - 1)
+            else:
+                print(f"플레이어를 선택하세요")
+                for i in range(self.player_num):
+                    print(f"/ {i}번 플레이어")
+                while True:
+                    a = int(input())
 
-                if a < 0 or a >= self.player_num:
-                    print("다시 입력하세요\n")
-                else:
-                    target = a
-                    break
-
+                    if a < 0 or a >= self.player_num:
+                        print("다시 입력하세요\n")
+                    else:
+                        target = a
+                        break
+        
         self.attack(2, target)
         print(f"{target}번 유저에게, 카드 2장 공격\n")
 
     def defence(self):
         self.players[self.turn].defence_int += 2
+    
+    
+    def roulette_wheel_selection(self, weights):
+        hand = []
+        card_num = [0, 0]  # 일반, 기술카드 구분위한 리스트
+        for i in range(self.start_cards_integer):
+            
+            if weights == 0:
+                hand.append(self.deck.pop())
+            else:
+                r = random.randint(1, 200 + weights)
+            
+                if r < 100:
+                    card_num[0] += 1
+                else:
+                    card_num[1] += 1
+
+                for card in self.deck:
+                    if card.name.isdigit() and card_num[0] != 0:
+                        index = self.deck.index(card)
+                        hand.append(self.deck.pop(index))
+                        card_num[0] -= 1
+                    elif not card.name.isdigit() and card_num[1] != 0:
+                        index = self.deck.index(card)
+                        hand.append(self.deck.pop(index))
+                        card_num[1] -= 1
+
+        for n in card_num:
+            if n != 0:
+                for j in range(n):
+                    hand.append(self.deck.pop())
+
+        return hand
 
 
 # -------------------------------------------------------------------------------------------------
@@ -438,6 +511,7 @@ class Player:
         self.attacked_int = 0
         self.defence_int = 0
         self.possible_cards_num = []
+        self.skill_card_weight = 0
 
     def press_uno(self):
         if self.is_authority == True and len(self.hand) == 2:
@@ -478,6 +552,7 @@ class User(Player):
         self.possible_cards.clear()
         self.possible_cards_num.clear()
         self.judge_possible_cards()
+                
         return self.possible_cards_num
 
         # print("1 : 보유한 카드들 보기\n")
@@ -568,6 +643,31 @@ class Computer(Player):
 
 # -------------------------------------------------------------------------------------------------
 
+class StoryA_User(Player):
+    def __init__(self, is_computer):
+        super().__init__(is_computer)
+        self.skill_card_weight = 50
+
+    def computer_play(self):
+        self.possible_cards.clear()
+        self.judge_possible_cards()
+        idx = []
+        if len(self.possible_cards) != 0:
+            for i in range(len(self.possible_cards)):
+                if "again" in self.possible_cards[i].name or "skip" in self.possible_cards[i].name:
+                    idx.append(i)
+            if len(idx):
+                self.use_card(idx.pop())
+            else:
+                ran = random.randrange(len(self.possible_cards))
+                self.use_card(ran)
+        else:
+            self.get_card()
+
+        if len(self.hand) == 1:
+            self.press_uno()
+
+# -------------------------------------------------------------------------------------------------
 
 class Card:
     def __init__(self, id, color, name, filename):
@@ -585,3 +685,6 @@ class Card:
 
 
 Gm = GameManager()
+
+
+
