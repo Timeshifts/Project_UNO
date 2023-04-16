@@ -455,7 +455,8 @@ class Single:
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
         if self.game.turn == 0:
-            for i in range(self.max_card + 2):
+            # 겹친 구간에서 위에 있는 카드가 선택되게 하기 위한 조정
+            for i in range(self.max_card + 1, -1, -1):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.rect[i].collidepoint(event.pos):
                         self.select_card(i)
@@ -471,6 +472,7 @@ class Single:
                         self.highlight = i
                         # 키보드 선택 해제
                         self.selected = -1
+                        return # 겹친 구간에서 카드 여러 개 선택 방지
                 elif event.type == pygame.KEYDOWN:
                     if self.pressed == False:
                         self.pressed = True
