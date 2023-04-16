@@ -37,15 +37,15 @@ def get_background(state, size):
             )
         background = pygame.transform.scale(pygame.image.load(path), size)
         return background
-
-    # elif state == "single":
-    #     return pygame.transform.scale(
-    #         pygame.image.load(RESOURCE_PATH / "single" / "single_background.png"), size
-    #     )
-    # elif state == "single_lobby":
-    #     return pygame.transform.scale(
-    #             pygame.image.load(RESOURCE_PATH / "single" / "single_robby_background.png"), size
-    #             )
+    elif state == "single":
+        return pygame.transform.scale(
+            pygame.image.load(RESOURCE_PATH / "single" / "single_background.png"), size
+        )
+    elif state == "single_lobby":
+        return pygame.transform.scale(
+            pygame.image.load(RESOURCE_PATH / "single" / "single_robby_background.png"),
+            size,
+        )
 
 
 # 배경 음악 재생
@@ -131,7 +131,6 @@ def main():
                 if event.key == setting.options["pause"] and state in (
                     "single_play" or "story_play"
                 ):
-
                     pause.init_pause(setting_UI, screen)
                     pause.pause()  # pause 상태에서의 루프
 

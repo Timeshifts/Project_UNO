@@ -55,7 +55,7 @@ class SingleLobby:
             self.button.append(
                 Button(
                     image,
-                    pygame.image.load(RESOURCE_PATH / "single" / "list_hovering.png"),
+                    image,
                     pos=(self.size[0] * 7 / 8, self.size[1] * (2 * i + 3) / 12),
                     text_input=text,
                     font=self.get_font(50),
@@ -83,7 +83,7 @@ class SingleLobby:
             )
             # 각 버튼 이벤트 처리용 Rect 삽입
             self.rect.append(self.button[i + self.max_computer].rect)
-            
+
             # 본인 이름 수정
             self.text_name = self.get_font(50).render(self.name, True, "White")
             self.text_name_rect = self.text_name.get_rect(
