@@ -7,9 +7,6 @@ clock = pygame.time.Clock()
 
 
 class Single:
-    # 폰트 설정
-    def get_font(self, size):
-        return pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
 
     def __init__(self, pos=(0, 0), size=(150, 50), computer_count=1, name="ME"):
         # self.menu = self.avail_menu
@@ -129,7 +126,7 @@ class Single:
                                 self.size[1] - card_y,
                             ),
                             text_input="",
-                            font=self.get_font(50),
+                            font=setting.get_font(50),
                             base_color="Black",
                             hovering_color="Black",
                         )
@@ -155,7 +152,7 @@ class Single:
                                 self.size[1] - card_y / 2,
                             ),
                             text_input="",
-                            font=self.get_font(50),
+                            font=setting.get_font(50),
                             base_color="Black",
                             hovering_color="Black",
                         )
@@ -180,7 +177,7 @@ class Single:
                             self.size[1] - card_y / 2,
                         ),
                         text_input="",
-                        font=self.get_font(50),
+                        font=setting.get_font(50),
                         base_color="Black",
                         hovering_color="Black",
                     )
@@ -206,7 +203,7 @@ class Single:
                     self.size[1] / 2,
                 ),
                 text_input="",
-                font=self.get_font(50),
+                font=setting.get_font(50),
                 base_color="Black",
                 hovering_color="Black",
             )
@@ -232,7 +229,7 @@ class Single:
                     self.size[1] / 2,
                 ),
                 text_input="",
-                font=self.get_font(50),
+                font=setting.get_font(50),
                 base_color="Black",
                 hovering_color="Black",
             )
@@ -246,7 +243,7 @@ class Single:
         card_folder = "card_colorblind" if setting.options["colorblind"] else "card"
 
         fontsize = 50
-        font = self.get_font(fontsize)
+        font = setting.get_font(fontsize)
         for i in range(self.max_card + 2):
             self.button[i].update(screen)
             if i == self.highlight:
@@ -292,7 +289,7 @@ class Single:
                     playlist_player_card,
                     (
                         self.size[0] * (7 / 8 - 1 / 8) + 30 + j * card_x / 3,
-                        self.size[1] * ((2 * i + 3) / 12 - 1 / 12) + 80,
+                        self.size[1] * ((2 * i + 3) / 12 - 1 / 12) + 80 * setting.get_screen_scale(),
                     ),
                 )
 
@@ -376,8 +373,8 @@ class Single:
             ),
         )
         # 턴 방향
-        rotation_x = 943
-        rotation_y = 238
+        rotation_x = 943 * setting.get_screen_scale()
+        rotation_y = 238 * setting.get_screen_scale()
         if self.is_turn_reversed == False:
             rotation = pygame.image.load(RESOURCE_PATH / "single" / "rotation.png")
         else:
@@ -424,7 +421,7 @@ class Single:
         #         ),
         #     )
         # 전체 타이머
-        font = self.get_font(100)
+        font = setting.get_font(100)
         game_timer = font.render(f"{self.game_timer}", True, "White")
         screen.blit(
             game_timer,
