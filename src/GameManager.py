@@ -36,6 +36,8 @@ class GameManager:
         self.story_A_computer_count = 0  # story A 특성 유저를 얼마나? 넣을지
         self.end = 0  # 게임 종료 여부
         self.game_timer_thread = 0
+        self.turn_timer_thread = 0
+        self.timer_zero = False
         self.wild = False
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
@@ -92,7 +94,7 @@ class GameManager:
         else:
             self.winner_index = self.player_score_calculate()
 
-        print(f"{self.winner_index} 번 유저 승리!!\n")
+        print(f"{self.winner_index} 번 유저 승리!!")
         self.end = 1
         # 전체 타이머 종료 추가
 
@@ -106,8 +108,8 @@ class GameManager:
         if self.is_hand_change == True:
             self.hand_change()
 
-        self.turn_timer_end = False
-        self.turn_count_down()
+        self.turn_timer_end = False  # 턴 타이머 동작 가능
+        self.turn_count_down()  # 턴 타이머 동작 시작
 
         # 전 턴에 누가 공격 카드 썼는지 판별
         # 누가 공격 카드를 썼다면, attack_int 만큼 카드주고 6초 기다린후 턴종료
@@ -115,10 +117,10 @@ class GameManager:
         # print(f"현재 묘지의 탑 카드 색깔 = {self.grave_top_color}, 이름 = {self.grave_top.name}\n")
 
         if self.players[self.turn].is_attacked == True:
-            print("공격 카드 효과 발동\n")
+            print("공격 카드 효과 발동")
 
             if self.players[self.turn].defence_int > 0:
-                print("방어발동\n")
+                print("방어발동")
                 self.players[self.turn].defence_int = 0
             else:
                 for i in range(self.players[self.turn].attacked_int):
@@ -141,7 +143,7 @@ class GameManager:
 
     # 턴 끝 함수
     def turn_end(self):
-        print(f"턴 종료\n\n")
+        print("턴 종료")
         
         self.players[self.turn].is_attacked = False
         self.players[self.turn].attacked_int = 0
@@ -149,12 +151,12 @@ class GameManager:
         
         # 현재 핸드가 0인지 판별
         if len(self.players[self.turn].hand) == 0:
-            print(f"{self.turn} 턴 유저 승리\n")
+            print(f"{self.turn} 턴 유저 승리")
             self.is_someone_win = True
             self.game_end()
 
         elif self.game_timer_integer == 0:
-            print(f"시간 다 됐으므로 게임 종료\n")
+            print(f"시간 다 됐으므로 게임 종료")
             self.game_end()
 
         else:
@@ -162,7 +164,7 @@ class GameManager:
                 len(self.players[self.turn].hand) == 1
                 and self.players[self.turn].is_uno == False
             ):
-                print(f"{self.turn} 턴 유저는 핸드 갯수가 1개인데 우노를 안누름, 패널티 적용\n")
+                print(f"{self.turn} 턴 유저는 핸드 갯수가 1개인데 우노를 안누름, 패널티 적용")
                 self.give_card(self.turn)
 
             self.players[self.turn].is_authority = False
@@ -201,22 +203,22 @@ class GameManager:
                 self.wild_color()
 
             elif card.name == "four":
-                print("다음 턴 유저에게, 카드 4장 공격\n")
+                print("다음 턴 유저에게, 카드 4장 공격")
                 self.wild_four()
 
             elif card.name == "target":
                 self.wild_target()
 
             elif card.name == "again":
-                print("추가 턴 획득 작동함\n")
+                print("추가 턴 획득 작동함")
                 self.turn_jump(-1)
 
             elif card.name == "defence":
-                print("방어 카드 효과 발동, 방어도 2 증가\n")
+                print("방어 카드 효과 발동, 방어도 2 증가")
                 self.defence()
 
             elif card.name == "pick":
-                print("다음 턴 유저에게, 카드 2장 공격\n")
+                print("다음 턴 유저에게, 카드 2장 공격")
                 target = 0
                 if self.is_turn_reversed == False:
                     target = self.turn + 1
@@ -230,11 +232,11 @@ class GameManager:
                 self.attack(2, target)
 
             elif card.name == "reverse":
-                print("턴 진행 방향 변경 작동함\n")
+                print("턴 진행 방향 변경 작동함")
                 self.turn_reverse()
 
             elif card.name == "skip":
-                print("턴 건너뛰기 작동함\n")
+                print("턴 건너뛰기 작동함")
                 self.turn_jump(1)
 
     def player_score_calculate(self):
@@ -338,11 +340,13 @@ class GameManager:
             time.sleep(1)
 
     def turn_timer(self, count):
+        self.timer_zero = False
         start_time = time.time()
         while True:
             self.turn_timer_integer = count - (int)(time.time() - start_time)
             if self.turn_timer_integer <= 0:
                 print("turn time end")
+                self.timer_zero = True
                 break
             elif self.turn_timer_end == True:
                 break
@@ -355,8 +359,8 @@ class GameManager:
         self.game_timer_thread.start()
 
     def turn_count_down(self):
-        thread = threading.Thread(target=self.turn_timer, args=(15,))
-        thread.start()
+        self.turn_timer_thread = threading.Thread(target=self.turn_timer, args=(15,))
+        self.turn_timer_thread.start()
 
     def top_card_change(self):
         if self.turn_count % self.top_card_change_num == 0:
@@ -468,12 +472,12 @@ class GameManager:
                 while True:
                     a = int(input())
                     if a < 0 or a >= self.player_num:
-                        print("다시 입력하세요\n")
+                        print("다시 입력하세요")
                     else:
                         target = a
                         break
         self.attack(2, target)
-        print(f"{target}번 유저에게, 카드 2장 공격\n")
+        print(f"{target}번 유저에게, 카드 2장 공격")
         self.card_color_selection()
 
     def defence(self):
@@ -506,12 +510,12 @@ class Player:
         self.hand.remove(current_card)
         self.is_turn_used = True
         Gm.get_card(current_card)
-        print(f"{Gm.turn} 턴 유저가 낸 카드는 {current_card.color} {current_card.name} \n")
+        print(f"{Gm.turn} 턴 유저가 낸 카드는 {current_card.color} {current_card.name} ")
 
     def get_card(self):
         Gm.give_card(Gm.turn)
         self.is_turn_used = True
-        print(f"{Gm.turn} 턴 유저는 카드를 받아옴 \n")
+        print(f"{Gm.turn} 턴 유저는 카드를 받아옴")
 
     def judge_possible_cards(self):
         for i in range(len(self.hand)):
