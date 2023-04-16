@@ -113,14 +113,14 @@ class Single:
                         Button(
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    str(RESOURCE_PATH / "card" / self.my_card[i])
+                                    str(RESOURCE_PATH / card_folder / self.my_card[i])
                                     + ".png"
                                 ),
                                 (card_x, card_y),
                             ),
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    RESOURCE_PATH / "card" / "highlight.png"
+                                    RESOURCE_PATH / card_folder / "highlight.png"
                                 ),
                                 (card_x, card_y),
                             ),
@@ -139,14 +139,14 @@ class Single:
                         Button(
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    str(RESOURCE_PATH / "card" / self.my_card[i])
+                                    str(RESOURCE_PATH / card_folder / self.my_card[i])
                                     + ".png"
                                 ),
                                 (card_x, card_y),
                             ),
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    RESOURCE_PATH / "card" / "shadow.png"
+                                    RESOURCE_PATH / card_folder / "shadow.png"
                                 ),
                                 (card_x, card_y),
                             ),
@@ -165,13 +165,13 @@ class Single:
                     Button(
                         pygame.transform.scale(
                             pygame.image.load(
-                                str(RESOURCE_PATH / "card" / self.my_card[i]) + ".png"
+                                str(RESOURCE_PATH / card_folder / self.my_card[i]) + ".png"
                             ),
                             (card_x, card_y),
                         ),
                         pygame.transform.scale(
                             pygame.image.load(
-                                str(RESOURCE_PATH / "card" / self.my_card[i]) + ".png"
+                                str(RESOURCE_PATH / card_folder / self.my_card[i]) + ".png"
                             ),
                             (card_x, card_y),
                         ),
@@ -193,12 +193,12 @@ class Single:
             Button(
                 pygame.transform.scale(
                     pygame.image.load(
-                        str(RESOURCE_PATH / "card" / "card_back") + ".png"
+                        str(RESOURCE_PATH / card_folder / "card_back") + ".png"
                     ),
                     (deck_card_x, deck_card_y),
                 ),
                 pygame.transform.scale(
-                    pygame.image.load(RESOURCE_PATH / "card" / "highlight.png"),
+                    pygame.image.load(RESOURCE_PATH / card_folder / "highlight.png"),
                     (deck_card_x, deck_card_y),
                 ),
                 pos=(
