@@ -87,7 +87,10 @@ class Single:
                     self.game.turn_start()
                     self.update_card()
                     self.set_first == 0
-                    self.effect = self.game.players[self.game.turn].computer_play()
+                    if self.game.players[self.game.turn].is_attacked == False:
+                        self.effect = self.game.players[self.game.turn].computer_play()
+                    else:
+                        pass
                     self.set_again = 1
                 else:
                     self.game.turn_end()
@@ -502,6 +505,16 @@ class Single:
             (
                 self.size[0] * 61 / 80,
                 self.size[1] / 24,
+            ),
+        )
+        # 턴 타이머
+        font = setting.get_font(50)
+        turn_timer = font.render(f"{self.game.turn_timer}", True, "White")
+        screen.blit(
+            turn_timer,
+            (
+                self.size[0] / 2,
+                self.size[1] / 5,
             ),
         )
         # 애니메이션
