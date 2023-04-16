@@ -5,6 +5,7 @@ import time
 
 # 1장 20번슬라이드
 
+
 class GameManager:
     def __init__(self):
         self.turn = 0  # 지금 누구 턴인지 나타내는 정수 변수
@@ -372,17 +373,16 @@ class GameManager:
 
             for j in range(self.player_num):
                 self.players[j].hand = hands.pop()
-    
+
     def roulette_wheel_selection(self, weights):
         hand = []
         card_num = [0, 0]  # 일반, 기술카드 구분위한 리스트
         for i in range(self.start_cards_integer):
-            
             if weights == 0:
                 hand.append(self.deck.pop())
             else:
                 r = random.randint(1, 200 + weights)
-            
+
                 if r <= 100:
                     card_num[0] += 1
                 else:
@@ -402,11 +402,9 @@ class GameManager:
             if n != 0:
                 for j in range(n):
                     hand.append(self.deck.pop())
-
         return hand
-            
-    # 여기 아래 부터는 기술 카드 효과들임 
 
+    # 기술 카드 효과
     def turn_reverse(self):
         if self.is_turn_reversed == False:
             self.is_turn_reversed = True
@@ -419,7 +417,7 @@ class GameManager:
     def attack(self, num, target):
         self.players[target].attacked_int += num
         self.players[target].is_attacked = True
-    
+
     def card_color_selection(self):
         card_color = ["blue", "green", "red", "yellow"]
 
@@ -449,11 +447,9 @@ class GameManager:
             target = (self.turn + 1) % self.player_num
         else:
             target = (self.turn - 1) % self.player_num
-
         self.attack(4, target)
-        
         self.card_color_selection()
-    
+
     def wild_color(self):
         self.card_color_selection()
 
@@ -476,10 +472,8 @@ class GameManager:
                     else:
                         target = a
                         break
-
         self.attack(2, target)
         print(f"{target}번 유저에게, 카드 2장 공격\n")
-        
         self.card_color_selection()
 
     def defence(self):
