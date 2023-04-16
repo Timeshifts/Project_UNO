@@ -38,6 +38,15 @@ def get_background(state, size):
         background = pygame.transform.scale(pygame.image.load(path), size)
         return background
 
+    # elif state == "single":
+    #     return pygame.transform.scale(
+    #         pygame.image.load(RESOURCE_PATH / "single" / "single_background.png"), size
+    #     )
+    # elif state == "single_lobby":
+    #     return pygame.transform.scale(
+    #             pygame.image.load(RESOURCE_PATH / "single" / "single_robby_background.png"), size
+    #             )
+
 
 # 배경 음악 재생
 def load_bgm(path, volume=1.0):
@@ -111,6 +120,7 @@ def main():
                 if event.key == setting.options["pause"] and state in (
                     "single_play" or "story_play"
                 ):
+
                     pause.init_pause(setting_UI, screen)
                     pause.pause()  # pause 상태에서의 루프
 
@@ -150,10 +160,8 @@ def main():
                     if "name" in event.dict.keys():
                         single_lobby.name = event.name
                     game_objects.remove(rename)
-                background = pygame.image.load(
-                    RESOURCE_PATH / "single" / "single_robby_background.png"
-                )
                 state = "single_lobby"
+                background = get_background(state, size)
                 load_bgm(
                     RESOURCE_PATH / "sound" / "bg_game.mp3", setting.get_volume("bgm")
                 )
@@ -167,16 +175,17 @@ def main():
                 name = single_lobby.name
                 # 게임 로비 제거
                 game_objects.remove(single_lobby)
-                background = pygame.image.load(
-                    RESOURCE_PATH / "single" / "single_background.png"
-                )
                 state = "single"
+                background = get_background(state, size)
                 # load_bgm(
                 #     RESOURCE_PATH / "sound" / "bg_game.mp3", setting_UI.get_volume("bgm")
                 # )
                 #
                 single = Single((width, height), size, computer_count, name)
+
                 game_objects.append(single)
+                single.name = name
+                single.computer_count = computer_count
                 single_turn = 1
 
             # 이름 변경 열기
@@ -200,6 +209,7 @@ def main():
                     RESOURCE_PATH / "sound" / "bg_story_main.mp3",
                     setting.get_volume("bgm"),
                 )
+                story_object.resize(size)
                 game_objects.append(story_object)
 
             # 옵션 열기
