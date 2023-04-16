@@ -28,6 +28,8 @@ class Single:
         self.game_timer = 0
         self.first = 0
         self.is_turn_reversed = False  # 턴 방향
+        self.effect = 0
+        self.start = 0
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -58,7 +60,7 @@ class Single:
         self.max_card = len(self.my_card)  # 내가 소유한 카드 개수
         self.game_timer = self.game.game_timer_integer
         self.is_turn_reversed = self.game.is_turn_reversed
-        # self.init_draw()
+        self.init_draw()
 
     def game_start(self):
         self.game = GM.Gm
@@ -79,17 +81,21 @@ class Single:
                 self.init_draw()
                 self.first = 1
         else:  # 컴퓨터인 경우
-            pygame.time.wait(2000)
-            self.game.turn_start()
-            self.update_card()
-            self.first = 0
-            self.game.players[self.game.turn].computer_play()
-            self.game.turn_end()
-            self.update_card()
-            se_event = pygame.event.Event(
-                EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
-            )
-            pygame.event.post(se_event)
+            if self.start == 0:
+                pygame.time.wait(2000)
+                self.game.turn_start()
+                self.update_card()
+                self.first = 0
+                self.effect = self.game.players[self.game.turn].computer_play()
+                self.start = 1
+            else:
+                self.game.turn_end()
+                self.update_card()
+                se_event = pygame.event.Event(
+                    EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"}
+                )
+                pygame.event.post(se_event)
+                self.start = 0
 
         if self.game.end == 1:  # 게임 종료
             return 0
@@ -113,14 +119,14 @@ class Single:
                         Button(
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    str(RESOURCE_PATH / "card" / self.my_card[i])
+                                    str(RESOURCE_PATH / card_folder / self.my_card[i])
                                     + ".png"
                                 ),
                                 (card_x, card_y),
                             ),
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    RESOURCE_PATH / "card" / "highlight.png"
+                                    RESOURCE_PATH / card_folder / "highlight.png"
                                 ),
                                 (card_x, card_y),
                             ),
@@ -139,14 +145,14 @@ class Single:
                         Button(
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    str(RESOURCE_PATH / "card" / self.my_card[i])
+                                    str(RESOURCE_PATH / card_folder / self.my_card[i])
                                     + ".png"
                                 ),
                                 (card_x, card_y),
                             ),
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    RESOURCE_PATH / "card" / "shadow.png"
+                                    RESOURCE_PATH / card_folder / "shadow.png"
                                 ),
                                 (card_x, card_y),
                             ),
@@ -165,13 +171,15 @@ class Single:
                     Button(
                         pygame.transform.scale(
                             pygame.image.load(
-                                str(RESOURCE_PATH / "card" / self.my_card[i]) + ".png"
+                                str(RESOURCE_PATH / card_folder / self.my_card[i])
+                                + ".png"
                             ),
                             (card_x, card_y),
                         ),
                         pygame.transform.scale(
                             pygame.image.load(
-                                str(RESOURCE_PATH / "card" / self.my_card[i]) + ".png"
+                                str(RESOURCE_PATH / card_folder / self.my_card[i])
+                                + ".png"
                             ),
                             (card_x, card_y),
                         ),
@@ -193,12 +201,12 @@ class Single:
             Button(
                 pygame.transform.scale(
                     pygame.image.load(
-                        str(RESOURCE_PATH / "card" / "card_back") + ".png"
+                        str(RESOURCE_PATH / card_folder / "card_back") + ".png"
                     ),
                     (deck_card_x, deck_card_y),
                 ),
                 pygame.transform.scale(
-                    pygame.image.load(RESOURCE_PATH / "card" / "highlight.png"),
+                    pygame.image.load(RESOURCE_PATH / card_folder / "highlight.png"),
                     (deck_card_x, deck_card_y),
                 ),
                 pos=(
@@ -260,11 +268,10 @@ class Single:
             playlist_y = 180 * setting.get_screen_scale()
             playlist_box = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
             playlist_box = pygame.transform.scale(
-                    playlist_box, (playlist_x, playlist_y)
-                )
+                playlist_box, (playlist_x, playlist_y)
+            )
             playlist_box_rect = playlist_box.get_rect(
-                center=(self.size[0] * 7 / 8, 
-                        self.size[1] * (2 * i + 3) / 12)
+                center=(self.size[0] * 7 / 8, self.size[1] * (2 * i + 3) / 12)
             )
             screen.blit(playlist_box, playlist_box_rect)
             # Player List 컴퓨터 이름
@@ -342,18 +349,6 @@ class Single:
                     card_y * 5 / 3,
                 ),
             )
-        # 카드 덱
-        deck_card_x = 130 * setting.get_screen_scale()
-        deck_card_y = 182 * setting.get_screen_scale() 
-        deck_card = pygame.image.load(RESOURCE_PATH / card_folder / "card_back.png")
-        deck_card = pygame.transform.scale(deck_card, (deck_card_x, deck_card_y))
-        screen.blit(
-            deck_card,
-            (
-                self.size[0] * 3 / 8 - deck_card_x / 2 - deck_card_x * 2 / 3,
-                self.size[1] / 2 - deck_card_y / 2,
-            ),
-        )
         # 카드 묘지
         grave_card_x = 130 * setting.get_screen_scale()
         grave_card_y = 182 * setting.get_screen_scale()
@@ -418,23 +413,6 @@ class Single:
                 self.size[1] * 2 / 3,
             ),
         )
-        # 내 카드
-        # for i in range(len(self.my_card)):
-        #     card_x = 182
-        #     card_y = 254.8
-        #     playlist_player_card = pygame.image.load(
-        #         str(RESOURCE_PATH / card_folder / self.my_card[i]) + ".png"
-        #     )
-        #     playlist_player_card = pygame.transform.scale(
-        #         playlist_player_card, (card_x, card_y)
-        #     )
-        #     screen.blit(
-        #         playlist_player_card,
-        #         (
-        #             self.size[0] / 30 + i * card_x / 2,
-        #             self.size[1] - card_y,
-        #         ),
-        #     )
         # 전체 타이머
         font = self.get_font(100)
         game_timer = font.render(f"{self.game_timer}", True, "White")
@@ -445,13 +423,29 @@ class Single:
                 self.size[1] / 24,
             ),
         )
+        # 애니메이션
+        if self.effect == "get":
+            get_card_x = 130 * setting.get_screen_scale()
+            get_card_y = 182 * setting.get_screen_scale()
+            get_card = pygame.image.load(
+                RESOURCE_PATH / card_folder / "card_back_effect.png"
+            )
+            get_card = pygame.transform.scale(get_card, (get_card_x, get_card_y))
+            screen.blit(
+                get_card,
+                (
+                    self.size[0] * 3 / 8 - get_card_x / 2 - get_card_x * 2 / 3,
+                    self.size[1] / 2 - get_card_y,
+                ),
+            )
+            self.effect = 0
 
     # 메뉴 선택 시 처리
     def select_card(self, index):
-        se_event = pygame.event.Event(
-            EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
-        )
-        pygame.event.post(se_event)
+        # se_event = pygame.event.Event(
+        #     EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
+        # )
+        # pygame.event.post(se_event)
         print(f"---{index}---")
 
         if index in self.possible_cards_num:
