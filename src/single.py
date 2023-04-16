@@ -7,9 +7,6 @@ clock = pygame.time.Clock()
 
 
 class Single:
-    # 폰트 설정
-    def get_font(self, size):
-        return pygame.font.Font(RESOURCE_PATH / "font.ttf", size)
 
     def __init__(self, pos=(0, 0), size=(150, 50), computer_count=1, name="ME"):
         # self.menu = self.avail_menu
@@ -113,14 +110,14 @@ class Single:
                         Button(
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    str(RESOURCE_PATH / "card" / self.my_card[i])
+                                    str(RESOURCE_PATH / card_folder / self.my_card[i])
                                     + ".png"
                                 ),
                                 (card_x, card_y),
                             ),
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    RESOURCE_PATH / "card" / "highlight.png"
+                                    RESOURCE_PATH / card_folder / "highlight.png"
                                 ),
                                 (card_x, card_y),
                             ),
@@ -129,7 +126,7 @@ class Single:
                                 self.size[1] - card_y,
                             ),
                             text_input="",
-                            font=self.get_font(50),
+                            font=setting.get_font(50),
                             base_color="Black",
                             hovering_color="Black",
                         )
@@ -139,14 +136,14 @@ class Single:
                         Button(
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    str(RESOURCE_PATH / "card" / self.my_card[i])
+                                    str(RESOURCE_PATH / card_folder / self.my_card[i])
                                     + ".png"
                                 ),
                                 (card_x, card_y),
                             ),
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    RESOURCE_PATH / "card" / "shadow.png"
+                                    RESOURCE_PATH / card_folder / "shadow.png"
                                 ),
                                 (card_x, card_y),
                             ),
@@ -155,7 +152,7 @@ class Single:
                                 self.size[1] - card_y / 2,
                             ),
                             text_input="",
-                            font=self.get_font(50),
+                            font=setting.get_font(50),
                             base_color="Black",
                             hovering_color="Black",
                         )
@@ -165,13 +162,13 @@ class Single:
                     Button(
                         pygame.transform.scale(
                             pygame.image.load(
-                                str(RESOURCE_PATH / "card" / self.my_card[i]) + ".png"
+                                str(RESOURCE_PATH / card_folder / self.my_card[i]) + ".png"
                             ),
                             (card_x, card_y),
                         ),
                         pygame.transform.scale(
                             pygame.image.load(
-                                str(RESOURCE_PATH / "card" / self.my_card[i]) + ".png"
+                                str(RESOURCE_PATH / card_folder / self.my_card[i]) + ".png"
                             ),
                             (card_x, card_y),
                         ),
@@ -180,25 +177,25 @@ class Single:
                             self.size[1] - card_y / 2,
                         ),
                         text_input="",
-                        font=self.get_font(50),
+                        font=setting.get_font(50),
                         base_color="Black",
                         hovering_color="Black",
                     )
                 )
             self.rect.append(self.button[i].rect)
         # 덱 버튼
-        deck_card_x = 130
-        deck_card_y = 182
+        deck_card_x = 130 * setting.get_screen_scale()
+        deck_card_y = 182 * setting.get_screen_scale()
         self.button.append(
             Button(
                 pygame.transform.scale(
                     pygame.image.load(
-                        str(RESOURCE_PATH / "card" / "card_back") + ".png"
+                        str(RESOURCE_PATH / card_folder / "card_back") + ".png"
                     ),
                     (deck_card_x, deck_card_y),
                 ),
                 pygame.transform.scale(
-                    pygame.image.load(RESOURCE_PATH / "card" / "highlight.png"),
+                    pygame.image.load(RESOURCE_PATH / card_folder / "highlight.png"),
                     (deck_card_x, deck_card_y),
                 ),
                 pos=(
@@ -206,15 +203,15 @@ class Single:
                     self.size[1] / 2,
                 ),
                 text_input="",
-                font=self.get_font(50),
+                font=setting.get_font(50),
                 base_color="Black",
                 hovering_color="Black",
             )
         )
         self.rect.append(self.button[self.max_card].rect)
         # 우노 버튼
-        uno_x = 200
-        uno_y = 200
+        uno_x = 200 * setting.get_screen_scale()
+        uno_y = 200 * setting.get_screen_scale()
         self.button.append(
             Button(
                 pygame.transform.scale(
@@ -232,7 +229,7 @@ class Single:
                     self.size[1] / 2,
                 ),
                 text_input="",
-                font=self.get_font(50),
+                font=setting.get_font(50),
                 base_color="Black",
                 hovering_color="Black",
             )
@@ -246,7 +243,7 @@ class Single:
         card_folder = "card_colorblind" if setting.options["colorblind"] else "card"
 
         fontsize = 50
-        font = self.get_font(fontsize)
+        font = setting.get_font(fontsize)
         for i in range(self.max_card + 2):
             self.button[i].update(screen)
             if i == self.highlight:
@@ -292,7 +289,7 @@ class Single:
                     playlist_player_card,
                     (
                         self.size[0] * (7 / 8 - 1 / 8) + 30 + j * card_x / 3,
-                        self.size[1] * ((2 * i + 3) / 12 - 1 / 12) + 80,
+                        self.size[1] * ((2 * i + 3) / 12 - 1 / 12) + 80 * setting.get_screen_scale(),
                     ),
                 )
 
@@ -342,18 +339,6 @@ class Single:
                     card_y * 5 / 3,
                 ),
             )
-        # 카드 덱
-        deck_card_x = 130 * setting.get_screen_scale()
-        deck_card_y = 182 * setting.get_screen_scale() 
-        deck_card = pygame.image.load(RESOURCE_PATH / card_folder / "card_back.png")
-        deck_card = pygame.transform.scale(deck_card, (deck_card_x, deck_card_y))
-        screen.blit(
-            deck_card,
-            (
-                self.size[0] * 3 / 8 - deck_card_x / 2 - deck_card_x * 2 / 3,
-                self.size[1] / 2 - deck_card_y / 2,
-            ),
-        )
         # 카드 묘지
         grave_card_x = 130 * setting.get_screen_scale()
         grave_card_y = 182 * setting.get_screen_scale()
@@ -388,8 +373,8 @@ class Single:
             ),
         )
         # 턴 방향
-        rotation_x = 943
-        rotation_y = 238
+        rotation_x = 943 * setting.get_screen_scale()
+        rotation_y = 238 * setting.get_screen_scale()
         if self.is_turn_reversed == False:
             rotation = pygame.image.load(RESOURCE_PATH / "single" / "rotation.png")
         else:
@@ -436,7 +421,7 @@ class Single:
         #         ),
         #     )
         # 전체 타이머
-        font = self.get_font(100)
+        font = setting.get_font(100)
         game_timer = font.render(f"{self.game_timer}", True, "White")
         screen.blit(
             game_timer,
@@ -470,17 +455,24 @@ class Single:
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
         if self.game.turn == 0:
-            for i in range(self.max_card + 2):
+            # 겹친 구간에서 위에 있는 카드가 선택되게 하기 위한 조정
+            for i in range(self.max_card + 1, -1, -1):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.rect[i].collidepoint(event.pos):
                         self.select_card(i)
                         break  # 한 번에 여러 개의 메뉴가 눌리지 않도록 처리
                 elif event.type == pygame.MOUSEMOTION:
                     if self.rect[i].collidepoint(event.pos):
+                        # 2차 요구사항 - 카드 선택을 위한 효과음 추가
+                        if i != self.highlight:
+                            pygame.event.post(
+                                pygame.event.Event(EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"})
+                            )
                         # highlight 대상을 변경
                         self.highlight = i
                         # 키보드 선택 해제
                         self.selected = -1
+                        return # 겹친 구간에서 카드 여러 개 선택 방지
                 elif event.type == pygame.KEYDOWN:
                     if self.pressed == False:
                         self.pressed = True
@@ -490,12 +482,20 @@ class Single:
                             if self.selected != -1:
                                 self.select_card(self.selected)
                         elif event.key == setting.options["left"]:
+                            # 2차 요구사항 - 카드 선택을 위한 효과음 추가
+                            pygame.event.post(
+                                pygame.event.Event(EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"})
+                            )
                             # 선택을 하나 왼쪽으로 이동
                             self.selected = (
                                 self.selected - 1 if 0 < self.selected else 0
                             )
                             self.highlight = self.selected
                         elif event.key == setting.options["right"]:
+                            # 2차 요구사항 - 카드 선택을 위한 효과음 추가
+                            pygame.event.post(
+                                pygame.event.Event(EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"})
+                            )
                             # 선택을 하나 오른쪽으로 이동
                             self.selected = (
                                 self.selected + 1

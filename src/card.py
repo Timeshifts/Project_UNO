@@ -1,6 +1,5 @@
 import random
-import pygame
-from setting import Settings
+import pygame, setting
 from constant import *
 
 
@@ -8,7 +7,7 @@ class Card:
     def __init__(self, name, color):
         self.name = name
         self.color = color
-        self.is_blind = Settings.default_setting["colorblind"]
+        self.is_blind = setting.options["colorblind"]
         if self.is_blind == False:
             self.filename = "card/" + self.color + "_" + self.name + ".png"
         else:
