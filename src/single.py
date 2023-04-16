@@ -21,7 +21,8 @@ class Single:
         self.my_card = []  # 내가 소유한 카드
         self.max_card = 0  # 내가 소유한 카드 개수
         self.possible_cards_num = []  # 선택이 가능한 카드
-        self.game_timer = 0
+        self.game_timer = 0  # 전체 타이머
+        self.turn_timer = 0  # 턴 타이머
         self.set_first = 0  # 내 턴일때 화면 갱신 한번만 하는 용도
         self.set_again = 0  # 컴퓨터 턴일때 화면 갱신 하는 용도
         self.is_turn_reversed = False  # 턴 방향
@@ -54,7 +55,8 @@ class Single:
                 )
         self.my_card = self.hand_card[0]  # 내가 소유한 카드
         self.max_card = len(self.my_card)  # 내가 소유한 카드 개수
-        self.game_timer = self.game.game_timer_integer
+        self.game_timer = self.game.game_timer_integer  # 게임 타이머 갱신
+        self.turn_timer = self.game.turn_timer_integer  # 턴 타이머 갱신
         self.is_turn_reversed = self.game.is_turn_reversed
         self.init_draw()
 
@@ -74,24 +76,30 @@ class Single:
             # self.init_draw()
             if self.game.turn == 0:  # 플레이어인 경우
                 self.possible_cards_num = self.game.players[0].play()
-                # print(self.possible_cards_num)
+                if self.game.timer_zero == True:  # 턴 타이머 종료된 경우
+                    self.game.players[0].get_card()
+                    self.game.turn_end()
+                    self.update_card()
+                    self.init_draw()
+                    self.highlight = 0
+                    self.set_first = 0
+                    print(f"타이머 1: {self.turn_timer}")
                 if self.set_first == 0:
                     self.game.turn_start()
                     # self.update_card()
                     # self.possible_cards_num = self.game.players[0].play()
                     self.init_draw()
                     self.set_first = 1
+                    print(f"타이머 2: {self.turn_timer}")
             else:  # 컴퓨터인 경우
-                if self.set_again == 0:
-                    pygame.time.wait(2000)
+                if self.set_first == 0:
+                    pygame.time.wait(1000)
                     self.game.turn_start()
                     self.update_card()
-                    self.set_first == 0
-                    if self.game.players[self.game.turn].is_attacked == False:
-                        self.effect = self.game.players[self.game.turn].computer_play()
-                    else:
-                        pass
-                    self.set_again = 1
+                    # self.set_first == 0
+                    self.effect = self.game.players[self.game.turn].computer_play()
+                    self.set_first = 1
+                    print(f"타이머 3: {self.turn_timer}")
                 else:
                     self.game.turn_end()
                     self.update_card()
@@ -99,7 +107,8 @@ class Single:
                         EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"}
                     )
                     pygame.event.post(se_event)
-                    self.set_again = 0
+                    self.set_first = 0
+                    print(f"타이머 4: {self.turn_timer}")
             return 1
 
     def init_draw(self):
@@ -405,6 +414,20 @@ class Single:
                     card_y * 5 / 3,
                 ),
             )
+        # 메인보드 컴퓨터 타이머
+        for i in range(self.computer_count):
+            if self.game.turn == i + 1:
+                turn_timer = font.render(f"{self.turn_timer}", True, "White")
+            else:
+                turn_timer = font.render("15", True, "White")
+            screen.blit(
+                turn_timer,
+                (
+                    self.size[0] * 3 / 4 * (i + 1) / (self.computer_count + 1)
+                    + card_x / 2,
+                    card_y * 2 / 3,
+                ),
+            )
         # 메인보드 컴퓨터 쉴드
         for i in range(self.computer_count):
             if self.game.players[i + 1].defence_int > 0:
@@ -509,12 +532,15 @@ class Single:
         )
         # 턴 타이머
         font = setting.get_font(50)
-        turn_timer = font.render(f"{self.game.turn_timer}", True, "White")
+        if self.game.turn == 0:
+            turn_timer = font.render(f"{self.turn_timer}", True, "White")
+        else:
+            turn_timer = font.render("15", True, "White")
         screen.blit(
             turn_timer,
             (
-                self.size[0] / 2,
-                self.size[1] / 5,
+                self.size[0] / 150,
+                self.size[1] * 3 / 4,
             ),
         )
         # 애니메이션
@@ -558,6 +584,7 @@ class Single:
             self.update_card()
             self.init_draw()
             self.highlight = 0
+            self.set_first = 0
         if index == self.max_card + 1:  # 우노버튼
             self.game.players[0].press_uno()
         if self.game.wild == True:

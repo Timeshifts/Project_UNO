@@ -37,6 +37,7 @@ class GameManager:
         self.end = 0  # 게임 종료 여부
         self.game_timer_thread = 0
         self.turn_timer_thread = 0
+        self.timer_zero = False
         self.wild = False
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
@@ -107,8 +108,8 @@ class GameManager:
         if self.is_hand_change == True:
             self.hand_change()
 
-        self.turn_timer_end = False
-        self.turn_count_down()
+        self.turn_timer_end = False  # 턴 타이머 동작 가능
+        self.turn_count_down()  # 턴 타이머 동작 시작
 
         # 전 턴에 누가 공격 카드 썼는지 판별
         # 누가 공격 카드를 썼다면, attack_int 만큼 카드주고 6초 기다린후 턴종료
@@ -139,14 +140,14 @@ class GameManager:
             #     print(f"{self.turn} 턴 유저, 실제 플레이어 이므로 권한 지급\n")
             #     self.players[self.turn].play()
 
-        self.turn_timer_end = True
-
         #  pygame.time.wait(2000)
 
         # self.turn_end()
 
     # 턴 끝 함수
     def turn_end(self):
+        self.timer_zero = False
+        self.turn_timer_end = True  # 턴 타이머 종료
         print(f"턴 종료")
         # 현재 핸드가 0인지 판별
         if len(self.players[self.turn].hand) == 0:
@@ -339,11 +340,13 @@ class GameManager:
             time.sleep(1)
 
     def turn_timer(self, count):
+        self.timer_zero = False
         start_time = time.time()
         while True:
             self.turn_timer_integer = count - (int)(time.time() - start_time)
             if self.turn_timer_integer <= 0:
                 print("turn time end")
+                self.timer_zero = True
                 break
             elif self.turn_timer_end == True:
                 break
