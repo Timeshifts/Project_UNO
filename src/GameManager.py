@@ -3,6 +3,7 @@ import pygame
 import threading
 import time
 
+# 1장 20번슬라이드
 
 class GameManager:
     def __init__(self):
@@ -52,7 +53,7 @@ class GameManager:
         for i in range(self.computer_count):
             self.players.append(Computer(True))
 
-        for i in range(self.computer_count):
+        for i in range(self.story_A_computer_count):
             self.players.append(StoryA_User(True))
 
         self.player_num = len(self.players)
@@ -113,30 +114,11 @@ class GameManager:
             print("공격 카드 효과 발동\n")
 
             if self.players[self.turn].defence_int > 0:
-                print("방어도 계산, 공격카드 차감\n")
-
-                if (
-                    self.players[self.turn].defence_int
-                    >= self.players[self.turn].attacked_int
-                ):
-                    self.players[self.turn].defence_int -= self.players[
-                        self.turn
-                    ].attacked_int
-                    print(
-                        f"{self.turn} 번 유저의 방어도 {self.players[self.turn].defence_int}\n"
-                    )
-
-                else:
-                    self.players[self.turn].attacked_int -= self.players[
-                        self.turn
-                    ].defence_int
-
-                    print(
-                        f"{self.turn} 번 유저에게 카드 {self.players[self.turn].attacked_int} 장 부여\n"
-                    )
-
-                    for i in range(self.players[self.turn].attacked_int):
-                        self.give_card(self.turn)
+                print("방어발동\n")
+                self.players[self.turn].defence_int = 0
+            else:
+                for i in range(self.players[self.turn].attacked_int):
+                    self.give_card(self.turn)
 
             self.players[self.turn].is_attacked = False
             self.attacked_int = 0
@@ -217,6 +199,7 @@ class GameManager:
 
             elif card.name == "four":
                 print("다음 턴 유저에게, 카드 4장 공격\n")
+                target = 0
                 if self.is_turn_reversed == False:
                     target = self.turn + 1
                     if target >= self.player_num:
@@ -241,6 +224,7 @@ class GameManager:
 
             elif card.name == "pick":
                 print("다음 턴 유저에게, 카드 2장 공격\n")
+                target = 0
                 if self.is_turn_reversed == False:
                     target = self.turn + 1
                     if target >= self.player_num:
@@ -436,7 +420,7 @@ class GameManager:
         print(f"묘지 탑 색깔 {self.grave_top_color} 로 설정")
 
     def target_attack(self):
-        target = target = random.randint(0, self.player_num - 1)
+        target = random.randint(0, self.player_num - 1)
         if self.is_setting == False:
             if self.players[self.turn].is_computer == True:
                 target = random.randint(0, self.player_num - 1)
@@ -473,7 +457,7 @@ class GameManager:
             else:
                 r = random.randint(1, 200 + weights)
             
-                if r < 100:
+                if r <= 100:
                     card_num[0] += 1
                 else:
                     card_num[1] += 1
