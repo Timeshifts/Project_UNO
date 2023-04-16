@@ -100,8 +100,8 @@ class Single:
         card_folder = "card_colorblind" if setting.options["colorblind"] else "card"
 
         # 내 카드
-        card_x = 130 * setting.get_screen_scale()
-        card_y = 182 * setting.get_screen_scale()
+        card_x = 130
+        card_y = 182
         for i in range(self.max_card):
             # 버튼 삽입
             if self.game.turn == 0:
@@ -122,8 +122,8 @@ class Single:
                                 (card_x, card_y),
                             ),
                             pos=(
-                                (i + 1.5) * card_x * 3 / 4,
-                                self.size[1] - card_y,
+                                (i + 1.5) * card_x * setting.get_screen_scale() * 3 / 4,
+                                self.size[1] - card_y * setting.get_screen_scale(),
                             ),
                             text_input="",
                             font=setting.get_font(50),
@@ -148,8 +148,8 @@ class Single:
                                 (card_x, card_y),
                             ),
                             pos=(
-                                (i + 1.5) * card_x * 3 / 4,
-                                self.size[1] - card_y / 2,
+                                (i + 1.5) * card_x * setting.get_screen_scale() * 3 / 4,
+                                self.size[1] - card_y * setting.get_screen_scale() / 2,
                             ),
                             text_input="",
                             font=setting.get_font(50),
@@ -184,8 +184,8 @@ class Single:
                 )
             self.rect.append(self.button[i].rect)
         # 덱 버튼
-        deck_card_x = 130 * setting.get_screen_scale()
-        deck_card_y = 182 * setting.get_screen_scale()
+        deck_card_x = 130
+        deck_card_y = 182
         self.button.append(
             Button(
                 pygame.transform.scale(
@@ -199,7 +199,7 @@ class Single:
                     (deck_card_x, deck_card_y),
                 ),
                 pos=(
-                    self.size[0] * 3 / 8 - deck_card_x * 2 / 3,
+                    self.size[0] * 3 / 8 - deck_card_x * setting.get_screen_scale() * 2 / 3,
                     self.size[1] / 2,
                 ),
                 text_input="",
@@ -210,8 +210,8 @@ class Single:
         )
         self.rect.append(self.button[self.max_card].rect)
         # 우노 버튼
-        uno_x = 200 * setting.get_screen_scale()
-        uno_y = 200 * setting.get_screen_scale()
+        uno_x = 200
+        uno_y = 200
         self.button.append(
             Button(
                 pygame.transform.scale(
@@ -225,7 +225,7 @@ class Single:
                     (uno_x, uno_y),
                 ),
                 pos=(
-                    self.size[0] * 3 / 4 - uno_x / 2,
+                    self.size[0] * 3 / 4 - uno_x * setting.get_screen_scale() / 2,
                     self.size[1] / 2,
                 ),
                 text_input="",
