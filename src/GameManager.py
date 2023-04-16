@@ -3,6 +3,7 @@ import pygame
 import threading
 import time
 
+# 1장 20번슬라이드
 
 class GameManager:
     def __init__(self):
@@ -52,7 +53,7 @@ class GameManager:
         for i in range(self.computer_count):
             self.players.append(Computer(True))
 
-        for i in range(self.computer_count):
+        for i in range(self.story_A_computer_count):
             self.players.append(StoryA_User(True))
 
         self.player_num = len(self.players)
