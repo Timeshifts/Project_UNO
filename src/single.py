@@ -173,8 +173,8 @@ class Single:
                             (card_x, card_y),
                         ),
                         pos=(
-                            (i + 1.5) * card_x * 3 / 4,
-                            self.size[1] - card_y / 2,
+                            (i + 1.5) * card_x * setting.get_screen_scale() * 3 / 4,
+                            self.size[1] - card_y * setting.get_screen_scale() / 2,
                         ),
                         text_input="",
                         font=setting.get_font(50),
