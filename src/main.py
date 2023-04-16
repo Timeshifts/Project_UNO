@@ -202,6 +202,7 @@ def main():
             if event.type == EVENT_OPEN_RENAME:
                 state = "rename"
                 game_objects.remove(single_lobby)
+                rename.resize(size)
                 game_objects.append(rename)
 
             # 이름 변경 닫기

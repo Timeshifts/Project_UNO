@@ -187,8 +187,8 @@ class Single:
                 )
             self.rect.append(self.button[i].rect)
         # 덱 버튼
-        deck_card_x = 130
-        deck_card_y = 182
+        deck_card_x = 130 * setting.get_screen_scale()
+        deck_card_y = 182 * setting.get_screen_scale()
         self.button.append(
             Button(
                 pygame.transform.scale(
@@ -213,8 +213,8 @@ class Single:
         )
         self.rect.append(self.button[self.max_card].rect)
         # 우노 버튼
-        uno_x = 200
-        uno_y = 200
+        uno_x = 200 * setting.get_screen_scale()
+        uno_y = 200 * setting.get_screen_scale()
         self.button.append(
             Button(
                 pygame.transform.scale(
