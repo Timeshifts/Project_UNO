@@ -74,6 +74,7 @@ class Single:
         self.update_card()
         # self.init_draw()
         if self.game.turn == 0:  # 플레이어인 경우
+            print(self.possible_cards_num)
             if self.first == 0:
                 self.game.turn_start()
                 # self.update_card()
@@ -85,7 +86,7 @@ class Single:
                 pygame.time.wait(2000)
                 self.game.turn_start()
                 self.update_card()
-                self.first = 0
+                self.first == 0
                 self.effect = self.game.players[self.game.turn].computer_play()
                 self.start = 1
             else:
@@ -223,30 +224,86 @@ class Single:
         # 우노 버튼
         uno_x = 200
         uno_y = 200
-        self.button.append(
-            Button(
-                pygame.transform.scale(
-                    pygame.image.load(RESOURCE_PATH / "single" / "uno_button.png"),
-                    (uno_x, uno_y),
-                ),
-                pygame.transform.scale(
-                    pygame.image.load(
-                        RESOURCE_PATH / "single" / "uno_button_highlight.png"
+        if self.game.players[0].is_uno == False:
+            self.button.append(
+                Button(
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "uno_button.png"),
+                        (uno_x, uno_y),
                     ),
-                    (uno_x, uno_y),
-                ),
-                pos=(
-                    self.size[0] * 3 / 4 - uno_x / 2,
-                    self.size[1] / 2,
-                ),
-                text_input="",
-                font=self.get_font(50),
-                base_color="Black",
-                hovering_color="Black",
+                    pygame.transform.scale(
+                        pygame.image.load(
+                            RESOURCE_PATH / "single" / "uno_button_highlight.png"
+                        ),
+                        (uno_x, uno_y),
+                    ),
+                    pos=(
+                        self.size[0] * 3 / 4 - uno_x / 2,
+                        self.size[1] / 2,
+                    ),
+                    text_input="",
+                    font=self.get_font(50),
+                    base_color="Black",
+                    hovering_color="Black",
+                )
             )
-        )
+        else:
+            self.button.append(
+                Button(
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "uno_effect.png"),
+                        (uno_x, uno_y),
+                    ),
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "uno_effect.png"),
+                        (uno_x, uno_y),
+                    ),
+                    pos=(
+                        self.size[0] * 3 / 4 - uno_x / 2,
+                        self.size[1] / 2,
+                    ),
+                    text_input="",
+                    font=self.get_font(50),
+                    base_color="Black",
+                    hovering_color="Black",
+                )
+            )
         # 각 버튼 이벤트 처리용 Rect 삽입
         self.rect.append(self.button[self.max_card + 1].rect)
+        # wild 카드 선택시 색 선택 버튼 추가
+        if self.game.wild == True:
+            card_color = ["blue", "green", "red", "yellow"]
+            for i in range(4):
+                color_x = 200
+                color_y = 200
+                self.button.append(
+                    Button(
+                        pygame.transform.scale(
+                            pygame.image.load(
+                                str(RESOURCE_PATH / card_folder / f"{card_color[i]}")
+                                + ".png"
+                            ),
+                            (color_x, color_y),
+                        ),
+                        pygame.transform.scale(
+                            pygame.image.load(
+                                str(RESOURCE_PATH / card_folder / f"{card_color[i]}")
+                                + ".png"
+                            ),
+                            (color_x, color_y),
+                        ),
+                        pos=(
+                            # self.size[0] * ((i * 2) + 1) / 16,
+                            0,
+                            self.size[1] / 2,
+                        ),
+                        text_input="",
+                        font=self.get_font(50),
+                        base_color="Black",
+                        hovering_color="Black",
+                    )
+                )
+                self.rect.append(self.button[self.max_card + 1 + i].rect)
 
     # 스크린에 자신을 그리기
     def draw(self, screen):
@@ -349,6 +406,21 @@ class Single:
                     card_y * 5 / 3,
                 ),
             )
+        # 메인보드 컴퓨터 쉴드
+        for i in range(self.computer_count):
+            if self.game.players[i + 1].defence_int > 0:
+                shield_x = 49 * setting.get_screen_scale()
+                shield_y = 53 * setting.get_screen_scale()
+                shield = pygame.image.load(RESOURCE_PATH / "single" / "shield.png")
+                shield = pygame.transform.scale(shield, (shield_x, shield_y))
+                screen.blit(
+                    shield,
+                    (
+                        self.size[0] * 3 / 4 * (i + 1) / (self.computer_count + 1)
+                        + card_x / 2,
+                        card_y * 5 / 3 - shield_y,
+                    ),
+                )
         # 카드 묘지
         grave_card_x = 130 * setting.get_screen_scale()
         grave_card_y = 182 * setting.get_screen_scale()
@@ -413,6 +485,19 @@ class Single:
                 self.size[1] * 2 / 3,
             ),
         )
+        # 내 쉴드
+        if self.game.players[0].defence_int > 0:
+            shield_x = 49 * setting.get_screen_scale()
+            shield_y = 53 * setting.get_screen_scale()
+            shield = pygame.image.load(RESOURCE_PATH / "single" / "shield.png")
+            shield = pygame.transform.scale(shield, (shield_x, shield_y))
+            screen.blit(
+                shield,
+                (
+                    0,
+                    self.size[1] * 2 / 3,
+                ),
+            )
         # 전체 타이머
         font = self.get_font(100)
         game_timer = font.render(f"{self.game_timer}", True, "White")
@@ -450,7 +535,11 @@ class Single:
 
         if index in self.possible_cards_num:
             self.game.players[0].use_card(index)
-            self.game.turn_end()
+            if self.game.wild == True:
+                pass
+            else:
+                self.game.turn_end()
+                self.first = 0
             self.update_card()
             self.init_draw()
         if index == self.max_card:  # 덱
@@ -458,13 +547,23 @@ class Single:
             self.game.turn_end()
             self.update_card()
             self.init_draw()
-        if index == self.max_card:  # 우노버튼
+        if index == self.max_card + 1:  # 우노버튼
             self.game.players[0].press_uno()
+        if self.game.wild == True:
+            if index > self.max_card + 2:
+                card_color = ["blue", "green", "red", "yellow"]
+                print(f"선택색1 : {card_color[index - (self.max_card + 2)]}")
+                self.game.grave_top_color = card_color[index - (self.max_card + 2)]
+                print(f"선택색 : {card_color[index - (self.max_card + 2)]}")
+                self.game.wild = False
 
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
+        self.color = 0
+        if self.game.wild == True:
+            self.color = 4
         if self.game.turn == 0:
-            for i in range(self.max_card + 2):
+            for i in range(self.max_card + 2 + self.color):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.rect[i].collidepoint(event.pos):
                         self.select_card(i)
@@ -493,8 +592,8 @@ class Single:
                             # 선택을 하나 오른쪽으로 이동
                             self.selected = (
                                 self.selected + 1
-                                if self.selected < self.max_card + 1
-                                else self.max_card + 1
+                                if self.selected < self.max_card + 1 + self.color
+                                else self.max_card + 1 + self.color
                             )
                             self.highlight = self.selected
 

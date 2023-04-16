@@ -34,6 +34,7 @@ class GameManager:
         self.story_A_computer_count = 0  # story A 특성 유저를 얼마나? 넣을지
         self.end = 0  # 게임 종료 여부
         self.game_timer_thread = 0
+        self.wild = False
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -179,7 +180,6 @@ class GameManager:
                 and self.players[self.turn].is_uno == False
             ):
                 print(f"{self.turn} 턴 유저는 핸드 갯수가 1개인데 우노를 안누름, 패널티 적용\n")
-                print(f"{self.turn} 턴 유저에게 카드 1장 지급\n")
                 self.give_card(self.turn)
 
             self.players[self.turn].is_authority = False
@@ -227,7 +227,7 @@ class GameManager:
                     target = self.turn - 1
                     if target < 0:
                         target += self.player_num
-
+                self.wild_color()
                 self.attack(4, target)
 
             elif card.name == "target":
@@ -359,7 +359,7 @@ class GameManager:
             elif self.game_timer_end == True:
                 break
 
-            print(f"game time: {self.game_timer_integer} seconds")
+            # print(f"game time: {self.game_timer_integer} seconds")
             time.sleep(1)
 
     def turn_timer(self, count):
@@ -421,36 +421,37 @@ class GameManager:
             ran = random.randint(0, 3)
             self.grave_top_color = card_color[ran]
         else:
-            print(f"색을 선택하세요")
-            for i in range(len(card_color)):
-                print(f"/{card_color[i]} {i}번")
+            self.wild = True
 
-            while True:
-                a = int(input())
+            # print(f"색을 선택하세요")
+            # for i in range(len(card_color)):
+            #     print(f"/{card_color[i]} {i}번")
 
-                if a < 0 or a >= len(card_color):
-                    print("다시 입력하세요\n")
-                else:
-                    self.grave_top_color = card_color[a]
-                    break
+            # while True:
+            #     a = int(input())
 
-        print(f"묘지 탑 색깔 {self.grave_top_color} 로 설정")
+            #     if a < 0 or a >= len(card_color):
+            #         print("다시 입력하세요\n")
+            #     else:
+            #         self.grave_top_color = card_color[a]
+            #         break
+
+        # print(f"묘지 탑 색깔 {self.grave_top_color} 로 설정")
 
     def target_attack(self):
         target = target = random.randint(0, self.player_num - 1)
         if self.is_setting == False:
             if self.players[self.turn].is_computer == True:
                 target = random.randint(0, self.player_num - 1)
-
                 while target == self.turn:
                     target = random.randint(0, self.player_num - 1)
             else:
+                self.wild = True
                 print(f"플레이어를 선택하세요")
                 for i in range(self.player_num):
                     print(f"/ {i}번 플레이어")
                 while True:
                     a = int(input())
-
                     if a < 0 or a >= self.player_num:
                         print("다시 입력하세요\n")
                     else:
