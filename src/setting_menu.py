@@ -168,8 +168,6 @@ class Setting_UI:
     # 가능한 메뉴 목록
     avail_menu = []
 
-    
-
     def __init__(self, pos=(0, 0), size=(150, 50)):
         setting.options = setting.default_setting
         setting.load_setting()

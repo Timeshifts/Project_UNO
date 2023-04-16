@@ -115,6 +115,17 @@ def main():
                 pygame.quit()
                 sys.exit(0)
 
+            # 게임 종료 상황에 이 Event를 post해 주세요.
+            # 요구 사항 '플레이어가 마우스 클릭하거나 키를 누르면 시작 메뉴로'를 위해 필요합니다.
+            if event.type == EVENT_END_GAME:
+                state = "end_game"
+            # 게임 종료 상황에
+            if state == "end_game":
+                # 플레이어가 마우스를 클릭하거나 아무 키나 누르면
+                if event.type in (pygame.MOUSEBUTTONDOWN, pygame.KEYDOWN):
+                    # 메인으로 돌아가기
+                    pygame.event.post(pygame.event.Event(EVENT_MAIN))
+
             # 일시 정지
             if event.type == pygame.KEYDOWN:
                 if event.key == setting.options["pause"] and state in (
@@ -200,7 +211,7 @@ def main():
                 game_objects.remove(rename)
 
             # 스토리 모드
-            if event.type == EVENT_START_STORY:
+            if event.type == EVENT_OPEN_STORYMAP:
                 # 메인 메뉴 제거
                 game_objects.remove(main_menu)
                 state = "story_map"
