@@ -27,6 +27,7 @@ class Single:
         self.possible_cards_num = []  # 선택이 가능한 카드
         self.game_timer = 0
         self.first = 0
+        self.is_turn_reversed = False  # 턴 방향
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -47,6 +48,7 @@ class Single:
         self.my_card = self.hand_card[0]  # 내가 소유한 카드
         self.max_card = len(self.my_card)  # 내가 소유한 카드 개수
         self.game_timer = self.game.game_timer_integer
+        self.is_turn_reversed = self.game.is_turn_reversed
         # self.init_draw()
 
     def game_start(self):
@@ -54,27 +56,32 @@ class Single:
         self.game.computer_count = self.computer_count
         self.game.start_cards_integer = 5
         self.game.game_start()
-
         self.update_card()
-        # print(f"내 카드 : {self.my_card}")
-        # print(f"묘지 : {self.game.grave_top_color}_{self.game.grave_top.name}")  # 카드 묘지
-        # print(f"게임 턴 : {self.game.turn}")
 
     def turn_start(self):
-        self.game.turn_start()
+        # self.game.turn_start()
         self.update_card()
         # self.init_draw()
         if self.game.turn == 0:  # 플레이어인 경우
-            self.possible_cards_num = self.game.players[0].play()
             if self.first == 0:
+                self.game.turn_start()
+                # self.update_card()
+                self.possible_cards_num = self.game.players[0].play()
                 self.init_draw()
                 self.first = 1
         else:  # 컴퓨터인 경우
+            pygame.time.wait(2000)
+            self.game.turn_start()
+            self.update_card()
             self.first = 0
             self.game.players[self.game.turn].computer_play()
             self.game.turn_end()
             self.update_card()
-            pygame.time.wait(2000)
+            se_event = pygame.event.Event(
+                EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
+            )
+            pygame.event.post(se_event)
+
         if self.game.end == 1:  # 게임 종료
             return 0
         else:
@@ -349,8 +356,25 @@ class Single:
         screen.blit(
             color_card,
             (
-                self.size[0] * 3 / 8 - color_card_x / 2 + grave_card_x * 11 / 6,
+                self.size[0] * 3 / 8 - color_card_x / 2 + grave_card_x * 5 / 3,
                 self.size[1] / 2 - color_card_y / 2,
+            ),
+        )
+        # 턴 방향
+        rotation_x = 943
+        rotation_y = 238
+        if self.is_turn_reversed == False:
+            rotation = pygame.image.load(RESOURCE_PATH / "single" / "rotation.png")
+        else:
+            rotation = pygame.image.load(
+                RESOURCE_PATH / "single" / "rotation_reversed.png"
+            )
+        rotation = pygame.transform.scale(rotation, (rotation_x, rotation_y))
+        screen.blit(
+            rotation,
+            (
+                self.size[0] * 3 / 8 - rotation_x / 2,
+                self.size[1] / 2 - rotation_y / 2,
             ),
         )
         # 내 보드
