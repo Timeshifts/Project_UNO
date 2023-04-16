@@ -116,9 +116,28 @@ def main():
                 sys.exit(0)
 
             # 게임 종료 상황에 이 Event를 post해 주세요.
+            # player_win: (True, False) - 플레이어가 이겼는지 졌는지를 넣어주시면 됩니다.
+            # story_map: int - 스토리를 클리어했을 경우 0번부터의 스토리 번호를 넣어주세요.
+            # 일반 게임에서는 story_map을 생략해도 좋습니다.
             # 요구 사항 '플레이어가 마우스 클릭하거나 키를 누르면 시작 메뉴로'를 위해 필요합니다.
             if event.type == EVENT_END_GAME:
+                # 게임 승리/패배 효과음 출력
+                if event.player_win:
+                    pygame.event.post(pygame.event.Event(
+                    EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "victory.mp3"} 
+                    ))
+                else:
+                    pygame.event.post(pygame.event.Event(
+                    EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "wild.mp3"} 
+                    ))
+                # 스토리 모드였다면 다음 지역 해금
+                if "story_map" in event.dict.keys():
+                    progress = story_object.STORY_MENU.story_progress
+                    if progress < event.story_map and event.player_win:
+                        progress = event.story_map
+                        story_object.STORY_MENU.save_progress()
                 state = "end_game"
+                
             # 게임 종료 상황에
             if state == "end_game":
                 # 플레이어가 마우스를 클릭하거나 아무 키나 누르면
