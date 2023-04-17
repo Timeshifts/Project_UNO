@@ -80,9 +80,10 @@ class Single:
             # self.init_draw()
             if self.game.turn == 0:  # 플레이어인 경우
                 self.possible_cards_num = self.game.players[0].play()
-                if self.game.timer_zero == True:  # 턴 타이머 종료된 경우
+                if self.game.timer_zero == True and self.game.no_act == False:  # 턴 타이머 종료된 경우
                     self.game.players[0].get_card()
                     self.game.turn_end()
+                    self.game.no_act = True
                     print(f"타이머 1: {self.turn_timer}")
                 if self.set_first == 0:
                     self.game.turn_start()
@@ -96,6 +97,8 @@ class Single:
                     # 컴퓨터 비동기 대기 - 컴퓨터 턴에 일시 정지 문제가 생기지 않도록 하기 위함.
                     # race condition 방지를 위해 이벤트로 복잡하게 구현되긴 했습니다.
                     if self.computer_think_thread is None:
+                        self.game.turn_timer_end = False
+                        self.game.turn_count_down()
                         self.computer_think_thread = threading.Thread(target=self.computer_wait)
                         self.computer_think_thread.start()
                         # 나머지는 바로 밑 computer_act 함수로 이동
