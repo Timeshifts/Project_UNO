@@ -581,7 +581,7 @@ class Single:
                 self.update_card()
                 self.init_draw()
                 self.highlight = 0
-                pass
+                self.game.wild = False
             else:
                 self.game.turn_end(option=1)
         if index == self.max_card:  # 덱
