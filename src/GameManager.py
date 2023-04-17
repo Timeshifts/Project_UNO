@@ -41,6 +41,7 @@ class GameManager:
         self.timer_zero = False
         self.wild = False
         self.paused = False  # 일시 정지 중 타이머 정지를 위한 불린변수
+        self.player_score = []  # 점수 저장
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -268,8 +269,8 @@ class GameManager:
             temp = 0
             for j in range(len(self.players[i].hand)):
                 temp += self.players[i].hand[j].score
-
-            print(f"{i} 번 유저의 점수는 {temp} 점")
+            self.player_score.append(temp)
+            # print(f"{i} 번 유저의 점수는 {temp} 점")
 
             if temp < min:
                 min = temp
