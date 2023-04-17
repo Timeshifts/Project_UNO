@@ -169,7 +169,7 @@ class GameManager:
         self.turn_timer_end = True
 
         # pygame.time.wait(250)
-
+        
         self.turn_timer_integer = 15
 
         # 현재 핸드가 0인지 판별
