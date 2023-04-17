@@ -165,7 +165,7 @@ class GameManager:
         self.players[self.turn].attacked_int = 0
         self.turn_timer_end = True
         
-        # pygame.time.wait(1200)
+        # pygame.time.wait(250)
         
         self.turn_timer_integer = 15
         
@@ -191,12 +191,12 @@ class GameManager:
             self.players[self.turn].is_turn_used = True
 
             if self.is_turn_reversed == False:
-                self.turn += 1 + self.turn_jump_num
+                self.turn += (1 + self.turn_jump_num)
 
                 while self.turn >= self.player_num:
                     self.turn -= self.player_num
             else:
-                self.turn -= 1 + self.turn_jump_num
+                self.turn -= (1 + self.turn_jump_num)
 
                 while self.turn < 0:
                     self.turn += self.player_num
@@ -357,6 +357,7 @@ class GameManager:
                 start_time = time.time() - time_elapsed
             self.game_timer_integer = count - (int)(time.time() - start_time)
             if self.game_timer_integer <= 0:
+                self.turn_timer_integer = 0
                 print("game time end")
                 break
             elif self.game_timer_end == True:
@@ -383,8 +384,8 @@ class GameManager:
             elif self.turn_timer_end == True:
                 break
 
-            print(f"turn time: {self.turn_timer_integer} seconds")
-            time.sleep(1)
+            #print(f"turn time: {self.turn_timer_integer} seconds")
+            time.sleep(0.2)
 
     def game_count_down(self):
         self.game_timer_thread = threading.Thread(target=self.game_timer, args=(300,))
