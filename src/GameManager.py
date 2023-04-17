@@ -179,27 +179,28 @@ class GameManager:
 
     # 턴 끝 함수
     def turn_end(self, option=0):
-        if self.no_act: return
+        if self.no_act:
+            return
         self.no_act = True
         print("턴 종료")
 
         self.players[self.turn].is_attacked = False
         self.players[self.turn].attacked_int = 0
         self.turn_timer_end = True
-        
+
         print(f"{option} {self.turn_end_thread}")
         if self.turn_end_thread is None:
-            self.turn_end_thread = threading.Thread(target=self.computer_wait, args=(option,))
+            self.turn_end_thread = threading.Thread(
+                target=self.computer_wait, args=(option,)
+            )
             self.turn_end_thread.start()
 
     def computer_wait(self, option=0):
         time.sleep(0.25)
-        pygame.event.post(
-            pygame.event.Event(EVENT_TURN_END, {"option": option})
-        )
+        pygame.event.post(pygame.event.Event(EVENT_TURN_END, {"option": option}))
 
     def turn_end_act(self):
-        print('비동기 동작')
+        print("비동기 동작")
         self.turn_end_thread = None
         self.turn_timer_integer = 15
 
@@ -422,7 +423,7 @@ class GameManager:
             time.sleep(0.2)
 
     def game_count_down(self):
-        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(300,))
+        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(20,))
         self.game_timer_thread.start()
 
     def turn_count_down(self):
@@ -573,11 +574,13 @@ class Player:
             self.is_uno = True
 
     def use_card(self, index):
-        current_card = self.hand[index]
-        self.hand.remove(current_card)
+        self.current_card = self.hand[index]
+        self.hand.remove(self.current_card)
         self.is_turn_used = True
-        Gm.get_card(current_card)
-        print(f"{Gm.turn} 턴 유저가 낸 카드는 {current_card.color} {current_card.name} ")
+        Gm.get_card(self.current_card)
+        print(
+            f"{Gm.turn} 턴 유저가 낸 카드는 {self.current_card.color} {self.current_card.name} "
+        )
 
     def get_card(self):
         Gm.give_card(Gm.turn)
@@ -688,7 +691,9 @@ class Computer(Player):
         if len(self.possible_cards_num) != 0:
             ran = random.choice(self.possible_cards_num)
             # ran = random.randrange(len(self.possible_cards))
-            return_value = self.use_card(ran)
+            self.use_card(ran)
+            return_value = f"{self.current_card.color}_{self.current_card.name}"
+            self.current_card = 0
         else:
             self.get_card()
             return_value = "get"
@@ -713,7 +718,10 @@ class StoryA_User(Player):
         is_combo = False
         if len(self.possible_cards) != 0:
             for i in range(len(self.possible_cards)):
-                if self.possible_cards[i].name == "again" or self.possible_cards[i].name == "skip":
+                if (
+                    self.possible_cards[i].name == "again"
+                    or self.possible_cards[i].name == "skip"
+                ):
                     print("--------콤보 공격--------")
                     self.use_card(self.hand.index(self.possible_cards[i]))
                     is_combo = True
@@ -726,6 +734,7 @@ class StoryA_User(Player):
 
         if len(self.hand) == 1:
             self.press_uno()
+
 
 # -------------------------------------------------------------------------------------------------
 
