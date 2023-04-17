@@ -110,6 +110,7 @@ def init_pause(settings: setting_menu.Setting_UI, main_screen: pygame.Surface):
 
 def pause(reset=True):
     paused = True
+    computer_thought = False
     paused_menu = Paused_Menu((0, 0), pause.screen.get_size())
     quit_menu = Quit_Menu((0, 0), pause.screen.get_size())
     if reset:
@@ -133,6 +134,11 @@ def pause(reset=True):
             if event.type == pygame.KEYDOWN:
                 if event.key == setting.options["pause"]:
                     paused = False
+                    # 일시 정지 중에 컴퓨터의 대기가 완료되면
+                    # 해제 즉시 작동하도록 처리
+                    if computer_thought:
+                        if computer_thought:
+                            pygame.event.post(pygame.event.Event(EVENT_COMPUTER_THINK))
                     # 실제로 설정이 바뀌지 않았을 수도 있으나,
                     # 설정 변경을 메인 루프에도 적용하기 위함.
                     pygame.event.post(pygame.event.Event(EVENT_OPTION_CHANGED))
@@ -140,6 +146,10 @@ def pause(reset=True):
             if event.type == EVENT_RESUME:
                 paused = False
                 pygame.event.post(pygame.event.Event(EVENT_OPTION_CHANGED))
+
+            # 컴퓨터가 일시정지 중 동작 완료
+            if event.type == EVENT_COMPUTER_THINK:
+                computer_thought = True
 
             # 효과음
             if event.type == EVENT_PLAY_SE:
