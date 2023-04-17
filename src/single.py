@@ -7,6 +7,7 @@ from constant import *
 
 clock = pygame.time.Clock()
 
+
 class Single:
     def __init__(self, pos=(0, 0), size=(150, 50), computer_count=1, name="ME"):
         # self.menu = self.avail_menu
@@ -28,7 +29,7 @@ class Single:
         self.set_again = 0  # 컴퓨터 턴일때 화면 갱신 하는 용도
         self.is_turn_reversed = False  # 턴 방향
         self.effect = 0  # 애니메이션
-        self.computer_think_thread = None # 컴퓨터 비동기 처리용 스레드
+        self.computer_think_thread = None  # 컴퓨터 비동기 처리용 스레드
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -100,13 +101,15 @@ class Single:
                     if self.computer_think_thread is None:
                         self.game.turn_timer_end = False
                         self.game.turn_count_down()
-                        self.computer_think_thread = threading.Thread(target=self.computer_wait)
+                        self.computer_think_thread = threading.Thread(
+                            target=self.computer_wait
+                        )
                         self.computer_think_thread.start()
                         # 나머지는 바로 밑 computer_act 함수로 이동
                 else:
                     self.game.turn_end()
             return 1
-        
+
     def computer_act(self):
         self.computer_think_thread = None
         self.game.turn_start()
@@ -118,10 +121,8 @@ class Single:
 
     def computer_wait(self):
         time.sleep(random.randint(1, 3))
-        pygame.event.post(
-            pygame.event.Event(EVENT_COMPUTER_THINK)
-        )
-        
+        pygame.event.post(pygame.event.Event(EVENT_COMPUTER_THINK))
+
     def init_draw(self):
         self.button = []
         self.rect = []
@@ -610,7 +611,7 @@ class Single:
         if event.type == EVENT_TURN_END:
             self.game.turn_end_act()
             if event.option == 2:
-                print('옵션 2')
+                print("옵션 2")
                 self.turn_start()
             if event.option == 1:
                 self.update_card()
