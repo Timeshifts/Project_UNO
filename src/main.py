@@ -138,9 +138,9 @@ def main():
                     end_prompt = "패배하였습니다. 키보드/마우스로 시작 화면으로 돌아갑니다."
                 # 스토리 모드였다면 다음 지역 해금
                 if "story_map" in event.dict.keys():
-                    progress = story_object.STORY_MENU.story_progress
+                    progress = story_map.StoryMenu.story_progress
                     if progress < event.story_map and event.player_win:
-                        progress = event.story_map
+                        story_map.StoryMenu.story_progress = event.story_map
                         story_object.STORY_MENU.save_progress()
                 state = "end_game"
 
@@ -206,18 +206,38 @@ def main():
 
             # 게임 시작
             if event.type == EVENT_START_SINGLE:
-                # 컴퓨터 개수
-                computer_count = single_lobby.computer_chk.count(True)
-                name = single_lobby.name
-                # 게임 로비 제거
-                game_objects.remove(single_lobby)
-                state = "single"
-                background = get_background(state, size)
-                # load_bgm(
-                #     RESOURCE_PATH / "sound" / "bg_game.mp3", setting_UI.get_volume("bgm")
-                # )
-                #
-                single = Single((width, height), size, computer_count, name)
+                # 스토리 모드 시작엔 index가 있는 event를 날려서
+                if "index" in event.dict.keys():
+                    single_lobby.name = "You"
+                    if event.index == 0:
+                        single_lobby.computer_chk = [True, False, False, False, False]
+                    elif event.index == 1:
+                        single_lobby.computer_chk = [True, True, False, False, False]
+                    elif event.index == 2:
+                        single_lobby.computer_chk = [True, False, False, False, False]
+                    elif event.index == 3:
+                        single_lobby.computer_chk = [True, True, True, False, False]
+                    # 컴퓨터 개수
+                    computer_count = single_lobby.computer_chk.count(True)
+                    name = single_lobby.name
+                    # 스토리 맵 제거
+                    game_objects.remove(story_object)
+                    state = "single"
+                    background = get_background(state, size)
+                    load_bgm(
+                        RESOURCE_PATH / "sound" / "bg_story_game.mp3", setting.get_volume("bgm")
+                    )
+                    single = Single((width, height), size, computer_count, name, event.index)
+                # 그게 없으면 일반 게임
+                else:
+                    # 컴퓨터 개수
+                    computer_count = single_lobby.computer_chk.count(True)
+                    name = single_lobby.name
+                    # 게임 로비 제거
+                    game_objects.remove(single_lobby)
+                    state = "single"
+                    background = get_background(state, size)
+                    single = Single((width, height), size, computer_count, name)
 
                 game_objects.append(single)
                 # single.name = name
