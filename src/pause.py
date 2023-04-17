@@ -137,8 +137,7 @@ def pause(reset=True):
                     # 일시 정지 중에 컴퓨터의 대기가 완료되면
                     # 해제 즉시 작동하도록 처리
                     if computer_thought:
-                        if computer_thought:
-                            pygame.event.post(pygame.event.Event(EVENT_COMPUTER_THINK))
+                        pygame.event.post(pygame.event.Event(EVENT_COMPUTER_THINK))
                     # 실제로 설정이 바뀌지 않았을 수도 있으나,
                     # 설정 변경을 메인 루프에도 적용하기 위함.
                     pygame.event.post(pygame.event.Event(EVENT_OPTION_CHANGED))
