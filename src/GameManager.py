@@ -559,11 +559,13 @@ class Player:
             self.is_uno = True
 
     def use_card(self, index):
-        current_card = self.hand[index]
-        self.hand.remove(current_card)
+        self.current_card = self.hand[index]
+        self.hand.remove(self.current_card)
         self.is_turn_used = True
-        Gm.get_card(current_card)
-        print(f"{Gm.turn} 턴 유저가 낸 카드는 {current_card.color} {current_card.name} ")
+        Gm.get_card(self.current_card)
+        print(
+            f"{Gm.turn} 턴 유저가 낸 카드는 {self.current_card.color} {self.current_card.name} "
+        )
 
     def get_card(self):
         Gm.give_card(Gm.turn)
@@ -674,7 +676,9 @@ class Computer(Player):
         if len(self.possible_cards_num) != 0:
             ran = random.choice(self.possible_cards_num)
             # ran = random.randrange(len(self.possible_cards))
-            return_value = self.use_card(ran)
+            self.use_card(ran)
+            return_value = f"{self.current_card.color}_{self.current_card.name}"
+            self.current_card = 0
         else:
             self.get_card()
             return_value = "get"
