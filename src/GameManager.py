@@ -599,68 +599,6 @@ class User(Player):
 
         return self.possible_cards_num
 
-        # print("1 : 보유한 카드들 보기\n")
-        # print("2 : 낼 수 있는 카드들 보기\n")
-        # print("3 : 카드 내기\n")
-        # print("4 : 카드 한장 받아오기\n")
-
-        # while True:
-        #     a = int(input())
-
-        #     # if a < 0 or a > 4:
-        #     #     print("다시 입력하세요\n")
-
-        #     # elif a == 1:
-        #     #     for i in range(len(self.hand)):
-        #     #         print(f"/{self.hand[i].color} {self.hand[i].name}")
-
-        #     if a == 2:
-        #         if len(self.possible_cards) != 0:
-        #             for i in range(len(self.possible_cards)):
-        #                 print(
-        #                     f"/{self.possible_cards[i].color} {self.possible_cards[i].name}"
-        #                 )
-        #         else:
-        #             print(f"낼 수 있는 카드가 없습니다.")
-
-        #     elif a == 3:
-        #         if len(self.possible_cards) != 0:
-        #             print(f"다음 카드들 중에서 어떤 카드를 낼지 선택하세요")
-        #             for i in range(len(self.possible_cards)):
-        #                 print(
-        #                     f"/{self.possible_cards[i].color} {self.possible_cards[i].name} {i}번"
-        #                 )
-
-        #             while True:
-        #                 a = int(input())
-
-        #                 if a < 0 or a >= len(self.possible_cards):
-        #                     print("다시 입력하세요\n")
-        #                 else:
-        #                     print(f"{a}번 카드 선택")
-        #                     self.use_card(a)
-        #                     break
-
-        #             break
-        #         else:
-        #             print(f"낼 수 있는 카드가 없습니다.")
-
-        #     else:
-        #         self.get_card()
-        #         print(f"받은 카드는 {self.hand[-1].color} {self.hand[-1].name}\n")
-        #         break
-
-        # if len(self.hand) == 1 and self.is_uno == False:
-        #     print("우노 버튼을 누른다? Y/N \n")
-        #     while True:
-        #         a = input()
-
-        #         if a != "Y" and a != "N":
-        #             print("다시 입력하세요\n")
-        #         elif a == "Y":
-        #             print("우노 버튼 작동\n")
-        #             self.press_uno()
-
 
 # -------------------------------------------------------------------------------------------------
 
