@@ -149,7 +149,9 @@ class GameManager:
         self.players[self.turn].attacked_int = 0
         self.turn_timer_end = True
         
-        pygame.time.wait(1500)
+        pygame.time.wait(1200)
+        
+        self.turn_timer_integer = 15
         
         # 현재 핸드가 0인지 판별
         if len(self.players[self.turn].hand) == 0:
