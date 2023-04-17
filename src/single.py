@@ -79,12 +79,10 @@ class Single:
             if self.game.turn == 0:  # 플레이어인 경우
                 self.possible_cards_num = self.game.players[0].play()
                 if self.game.timer_zero == True:  # 턴 타이머 종료된 경우
-                    self.game.players[0].get_card()
-                    self.game.turn_end()
-                    self.update_card()
-                    self.init_draw()
-                    self.highlight = 0
-                    self.set_first = 0
+                    if self.game.no_act == False:
+                        self.game.players[0].get_card()
+                    self.game.turn_end(option=2)
+                    print(f"타이머 1: {self.turn_timer}")
                 if self.set_first == 0:
                     self.game.turn_start()
                     self.init_draw()
@@ -100,17 +98,13 @@ class Single:
                     # 컴퓨터 비동기 대기 - 컴퓨터 턴에 일시 정지 문제가 생기지 않도록 하기 위함.
                     # race condition 방지를 위해 이벤트로 복잡하게 구현되긴 했습니다.
                     if self.computer_think_thread is None:
+                        self.game.turn_timer_end = False
+                        self.game.turn_count_down()
                         self.computer_think_thread = threading.Thread(target=self.computer_wait)
                         self.computer_think_thread.start()
                         # 나머지는 바로 밑 computer_act 함수로 이동
                 else:
                     self.game.turn_end()
-                    self.update_card()
-                    se_event = pygame.event.Event(
-                        EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"}
-                    )
-                    pygame.event.post(se_event)
-                    self.set_first = 0
             return 1
         
     def computer_act(self):
@@ -584,43 +578,59 @@ class Single:
         # )
         # pygame.event.post(se_event)
         print(f"---{index}---")
-        if self.game_timer != 0:
-            if index in self.possible_cards_num:
-                self.game.players[0].use_card(index)
-                if self.game.wild == True:
-                    pass
-                else:
-                    self.game.turn_end()
-                    self.set_first = 0
-                self.update_card()
-                self.init_draw()
-                self.highlight = 0
-            if index == self.max_card:  # 덱
-                self.game.players[0].get_card()
-                self.game.turn_end()
-                self.update_card()
-                self.init_draw()
-                self.highlight = 0
-                self.set_first = 0
-            if index == self.max_card + 1:  # 우노버튼
-                self.game.players[0].press_uno()
+
+        if index in self.possible_cards_num:
+            self.game.players[0].use_card(index)
             if self.game.wild == True:
-                if index >= self.max_card + 2:
-                    card_color = ["blue", "green", "red", "yellow"]
-                    print(f"선택색 : {card_color[index - (self.max_card + 2)]}")
-                    self.game.grave_top_color = card_color[index - (self.max_card + 2)]
-                    self.game.wild = False
-                    self.game.turn_end()
-                    self.set_first = 0
-                    self.update_card()
-                    self.init_draw()
-                    self.highlight = 0
+                self.update_card()
+                self.init_draw()
+                self.highlight = 0
+                self.game.wild = False
+            else:
+                self.game.turn_end(option=1)
+        if index == self.max_card:  # 덱
+            self.game.players[0].get_card()
+            self.game.turn_end()
+        if index == self.max_card + 1:  # 우노버튼
+            self.game.players[0].press_uno()
+        if self.game.wild == True:
+            if index >= self.max_card + 2:
+                card_color = ["blue", "green", "red", "yellow"]
+                print(f"선택색 : {card_color[index - (self.max_card + 2)]}")
+                self.game.grave_top_color = card_color[index - (self.max_card + 2)]
+                self.game.wild = False
+                self.game.turn_end()
 
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
         self.color = 0
         if self.game.wild == True:
             self.color = 4
+        # 턴 종료 대기 완료
+        if event.type == EVENT_TURN_END:
+            self.game.turn_end_act()
+            if event.option == 2:
+                print('옵션 2')
+                self.turn_start()
+            if event.option == 1:
+                self.update_card()
+                self.init_draw()
+                self.highlight = 0
+            if self.game.turn != 0 and self.set_first != 0:
+                self.update_card()
+                se_event = pygame.event.Event(
+                    EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"}
+                )
+                pygame.event.post(se_event)
+                self.set_first = 0
+                print(f"타이머 4: {self.turn_timer}")
+            else:
+                self.update_card()
+                self.init_draw()
+                self.highlight = 0
+                self.set_first = 0
+            self.game.no_act = False
+            self.turn_start()
         # 컴퓨터 비동기 대기 완료
         if event.type == EVENT_COMPUTER_THINK:
             self.computer_act()
