@@ -150,6 +150,7 @@ def main():
                 if event.key == setting.options["pause"] and state in (
                     "single_play" or "story_play"
                 ):
+                    single.game.paused = True
                     pause.init_pause(setting_UI, screen)
                     pause.pause()  # pause 상태에서의 루프
 
@@ -284,6 +285,8 @@ def main():
                         obj.resize(size)
                 # 일시 정지 이후 색약 모드 변경 결과 즉시 반영
                 if state in ("single_play" or "story_play"):
+                    # 과 함께 타이머 재작동
+                    single.game.paused = False
                     single.update_card()
                     single.init_draw()
                 pygame.mixer.music.set_volume(setting.get_volume("bgm"))

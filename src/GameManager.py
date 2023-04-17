@@ -39,6 +39,7 @@ class GameManager:
         self.turn_timer_thread = 0
         self.timer_zero = False
         self.wild = False
+        self.paused = False # 일시 정지 중 타이머 정지를 위한 불린변수
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -331,6 +332,12 @@ class GameManager:
     def game_timer(self, count):
         start_time = time.time()
         while True:
+            # 일시 정지 중에 타이머 동작 방지
+            if self.paused:
+                time_elapsed = time.time() - start_time
+                while self.paused:
+                    time.sleep(0.1)
+                start_time = time.time() - time_elapsed
             self.game_timer_integer = count - (int)(time.time() - start_time)
             if self.game_timer_integer <= 0:
                 print("game time end")
@@ -345,6 +352,12 @@ class GameManager:
         self.timer_zero = False
         start_time = time.time()
         while True:
+            # 일시 정지 중에 타이머 동작 방지
+            if self.paused:
+                time_elapsed = time.time() - start_time
+                while self.paused:
+                    time.sleep(0.1)
+                start_time = time.time() - time_elapsed
             self.turn_timer_integer = count - (int)(time.time() - start_time)
             if self.turn_timer_integer <= 0:
                 print("turn time end")
