@@ -30,6 +30,8 @@ class Single:
         self.is_turn_reversed = False  # 턴 방향
         self.effect = 0  # 애니메이션
         self.computer_think_thread = None  # 컴퓨터 비동기 처리용 스레드
+        self.count = 0  # 애니메이션 횟수
+        self.effect_index = 0  # 내는 카드 번호
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -83,7 +85,6 @@ class Single:
                     if self.game.no_act == False:
                         self.game.players[0].get_card()
                     self.game.turn_end(option=2)
-                    print(f"타이머 1: {self.turn_timer}")
                 if self.set_first == 0:
                     self.game.turn_start()
                     self.init_draw()
@@ -117,7 +118,6 @@ class Single:
         # self.set_first == 0
         self.effect = self.game.players[self.game.turn].computer_play()
         self.set_first = 1
-        print(f"타이머 3: {self.turn_timer}")
 
     def computer_wait(self):
         time.sleep(random.randint(1, 3))
@@ -364,6 +364,11 @@ class Single:
         for i in range(self.computer_count):
             card_x = 87.75 * setting.get_screen_scale()
             card_y = 122.85 * setting.get_screen_scale()
+            card_pos_x = (
+                self.size[0] * 3 / 4 * (self.game.turn) / (self.computer_count + 1)
+                - card_x / 2
+            )
+            card_pos_y = card_y * 2 / 3
             board_player_card = pygame.image.load(
                 RESOURCE_PATH / card_folder / "card_back.png"
             )
@@ -375,7 +380,7 @@ class Single:
                 (
                     self.size[0] * 3 / 4 * (i + 1) / (self.computer_count + 1)
                     - card_x / 2,
-                    card_y * 2 / 3,
+                    card_pos_y,
                 ),
             )
         # 메인보드 컴퓨터 이름
@@ -437,6 +442,10 @@ class Single:
         # 카드 묘지
         grave_card_x = 130 * setting.get_screen_scale()
         grave_card_y = 182 * setting.get_screen_scale()
+        grave_card_pos_x = (
+            self.size[0] * 3 / 8 - grave_card_x / 2 + grave_card_x * 2 / 3
+        )
+        grave_card_pos_y = self.size[1] / 2 - grave_card_y / 2
         grave_card = pygame.image.load(
             str(
                 RESOURCE_PATH
@@ -449,8 +458,8 @@ class Single:
         screen.blit(
             grave_card,
             (
-                self.size[0] * 3 / 8 - grave_card_x / 2 + grave_card_x * 2 / 3,
-                self.size[1] / 2 - grave_card_y / 2,
+                grave_card_pos_x,
+                grave_card_pos_y,
             ),
         )
         # 카드 색상
@@ -549,7 +558,7 @@ class Single:
             ),
         )
         # 애니메이션
-        if self.effect == "get":
+        if self.effect == "get":  # 컴퓨터 카드 가져올때
             get_card_x = 130 * setting.get_screen_scale()
             get_card_y = 182 * setting.get_screen_scale()
             get_card = pygame.image.load(
@@ -564,7 +573,7 @@ class Single:
                 ),
             )
             self.effect = 0
-        if self.effect == "get_my":
+        elif self.effect == "get_my":  # 플레이어가 카드 가져올때
             get_card_x = 130 * setting.get_screen_scale()
             get_card_y = 182 * setting.get_screen_scale()
             get_card = pygame.image.load(
@@ -579,6 +588,64 @@ class Single:
                 ),
             )
             self.effect = 0
+        elif self.effect != 0:
+            max_count = 2  # 효과 보여주는 횟수
+            if self.game.turn == 0:  # 플레이어가 카드 낼때
+                give_card_x = 130 * setting.get_screen_scale()
+                give_card_y = 182 * setting.get_screen_scale()
+                give_x = (
+                    self.effect_index
+                    * give_card_x
+                    * setting.get_screen_scale()
+                    * 3
+                    / 4,
+                )
+                give_y = self.size[1] - give_card_y * setting.get_screen_scale() / 2
+                print(give_x[0])
+                print(give_y)
+                print(give_x[0] + (grave_card_pos_x - give_x[0]))
+                print(give_y + (grave_card_pos_y - give_y))
+                give_card = pygame.image.load(
+                    RESOURCE_PATH / card_folder / f"{self.effect}.png"
+                )
+                give_card = pygame.transform.scale(
+                    give_card, (give_card_x, give_card_y)
+                )
+                screen.blit(
+                    give_card,
+                    (
+                        give_x[0]
+                        + (grave_card_pos_x - give_x[0]) * self.count / max_count,
+                        give_y + (grave_card_pos_y - give_y) * self.count / max_count,
+                    ),
+                )
+                self.count += 1
+                if self.count == max_count:
+                    self.effect = 0
+                    self.count = 0
+            else:  # 컴퓨터 카드 낼때
+                i == self.game.turn
+                give_card_x = 130 * setting.get_screen_scale()
+                give_card_y = 182 * setting.get_screen_scale()
+                give_card = pygame.image.load(
+                    RESOURCE_PATH / card_folder / f"{self.effect}.png"
+                )
+                give_card = pygame.transform.scale(
+                    give_card, (give_card_x, give_card_y)
+                )
+                screen.blit(
+                    give_card,
+                    (
+                        card_pos_x
+                        + (grave_card_pos_x - card_pos_x) * self.count / max_count,
+                        card_pos_y
+                        + (grave_card_pos_y - card_pos_y) * self.count / max_count,
+                    ),
+                )
+                self.count += 1
+                if self.count == max_count:
+                    self.effect = 0
+                    self.count = 0
 
     # 메뉴 선택 시 처리
     def select_card(self, index):
@@ -589,6 +656,8 @@ class Single:
         print(f"---{index}---")
 
         if index in self.possible_cards_num:
+            self.effect = self.hand_card[0][index]
+            self.effect_index = index
             self.game.players[0].use_card(index)
             if self.game.wild == True:
                 self.update_card()
@@ -599,8 +668,8 @@ class Single:
                 self.game.turn_end(option=1)
         if index == self.max_card:  # 덱
             self.game.players[0].get_card()
-            self.game.turn_end()
             self.effect = "get_my"
+            self.game.turn_end()
         if index == self.max_card + 1:  # 우노버튼
             self.game.players[0].press_uno()
         if self.game.wild == True:
@@ -633,7 +702,6 @@ class Single:
                 )
                 pygame.event.post(se_event)
                 self.set_first = 0
-                print(f"타이머 4: {self.turn_timer}")
             else:
                 self.update_card()
                 self.init_draw()
