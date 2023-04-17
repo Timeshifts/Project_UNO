@@ -45,6 +45,7 @@ class GameManager:
         self.paused = False  # 일시 정지 중 타이머 정지를 위한 불린변수
         self.player_score = []  # 점수 저장
         self.story = -1  # 몇 번 스토리 모드? (-1이면 일반 게임)
+        self.wild_card = 0
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -261,8 +262,8 @@ class GameManager:
                 print("다음 턴 유저에게, 카드 4장 공격")
                 self.wild_four()
 
-            elif card.name == "target":
-                self.wild_target()
+            # elif card.name == "target":
+            #     self.wild_target()
 
             elif card.name == "again":
                 print("추가 턴 획득 작동함")
@@ -352,7 +353,8 @@ class GameManager:
             "reverse",
             "skip",
         ]
-        wcard_name = ["color", "four", "target"]
+        wcard_name = ["color", "four"]
+        # wcard_name = ["color", "four", "target"]
         for color in card_color:
             if color == "wild":
                 for wcn in wcard_name:
@@ -422,11 +424,11 @@ class GameManager:
             # print(f"turn time: {self.turn_timer_integer} seconds")
             time.sleep(0.2)
 
-    def game_count_down(self):
-        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(20,))
+    def game_count_down(self):  # 전체 시간
+        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(100,))
         self.game_timer_thread.start()
 
-    def turn_count_down(self):
+    def turn_count_down(self):  # 턴 시간
         self.turn_timer_thread = threading.Thread(target=self.turn_timer, args=(15,))
         self.turn_timer_thread.start()
 
@@ -498,55 +500,42 @@ class GameManager:
         else:
             self.wild = True
 
-            # print(f"색을 선택하세요")
-            # for i in range(len(card_color)):
-            #     print(f"/{card_color[i]} {i}번")
-
-            # while True:
-            #     a = int(input())
-
-            #     if a < 0 or a >= len(card_color):
-            #         print("다시 입력하세요\n")
-            #     else:
-            #         self.grave_top_color = card_color[a]
-            #         break
-
-        # print(f"묘지 탑 색깔 {self.grave_top_color} 로 설정")
-
-    def wild_four(self):
-        target = 0
-        if self.is_turn_reversed == False:
-            target = (self.turn + 1) % self.player_num
-        else:
-            target = (self.turn - 1) % self.player_num
-        self.attack(4, target)
-        self.card_color_selection()
-
     def wild_color(self):
         self.card_color_selection()
 
-    def wild_target(self):
-        target = random.randint(0, self.player_num - 1)
-        if self.is_setting == False:
-            if self.players[self.turn].is_computer == True:
-                target = random.randint(0, self.player_num - 1)
-                while target == self.turn:
-                    target = random.randint(0, self.player_num - 1)
-            else:
-                self.wild = True
-                print(f"플레이어를 선택하세요")
-                for i in range(self.player_num):
-                    print(f"/ {i}번 플레이어")
-                while True:
-                    a = int(input())
-                    if a < 0 or a >= self.player_num:
-                        print("다시 입력하세요")
-                    else:
-                        target = a
-                        break
-        self.attack(2, target)
-        print(f"{target}번 유저에게, 카드 2장 공격")
+    def wild_four(self):
         self.card_color_selection()
+        self.wild_card = "wild_four"
+        if self.players[self.turn].is_computer == True:
+            target = 0
+            if self.is_turn_reversed == False:
+                target = (self.turn + 1) % self.player_num
+            else:
+                target = (self.turn - 1) % self.player_num
+            self.attack(4, target)
+
+    # def wild_target(self):
+    #     self.card_color_selection()
+    #     self.wild_card = "wild_target"
+    #     if self.players[self.turn].is_computer == True:
+    #         if self.is_setting == False:
+    #             target = random.randint(0, self.player_num - 1)
+    #             # if self.players[self.turn].is_computer == True:
+    #             while target == self.turn:
+    #                 target = random.randint(0, self.player_num - 1)
+    #             self.attack(2, target)
+    #             print(f"{target}번 유저에게, 카드 2장 공격")
+    # else:
+    # print(f"플레이어를 선택하세요")
+    # for i in range(self.player_num):
+    #     print(f"/ {i}번 플레이어")
+    # while True:
+    #     a = int(input())
+    #     if a < 0 or a >= self.player_num:
+    #         print("다시 입력하세요")
+    #     else:
+    #         target = a
+    #         break
 
     def defence(self):
         self.players[self.turn].defence_int += 1
@@ -578,9 +567,10 @@ class Player:
         self.hand.remove(self.current_card)
         self.is_turn_used = True
         Gm.get_card(self.current_card)
-        print(
-            f"{Gm.turn} 턴 유저가 낸 카드는 {self.current_card.color} {self.current_card.name} "
-        )
+        if self.current_card.color == "color" or "four":
+            return "wild"
+        else:
+            return 0
 
     def get_card(self):
         Gm.give_card(Gm.turn)
