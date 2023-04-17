@@ -8,7 +8,7 @@ from constant import *
 clock = pygame.time.Clock()
 
 class Single:
-    def __init__(self, pos=(0, 0), size=(150, 50), computer_count=1, name="ME"):
+    def __init__(self, pos=(0, 0), size=(150, 50), computer_count=1, name="ME", story=-1):
         # self.menu = self.avail_menu
         # self.max_menu = len(self.menu)
         self.computer_count = computer_count
@@ -29,6 +29,7 @@ class Single:
         self.is_turn_reversed = False  # 턴 방향
         self.effect = 0  # 애니메이션
         self.computer_think_thread = None # 컴퓨터 비동기 처리용 스레드
+        self.story = story # 스토리 모드 (-1이면 스토리 아님)
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -66,6 +67,7 @@ class Single:
         # Gm 역시 single처럼 게임 재시작시 변경되도록 처리
         GM.Gm = GM.GameManager()
         self.game = GM.Gm
+        self.game.story = self.story
         self.game.computer_count = self.computer_count
         self.game.start_cards_integer = 5
         self.game.game_start()

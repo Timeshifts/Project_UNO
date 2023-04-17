@@ -34,6 +34,10 @@ class StoryConfirm(Menu):
         # 스토리 다음 버튼 = 돌아가기 버튼
         if self.avail_menu[index] == "OK":
             print(f"{enter_story}번 스토리 시작")
+            pygame.event.post(
+                pygame.event.Event(EVENT_START_SINGLE, {"index": enter_story})
+            )
+            enter_story = -1
         else:
             enter_story = -1
 
