@@ -40,7 +40,7 @@ class GameManager:
         self.turn_timer_thread = 0
         self.timer_zero = False
         self.wild = False
-        self.paused = False # 일시 정지 중 타이머 정지를 위한 불린변수
+        self.paused = False  # 일시 정지 중 타이머 정지를 위한 불린변수
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -100,19 +100,21 @@ class GameManager:
         self.end = 1
 
         # (직접 조작하는) 플레이어가 승리하였는가?
-        player_win = (self.winner_index == 0)
+        player_win = self.winner_index == 0
 
         pygame.event.post(
             pygame.event.Event(
-            EVENT_END_GAME, 
-            {"player_win": player_win, 
-             # TODO: 몇 번 스토리 맵 진행 중이었는지로 바꿔주세요.
-             # 일반 모드에서는 -1이어도 되고, 안 적어도 됩니다.
-             "story_map": -1}) 
+                EVENT_END_GAME,
+                {
+                    "player_win": player_win,
+                    # TODO: 몇 번 스토리 맵 진행 중이었는지로 바꿔주세요.
+                    # 일반 모드에서는 -1이어도 되고, 안 적어도 됩니다.
+                    "story_map": -1,
+                },
+            )
         )
 
         # 전체 타이머 종료 추가
-        
 
     # 턴 시작 함수
     def turn_start(self):
@@ -164,19 +166,11 @@ class GameManager:
         self.players[self.turn].is_attacked = False
         self.players[self.turn].attacked_int = 0
         self.turn_timer_end = True
-<<<<<<< HEAD
 
-        pygame.time.wait(1200)
-
-        self.turn_timer_integer = 15
-
-=======
-        
         pygame.time.wait(250)
-        
+
         self.turn_timer_integer = 15
-        
->>>>>>> 10ce9d026d793fc682eab497492c35cd5eef2c01
+
         # 현재 핸드가 0인지 판별
         if len(self.players[self.turn].hand) == 0:
             print(f"{self.turn} 턴 유저 승리")
@@ -199,12 +193,12 @@ class GameManager:
             self.players[self.turn].is_turn_used = True
 
             if self.is_turn_reversed == False:
-                self.turn += (1 + self.turn_jump_num)
+                self.turn += 1 + self.turn_jump_num
 
                 while self.turn >= self.player_num:
                     self.turn -= self.player_num
             else:
-                self.turn -= (1 + self.turn_jump_num)
+                self.turn -= 1 + self.turn_jump_num
 
                 while self.turn < 0:
                     self.turn += self.player_num
@@ -392,7 +386,7 @@ class GameManager:
             elif self.turn_timer_end == True:
                 break
 
-            #print(f"turn time: {self.turn_timer_integer} seconds")
+            # print(f"turn time: {self.turn_timer_integer} seconds")
             time.sleep(0.2)
 
     def game_count_down(self):
