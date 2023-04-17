@@ -78,10 +78,10 @@ class Single:
             self.update_card()
             if self.game.turn == 0:  # 플레이어인 경우
                 self.possible_cards_num = self.game.players[0].play()
-                if self.game.timer_zero == True and self.game.no_act == False:  # 턴 타이머 종료된 경우
-                    self.game.no_act = True
-                    self.game.players[0].get_card()
-                    self.game.turn_end()
+                if self.game.timer_zero == True:  # 턴 타이머 종료된 경우
+                    if self.game.no_act == False:
+                        self.game.players[0].get_card()
+                    self.game.turn_end(option=2)
                     print(f"타이머 1: {self.turn_timer}")
                 if self.set_first == 0:
                     self.game.turn_start()
@@ -609,6 +609,9 @@ class Single:
         # 턴 종료 대기 완료
         if event.type == EVENT_TURN_END:
             self.game.turn_end_act()
+            if event.option == 2:
+                print('옵션 2')
+                self.turn_start()
             if event.option == 1:
                 self.update_card()
                 self.init_draw()

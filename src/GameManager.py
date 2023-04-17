@@ -172,14 +172,15 @@ class GameManager:
         self.players[self.turn].attacked_int = 0
         self.turn_timer_end = True
         
+        print(f"{option} {self.turn_end_thread}")
         if self.turn_end_thread is None:
-            self.turn_end_thread = threading.Thread(target=self.computer_wait, args={"option": option})
+            self.turn_end_thread = threading.Thread(target=self.computer_wait, args=(option,))
             self.turn_end_thread.start()
 
     def computer_wait(self, option=0):
         time.sleep(0.25)
         pygame.event.post(
-            pygame.event.Event(EVENT_TURN_END, {"option": 0})
+            pygame.event.Event(EVENT_TURN_END, {"option": option})
         )
 
     def turn_end_act(self):
