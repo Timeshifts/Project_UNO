@@ -1,10 +1,11 @@
 import GameManager as GM
 import pygame, setting
+import threading, time
+import random
 from button import Button
 from constant import *
 
 clock = pygame.time.Clock()
-
 
 class Single:
     def __init__(self, pos=(0, 0), size=(150, 50), computer_count=1, name="ME"):
@@ -27,6 +28,7 @@ class Single:
         self.set_again = 0  # 컴퓨터 턴일때 화면 갱신 하는 용도
         self.is_turn_reversed = False  # 턴 방향
         self.effect = 0  # 애니메이션
+        self.computer_think_thread = None # 컴퓨터 비동기 처리용 스레드
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -95,13 +97,12 @@ class Single:
                     print(f"타이머 2: {self.turn_timer}")
             else:  # 컴퓨터인 경우
                 if self.set_first == 0:
-                    pygame.time.wait(1000)
-                    self.game.turn_start()
-                    self.update_card()
-                    # self.set_first == 0
-                    self.effect = self.game.players[self.game.turn].computer_play()
-                    self.set_first = 1
-                    print(f"타이머 3: {self.turn_timer}")
+                    # 컴퓨터 비동기 대기 - 컴퓨터 턴에 일시 정지 문제가 생기지 않도록 하기 위함.
+                    # race condition 방지를 위해 이벤트로 복잡하게 구현되긴 했습니다.
+                    if self.computer_think_thread is None:
+                        self.computer_think_thread = threading.Thread(target=self.computer_wait)
+                        self.computer_think_thread.start()
+                        # 나머지는 바로 밑 computer_act 함수로 이동
                 else:
                     self.game.turn_end()
                     self.update_card()
@@ -112,7 +113,22 @@ class Single:
                     self.set_first = 0
                     print(f"타이머 4: {self.turn_timer}")
             return 1
+        
+    def computer_act(self):
+        self.computer_think_thread = None
+        self.game.turn_start()
+        self.update_card()
+        # self.set_first == 0
+        self.effect = self.game.players[self.game.turn].computer_play()
+        self.set_first = 1
+        print(f"타이머 3: {self.turn_timer}")
 
+    def computer_wait(self):
+        time.sleep(random.randint(1, 3))
+        pygame.event.post(
+            pygame.event.Event(EVENT_COMPUTER_THINK)
+        )
+        
     def init_draw(self):
         self.button = []
         self.rect = []
@@ -606,6 +622,9 @@ class Single:
         self.color = 0
         if self.game.wild == True:
             self.color = 4
+        # 컴퓨터 비동기 대기 완료
+        if event.type == EVENT_COMPUTER_THINK:
+            self.computer_act()
         if self.game.turn == 0:
             # 겹친 구간에서 위에 있는 카드가 선택되게 하기 위한 조정
             for i in range(self.max_card + 1, -1, -1):
