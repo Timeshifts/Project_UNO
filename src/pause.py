@@ -56,7 +56,7 @@ class Quit_Menu(Menu):
         elif self.avail_menu[index] == "돌아가기":
             pygame.event.post(pygame.event.Event(EVENT_PAUSE_MENU))  # 정지 메뉴로 복귀
         elif self.avail_menu[index] == "시작 화면":
-            pygame.event.post(pygame.event.Event(EVENT_START_MENU))  # 시작 화면으로 복귀
+            pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 시작 화면으로 복귀
 
 
 class Paused_Menu(Menu):
@@ -176,11 +176,11 @@ def pause(reset=True):
                 quit_menu.resize(size)
 
             # 시작 메뉴로 돌아가기
-            if event.type == EVENT_START_MENU:
+            if event.type == EVENT_MAIN:
                 # 일시 정지를 풀고
                 paused = False
                 # Main 루프에서 이벤트를 처리하도록 다시 넘겨주기
-                pygame.event.post(pygame.event.Event(EVENT_START_MENU))
+                pygame.event.post(pygame.event.Event(EVENT_MAIN))
 
             # 해상도 변경 이벤트를 받아 화면 리사이징
             # 배경음악 음량 변경 즉시 적용

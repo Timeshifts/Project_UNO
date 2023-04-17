@@ -2,6 +2,7 @@ import random
 import pygame
 import threading
 import time
+from constant import EVENT_END_GAME
 
 # 1장 20번슬라이드
 
@@ -39,6 +40,7 @@ class GameManager:
         self.turn_timer_thread = 0
         self.timer_zero = False
         self.wild = False
+        self.paused = False # 일시 정지 중 타이머 정지를 위한 불린변수
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -96,7 +98,21 @@ class GameManager:
 
         print(f"{self.winner_index} 번 유저 승리!!")
         self.end = 1
+
+        # (직접 조작하는) 플레이어가 승리하였는가?
+        player_win = (self.winner_index == 0)
+
+        pygame.event.post(
+            pygame.event.Event(
+            EVENT_END_GAME, 
+            {"player_win": player_win, 
+             # TODO: 몇 번 스토리 맵 진행 중이었는지로 바꿔주세요.
+             # 일반 모드에서는 -1이어도 되고, 안 적어도 됩니다.
+             "story_map": -1}) 
+        )
+
         # 전체 타이머 종료 추가
+        
 
     # 턴 시작 함수
     def turn_start(self):
@@ -331,6 +347,12 @@ class GameManager:
     def game_timer(self, count):
         start_time = time.time()
         while True:
+            # 일시 정지 중에 타이머 동작 방지
+            if self.paused:
+                time_elapsed = time.time() - start_time
+                while self.paused:
+                    time.sleep(0.1)
+                start_time = time.time() - time_elapsed
             self.game_timer_integer = count - (int)(time.time() - start_time)
             if self.game_timer_integer <= 0:
                 print("game time end")
@@ -345,6 +367,12 @@ class GameManager:
         self.timer_zero = False
         start_time = time.time()
         while True:
+            # 일시 정지 중에 타이머 동작 방지
+            if self.paused:
+                time_elapsed = time.time() - start_time
+                while self.paused:
+                    time.sleep(0.1)
+                start_time = time.time() - time_elapsed
             self.turn_timer_integer = count - (int)(time.time() - start_time)
             if self.turn_timer_integer <= 0:
                 print("turn time end")
