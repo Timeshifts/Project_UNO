@@ -281,8 +281,10 @@ class Test(unittest.TestCase):
         for j in range(20):
             self.gm.turn_start()
             if self.gm.turn_count % self.gm.top_card_change_num == 0:
+                print("----------------------------------")
                 print(f"바뀌기전의 grave_top 색 : {self.grave_top_four}")
                 print(f"바뀐 후의 grave_top 색 : {self.gm.grave_top_color}")
+                print("----------------------------------")
                 self.assertNotEqual(self.gm.grave_top_color,self.grave_top_four)
             if isinstance(self.gm.players[self.gm.turn],GM.Computer):
                 self.gm.players[self.gm.turn].computer_play()
@@ -311,8 +313,11 @@ class Test(unittest.TestCase):
             if self.gm.turn_count % self.gm.hand_change_num == 0:
                 for a in range(len(self.gm.players)):
                     after_hand.append(len(self.gm.players[a].hand))
+        
+                print("----------------------------------")
                 print(f"바뀌기 전 모든 플레이어 카드 수 : {before_hand}")
                 print(f"바뀐 후 플레이어 카드 수 : {after_hand}")
+                print("----------------------------------")
                 self.assertNotEqual(before_hand,after_hand)
                 before_hand = []
                 after_hand = []
