@@ -44,7 +44,7 @@ class GameManager:
         self.no_act = False
         self.paused = False  # 일시 정지 중 타이머 정지를 위한 불린변수
         self.player_score = []  # 점수 저장
-        self.story = -1 # 몇 번 스토리 모드? (-1이면 일반 게임)
+        self.story = -1  # 몇 번 스토리 모드? (-1이면 일반 게임)
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -127,7 +127,7 @@ class GameManager:
                 EVENT_END_GAME,
                 {
                     "player_win": player_win,
-                    "story_map": self.story+1,
+                    "story_map": self.story + 1,
                 },
             )
         )
@@ -200,7 +200,7 @@ class GameManager:
         pygame.event.post(pygame.event.Event(EVENT_TURN_END, {"option": option}))
 
     def turn_end_act(self):
-        print("비동기 동작")
+        # print("비동기 동작")
         self.turn_end_thread = None
         self.turn_timer_integer = 15
 
@@ -393,7 +393,7 @@ class GameManager:
             self.game_timer_integer = count - (int)(time.time() - start_time)
             if self.game_timer_integer <= 0:
                 self.turn_timer_integer = 0
-                print("game time end")
+                # print("game time end")
                 break
             elif self.game_timer_end == True:
                 break
@@ -413,7 +413,7 @@ class GameManager:
                 start_time = time.time() - time_elapsed
             self.turn_timer_integer = count - (int)(time.time() - start_time)
             if self.turn_timer_integer <= 0:
-                print("turn time end")
+                # print("turn time end")
                 self.timer_zero = True
                 break
             elif self.turn_timer_end == True:

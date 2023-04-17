@@ -9,7 +9,9 @@ clock = pygame.time.Clock()
 
 
 class Single:
-    def __init__(self, pos=(0, 0), size=(150, 50), computer_count=1, name="ME", story=-1):
+    def __init__(
+        self, pos=(0, 0), size=(150, 50), computer_count=1, name="ME", story=-1
+    ):
         # self.menu = self.avail_menu
         # self.max_menu = len(self.menu)
         self.computer_count = computer_count
@@ -32,7 +34,7 @@ class Single:
         self.computer_think_thread = None  # 컴퓨터 비동기 처리용 스레드
         self.count = 0  # 애니메이션 횟수
         self.effect_index = 0  # 내는 카드 번호
-        self.story = story # 스토리 모드 (-1이면 스토리 아님)
+        self.story = story  # 스토리 모드 (-1이면 스토리 아님)
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -603,10 +605,6 @@ class Single:
                     / 4,
                 )
                 give_y = self.size[1] - give_card_y * setting.get_screen_scale() / 2
-                print(give_x[0])
-                print(give_y)
-                print(give_x[0] + (grave_card_pos_x - give_x[0]))
-                print(give_y + (grave_card_pos_y - give_y))
                 give_card = pygame.image.load(
                     RESOURCE_PATH / card_folder / f"{self.effect}.png"
                 )
@@ -651,11 +649,10 @@ class Single:
 
     # 메뉴 선택 시 처리
     def select_card(self, index):
-        # se_event = pygame.event.Event(
-        #     EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
-        # )
-        # pygame.event.post(se_event)
-        print(f"---{index}---")
+        se_event = pygame.event.Event(
+            EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
+        )
+        pygame.event.post(se_event)
 
         if index in self.possible_cards_num:
             self.effect = self.hand_card[0][index]
@@ -691,7 +688,7 @@ class Single:
         if event.type == EVENT_TURN_END:
             self.game.turn_end_act()
             if event.option == 2:
-                print("옵션 2")
+                # print("옵션 2")
                 self.turn_start()
             if event.option == 1:
                 self.update_card()
