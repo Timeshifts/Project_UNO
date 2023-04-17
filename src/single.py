@@ -212,7 +212,8 @@ class Single:
                     (deck_card_x, deck_card_y),
                 ),
                 pos=(
-                    self.size[0] * 3 / 8 - deck_card_x * setting.get_screen_scale() * 2 / 3,
+                    self.size[0] * 3 / 8
+                    - deck_card_x * setting.get_screen_scale() * 2 / 3,
                     self.size[1] / 2,
                 ),
                 text_input="",
