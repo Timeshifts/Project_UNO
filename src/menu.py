@@ -104,14 +104,14 @@ class Menu:
         key = ["up", "down", "left", "right", "enter", "pause"]
         for i in range(len(key)):
             # key_value = pygame.key.name(setting.options[key[i]])
-            key_value = setting.get_font(50).render(
+            key_value = setting.get_font(30).render(
                 f"{key[i]} : {pygame.key.name(setting.options[key[i]])}", True, "White"
             )
             screen.blit(
                 key_value,
                 (
                     self.size[0] / 50,
-                    self.size[1] * 27 / 40 + self.size[1] * i / 20,
+                    self.size[1] * 13 / 17 + self.size[1] * i / 30,
                 ),
             )
 
