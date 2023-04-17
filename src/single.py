@@ -61,6 +61,8 @@ class Single:
         self.init_draw()
 
     def game_start(self):
+        # Gm 역시 single처럼 게임 재시작시 변경되도록 처리
+        GM.Gm = GM.GameManager()
         self.game = GM.Gm
         self.game.computer_count = self.computer_count
         self.game.start_cards_integer = 5

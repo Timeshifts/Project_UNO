@@ -167,9 +167,9 @@ def main():
                 elif state == "story_map":
                     game_objects.remove(story_object)  # 스토리 모드 제거
                 elif state in ("single", "end_game"):
+                    game_objects.remove(single)
                     del single  # single 객체 삭제
                     single_turn = 0  # single 진행 X
-                    game_objects.remove(single)
                 # 메인 메뉴로 복귀
                 game_objects.append(main_menu)
                 main_menu.resize(size)
@@ -259,20 +259,6 @@ def main():
                 if state == "main_menu":
                     game_objects.append(main_menu)
                     main_menu.resize(size)
-
-            # 메인 메뉴로 복귀
-            if event.type == EVENT_START_MENU:
-                if state == "single":
-                    del single  # single 객체 삭제
-                    single_turn = 0  # single 진행 X
-                    game_objects.clear()
-                state = "main_menu"
-                background = get_background(state, size)
-                load_bgm(
-                    RESOURCE_PATH / "sound" / "bg_main.mp3", setting.get_volume("bgm")
-                )
-                game_objects.append(main_menu)
-                main_menu.resize(size)
 
             # 해상도 변경 이벤트를 받아 화면 리사이징
             # 배경음악 음량 변경 즉시 적용
