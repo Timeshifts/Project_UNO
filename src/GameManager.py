@@ -514,28 +514,28 @@ class GameManager:
     def wild_color(self):
         self.card_color_selection()
 
-    def wild_target(self):
-        target = random.randint(0, self.player_num - 1)
-        if self.is_setting == False:
-            if self.players[self.turn].is_computer == True:
-                target = random.randint(0, self.player_num - 1)
-                while target == self.turn:
-                    target = random.randint(0, self.player_num - 1)
-            else:
-                self.wild = True
-                print(f"플레이어를 선택하세요")
-                for i in range(self.player_num):
-                    print(f"/ {i}번 플레이어")
-                while True:
-                    a = int(input())
-                    if a < 0 or a >= self.player_num:
-                        print("다시 입력하세요")
-                    else:
-                        target = a
-                        break
-        self.attack(2, target)
-        print(f"{target}번 유저에게, 카드 2장 공격")
-        self.card_color_selection()
+    # def wild_target(self):
+    #     target = random.randint(0, self.player_num - 1)
+    #     if self.is_setting == False:
+    #         if self.players[self.turn].is_computer == True:
+    #             target = random.randint(0, self.player_num - 1)
+    #             while target == self.turn:
+    #                 target = random.randint(0, self.player_num - 1)
+    #         else:
+    #             self.wild = True
+    #             print(f"플레이어를 선택하세요")
+    #             for i in range(self.player_num):
+    #                 print(f"/ {i}번 플레이어")
+    #             while True:
+    #                 a = int(input())
+    #                 if a < 0 or a >= self.player_num:
+    #                     print("다시 입력하세요")
+    #                 else:
+    #                     target = a
+    #                     break
+    #     self.attack(2, target)
+    #     print(f"{target}번 유저에게, 카드 2장 공격")
+    #     self.card_color_selection()
 
     def defence(self):
         self.players[self.turn].defence_int += 1
