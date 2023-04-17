@@ -71,9 +71,7 @@ class Single:
         if self.game.end == 1:  # 게임 종료
             return 0
         else:
-            # self.game.turn_start()
             self.update_card()
-            # self.init_draw()
             if self.game.turn == 0:  # 플레이어인 경우
                 self.possible_cards_num = self.game.players[0].play()
                 if self.game.timer_zero == True:  # 턴 타이머 종료된 경우
@@ -83,14 +81,10 @@ class Single:
                     self.init_draw()
                     self.highlight = 0
                     self.set_first = 0
-                    print(f"타이머 1: {self.turn_timer}")
                 if self.set_first == 0:
                     self.game.turn_start()
-                    # self.update_card()
-                    # self.possible_cards_num = self.game.players[0].play()
                     self.init_draw()
                     self.set_first = 1
-                    print(f"타이머 2: {self.turn_timer}")
             else:  # 컴퓨터인 경우
                 if self.set_first == 0:
                     pygame.time.wait(1000)
@@ -99,7 +93,6 @@ class Single:
                     # self.set_first == 0
                     self.effect = self.game.players[self.game.turn].computer_play()
                     self.set_first = 1
-                    print(f"타이머 3: {self.turn_timer}")
                 else:
                     self.game.turn_end()
                     self.update_card()
@@ -108,7 +101,6 @@ class Single:
                     )
                     pygame.event.post(se_event)
                     self.set_first = 0
-                    print(f"타이머 4: {self.turn_timer}")
             return 1
 
     def init_draw(self):
@@ -567,37 +559,37 @@ class Single:
         # )
         # pygame.event.post(se_event)
         print(f"---{index}---")
-
-        if index in self.possible_cards_num:
-            self.game.players[0].use_card(index)
-            if self.game.wild == True:
-                pass
-            else:
-                self.game.turn_end()
-                self.set_first = 0
-            self.update_card()
-            self.init_draw()
-            self.highlight = 0
-        if index == self.max_card:  # 덱
-            self.game.players[0].get_card()
-            self.game.turn_end()
-            self.update_card()
-            self.init_draw()
-            self.highlight = 0
-            self.set_first = 0
-        if index == self.max_card + 1:  # 우노버튼
-            self.game.players[0].press_uno()
-        if self.game.wild == True:
-            if index >= self.max_card + 2:
-                card_color = ["blue", "green", "red", "yellow"]
-                print(f"선택색 : {card_color[index - (self.max_card + 2)]}")
-                self.game.grave_top_color = card_color[index - (self.max_card + 2)]
-                self.game.wild = False
-                self.game.turn_end()
-                self.set_first = 0
+        if self.game_timer != 0:
+            if index in self.possible_cards_num:
+                self.game.players[0].use_card(index)
+                if self.game.wild == True:
+                    pass
+                else:
+                    self.game.turn_end()
+                    self.set_first = 0
                 self.update_card()
                 self.init_draw()
                 self.highlight = 0
+            if index == self.max_card:  # 덱
+                self.game.players[0].get_card()
+                self.game.turn_end()
+                self.update_card()
+                self.init_draw()
+                self.highlight = 0
+                self.set_first = 0
+            if index == self.max_card + 1:  # 우노버튼
+                self.game.players[0].press_uno()
+            if self.game.wild == True:
+                if index >= self.max_card + 2:
+                    card_color = ["blue", "green", "red", "yellow"]
+                    print(f"선택색 : {card_color[index - (self.max_card + 2)]}")
+                    self.game.grave_top_color = card_color[index - (self.max_card + 2)]
+                    self.game.wild = False
+                    self.game.turn_end()
+                    self.set_first = 0
+                    self.update_card()
+                    self.init_draw()
+                    self.highlight = 0
 
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
