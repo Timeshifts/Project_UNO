@@ -107,7 +107,6 @@ def main():
     single_turn = 0
 
     while True:
-        
         for event in pygame.event.get():
             # 사용자가 X 버튼을 누르는 등의 동작으로 창 종료 시, 메뉴에서 종료 선택 시 종료 처리
             if event.type in (pygame.QUIT, EVENT_QUIT_GAME):
@@ -121,14 +120,21 @@ def main():
             if event.type == EVENT_END_GAME:
                 # 게임 승리/패배 효과음 출력
                 if event.player_win:
-                    pygame.event.post(pygame.event.Event(
-                    EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "victory.mp3"} 
-                    ))
+                    # if single.game.winner_index == 0:
+                    pygame.event.post(
+                        pygame.event.Event(
+                            EVENT_PLAY_SE,
+                            {"path": RESOURCE_PATH / "sound" / "victory.mp3"},
+                        )
+                    )
                     end_prompt = "승리하였습니다! 키보드/마우스로 시작 화면으로 돌아갑니다."
                 else:
-                    pygame.event.post(pygame.event.Event(
-                    EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "wild.mp3"} 
-                    ))
+                    pygame.event.post(
+                        pygame.event.Event(
+                            EVENT_PLAY_SE,
+                            {"path": RESOURCE_PATH / "sound" / "wild.mp3"},
+                        )
+                    )
                     end_prompt = "패배하였습니다. 키보드/마우스로 시작 화면으로 돌아갑니다."
                 # 스토리 모드였다면 다음 지역 해금
                 if "story_map" in event.dict.keys():
@@ -289,12 +295,49 @@ def main():
         for obj in game_objects:
             obj.draw(screen)
 
-        # 게임 종료 상황 prompt만 여기서 처리하겠습니다.
+        # 게임 종료 상황 prompt
         if state == "end_game":
+            # 검은 배경 상자
+            box = pygame.transform.scale(
+                pygame.image.load(RESOURCE_PATH / "single" / "box.png"),
+                (size[0], size[1]),
+            )
+            box_rect = box.get_rect(center=(size[0] / 2, size[1] / 2))
+            screen.blit(box, box_rect)
+            # 게임 승리/패배 표시
             prompt_text = setting.get_font(50).render(end_prompt, True, "White")
-            prompt_text_rect = prompt_text.get_rect(
-            center=(size[0] / 2, size[1] * 0.25))
+            prompt_text_rect = prompt_text.get_rect(center=(size[0] / 2, size[1] / 4))
             screen.blit(prompt_text, prompt_text_rect)
+            # 승리자 표시
+            if single.game.winner_index == 0:
+                winner_name = name
+            else:
+                winner_name = f"Player_{single.game.winner_index}"
+            winner = setting.get_font(50).render(
+                f"승리자 : {winner_name}",
+                True,
+                "White",
+            )
+            winner_rect = winner.get_rect(
+                center=(size[0] / 2, size[1] / 15 + size[1] / 3)
+            )
+            screen.blit(winner, winner_rect)
+            # 시간이 다되어서 끝난 경우 점수 표시
+            if single.game.is_someone_win == False:
+                for i in range(computer_count + 1):
+                    if i == 0:
+                        player_name = name
+                    else:
+                        player_name = f"Player_{i}"
+                    score = setting.get_font(50).render(
+                        f"{player_name}의 점수 : {single.game.player_score[i]}",
+                        True,
+                        "White",
+                    )
+                    score_rect = score.get_rect(
+                        center=(size[0] / 2, size[1] * (i + 2) / 15 + size[1] / 3)
+                    )
+                    screen.blit(score, score_rect)
 
         # 화면 갱신, FPS 60
         pygame.display.flip()
@@ -304,8 +347,14 @@ def main():
         # 싱글 게임 진행중 확인
         if single_turn == 1:
             single_turn = single.turn_start()
-            # single.update_card()
-            # pygame.time.wait(3000)
+            if single_turn == 0:  # 싱글 게임 종료
+                if single.game.winner_index == 0:  # 플레이어 승리한 경우
+                    player_win = True
+                else:  # 플레이어 패배한 경우
+                    player_win = False
+                pygame.event.post(
+                    pygame.event.Event(EVENT_END_GAME, {"player_win": player_win})
+                )
 
 
 if __name__ == "__main__":

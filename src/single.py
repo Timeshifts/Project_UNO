@@ -75,25 +75,26 @@ class Single:
         if self.game.end == 1:  # 게임 종료
             return 0
         else:
-            # self.game.turn_start()
             self.update_card()
-            # self.init_draw()
             if self.game.turn == 0:  # 플레이어인 경우
                 self.possible_cards_num = self.game.players[0].play()
                 if self.game.timer_zero == True and self.game.no_act == False:  # 턴 타이머 종료된 경우
+                    self.game.no_act = True
                     self.game.players[0].get_card()
                     self.game.turn_end()
-                    self.game.no_act = True
                     print(f"타이머 1: {self.turn_timer}")
                 if self.set_first == 0:
                     self.game.turn_start()
-                    # self.update_card()
-                    # self.possible_cards_num = self.game.players[0].play()
                     self.init_draw()
                     self.set_first = 1
-                    print(f"타이머 2: {self.turn_timer}")
             else:  # 컴퓨터인 경우
                 if self.set_first == 0:
+                    # pygame.time.wait(1000)
+                    # self.game.turn_start()
+                    # self.update_card()
+                    # self.effect = self.game.players[self.game.turn].computer_play()
+                    # self.set_first = 1
+
                     # 컴퓨터 비동기 대기 - 컴퓨터 턴에 일시 정지 문제가 생기지 않도록 하기 위함.
                     # race condition 방지를 위해 이벤트로 복잡하게 구현되긴 했습니다.
                     if self.computer_think_thread is None:
@@ -229,7 +230,8 @@ class Single:
                     (deck_card_x, deck_card_y),
                 ),
                 pos=(
-                    self.size[0] * 3 / 8 - deck_card_x * setting.get_screen_scale() * 2 / 3,
+                    self.size[0] * 3 / 8
+                    - deck_card_x * setting.get_screen_scale() * 2 / 3,
                     self.size[1] / 2,
                 ),
                 text_input="",
@@ -496,7 +498,6 @@ class Single:
                 RESOURCE_PATH / "single" / "rotation_reversed.png"
             )
         rotation = pygame.transform.scale(rotation, (rotation_x, rotation_y))
-
         screen.blit(
             rotation,
             (
