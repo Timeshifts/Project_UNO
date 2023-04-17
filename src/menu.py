@@ -25,19 +25,19 @@ class Menu:
         self.pressed = False
         if "scale" in kwargs:
             self.scale = kwargs["scale"]
-        else:  
+        else:
             self.scale = (1.0, 1.0)
 
         # button_img에는 단일 이미지나 이미지 tuple을 넣을 수 있으며,
         # 이미지 tuple을 통해 각 버튼마다 다른 이미지를 구현할 수 있습니다.
         if "button_img" in kwargs:
             self.button_img = kwargs["button_img"]
-        else:  
+        else:
             self.button_img = RESOURCE_PATH / "main" / "main_button.png"
 
         if "hovering_img" in kwargs:
             self.hovering_img = kwargs["hovering_img"]
-        else:  
+        else:
             self.hovering_img = RESOURCE_PATH / "main" / "main_button_highlight.png"
 
         # 현재 highlight된 위치의 index
@@ -51,17 +51,16 @@ class Menu:
         self.rect = []
 
         for i in range(self.max_menu):
-
             if isinstance(self.button_img, Path):
-                button_img = self.button_img 
+                button_img = self.button_img
             else:
                 try:
                     button_img = self.button_img[i]
                 except IndexError:
                     button_img = RESOURCE_PATH / "main" / "main_button.png"
-            
+
             if isinstance(self.hovering_img, Path):
-                hovering_img = self.hovering_img 
+                hovering_img = self.hovering_img
             else:
                 try:
                     hovering_img = self.hovering_img[i]
@@ -70,7 +69,6 @@ class Menu:
 
             # 버튼 삽입
             self.button.append(
-                
                 Button(
                     pygame.image.load(button_img),
                     pygame.image.load(hovering_img),
@@ -79,7 +77,7 @@ class Menu:
                     font=setting.get_font(50),
                     base_color="#3a4aab",
                     hovering_color="White",
-                    scale=(1, 1) if self.scale is None else self.scale
+                    scale=(1, 1) if self.scale is None else self.scale,
                 )
             )
             # 각 버튼 이벤트 처리용 Rect 삽입
@@ -102,6 +100,20 @@ class Menu:
                 self.button[i].changeHighlight(True, screen)
             else:
                 self.button[i].changeHighlight(False, screen)
+        # 키
+        key = ["up", "down", "left", "right", "enter", "pause"]
+        for i in range(len(key)):
+            # key_value = pygame.key.name(setting.options[key[i]])
+            key_value = setting.get_font(50).render(
+                f"{key[i]} : {pygame.key.name(setting.options[key[i]])}", True, "White"
+            )
+            screen.blit(
+                key_value,
+                (
+                    self.size[0] / 50,
+                    self.size[1] * 27 / 40 + self.size[1] * i / 20,
+                ),
+            )
 
     # 메뉴 선택 시 처리
     def select_menu(self, index):
