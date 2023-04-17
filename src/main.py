@@ -288,6 +288,8 @@ def main():
         # 싱글 게임 진행중 확인
         if single_turn == 1:
             single_turn = single.turn_start()
+            if single_turn == 0:
+                state = "end"
             # single.update_card()
             # pygame.time.wait(3000)
 
