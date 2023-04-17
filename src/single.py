@@ -90,7 +90,6 @@ class Single:
                     pygame.time.wait(1000)
                     self.game.turn_start()
                     self.update_card()
-                    # self.set_first == 0
                     self.effect = self.game.players[self.game.turn].computer_play()
                     self.set_first = 1
                 else:
@@ -478,7 +477,6 @@ class Single:
                 RESOURCE_PATH / "single" / "rotation_reversed.png"
             )
         rotation = pygame.transform.scale(rotation, (rotation_x, rotation_y))
-
         screen.blit(
             rotation,
             (

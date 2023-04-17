@@ -144,13 +144,15 @@ class GameManager:
     # 턴 끝 함수
     def turn_end(self):
         print("턴 종료")
-        
+
         self.players[self.turn].is_attacked = False
         self.players[self.turn].attacked_int = 0
         self.turn_timer_end = True
-        
-        pygame.time.wait(1500)
-        
+
+        pygame.time.wait(1200)
+
+        self.turn_timer_integer = 15
+
         # 현재 핸드가 0인지 판별
         if len(self.players[self.turn].hand) == 0:
             print(f"{self.turn} 턴 유저 승리")
@@ -357,7 +359,7 @@ class GameManager:
             time.sleep(1)
 
     def game_count_down(self):
-        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(300,))
+        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(30,))
         self.game_timer_thread.start()
 
     def turn_count_down(self):

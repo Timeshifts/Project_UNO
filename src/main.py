@@ -273,8 +273,28 @@ def main():
             for obj in game_objects:
                 obj.handle_event(event)
 
+        if state == "end":
+            # single.game.player_score_calculate()
+            print("보여줘")
+            font = setting.get_font(50)
+            score = font.render("HI", True, "White")
+            screen.blit(
+                score,
+                (0, 0),
+            )
+
         # 기본 화면 표시
         screen.blit(background, (0, 0))
+
+        if state == "end":
+            # single.game.player_score_calculate()
+            print("보여줘")
+            font = setting.get_font(50)
+            score = font.render("HI", True, "White")
+            screen.blit(
+                score,
+                (0, 0),
+            )
 
         # 각각의 오브젝트 그리기
         for obj in game_objects:
@@ -288,10 +308,10 @@ def main():
         # 싱글 게임 진행중 확인
         if single_turn == 1:
             single_turn = single.turn_start()
-            if single_turn == 0:
+            if single_turn == 0:  # 싱글 게임 종료
                 state = "end"
-            # single.update_card()
-            # pygame.time.wait(3000)
+                game_objects.clear()
+                print(state)
 
 
 if __name__ == "__main__":
