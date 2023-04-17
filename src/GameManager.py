@@ -679,17 +679,15 @@ class StoryA_User(Player):
     def computer_play(self):
         self.possible_cards.clear()
         self.judge_possible_cards()
-        idx = []
+        is_combo = False
         if len(self.possible_cards) != 0:
             for i in range(len(self.possible_cards)):
-                if (
-                    "again" in self.possible_cards[i].name
-                    or "skip" in self.possible_cards[i].name
-                ):
-                    idx.append(i)
-            if len(idx):
-                self.use_card(idx.pop())
-            else:
+                if self.possible_cards[i].name == "again" or self.possible_cards[i].name == "skip":
+                    print("--------콤보 공격--------")
+                    self.use_card(self.hand.index(self.possible_cards[i]))
+                    is_combo = True
+                    break
+            if is_combo == False:
                 ran = random.randrange(len(self.possible_cards))
                 self.use_card(ran)
         else:
@@ -697,7 +695,6 @@ class StoryA_User(Player):
 
         if len(self.hand) == 1:
             self.press_uno()
-
 
 # -------------------------------------------------------------------------------------------------
 
