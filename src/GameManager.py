@@ -2,7 +2,7 @@ import random
 import pygame
 import threading
 import time
-from constant import EVENT_END_GAME
+from constant import EVENT_END_GAME, EVENT_TURN_END
 
 # 1장 20번슬라이드
 
@@ -38,8 +38,10 @@ class GameManager:
         self.end = 0  # 게임 종료 여부
         self.game_timer_thread = 0
         self.turn_timer_thread = 0
+        self.turn_end_thread = None
         self.timer_zero = False
         self.wild = False
+        self.no_act = False
         self.paused = False  # 일시 정지 중 타이머 정지를 위한 불린변수
         self.player_score = []  # 점수 저장
 
@@ -161,15 +163,29 @@ class GameManager:
         # self.turn_end()
 
     # 턴 끝 함수
-    def turn_end(self):
+    def turn_end(self, option=0):
+        if self.no_act: return
+        self.no_act = True
         print("턴 종료")
 
         self.players[self.turn].is_attacked = False
         self.players[self.turn].attacked_int = 0
         self.turn_timer_end = True
-
-        # pygame.time.wait(250)
         
+        print(f"{option} {self.turn_end_thread}")
+        if self.turn_end_thread is None:
+            self.turn_end_thread = threading.Thread(target=self.computer_wait, args=(option,))
+            self.turn_end_thread.start()
+
+    def computer_wait(self, option=0):
+        time.sleep(0.25)
+        pygame.event.post(
+            pygame.event.Event(EVENT_TURN_END, {"option": option})
+        )
+
+    def turn_end_act(self):
+        print('비동기 동작')
+        self.turn_end_thread = None
         self.turn_timer_integer = 15
 
         # 현재 핸드가 0인지 판별
@@ -391,7 +407,7 @@ class GameManager:
             time.sleep(0.2)
 
     def game_count_down(self):
-        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(30,))
+        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(300,))
         self.game_timer_thread.start()
 
     def turn_count_down(self):

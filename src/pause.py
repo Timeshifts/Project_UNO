@@ -111,6 +111,7 @@ def init_pause(settings: setting_menu.Setting_UI, main_screen: pygame.Surface):
 def pause(reset=True):
     paused = True
     computer_thought = False
+    turn_ended = False
     paused_menu = Paused_Menu((0, 0), pause.screen.get_size())
     quit_menu = Quit_Menu((0, 0), pause.screen.get_size())
     if reset:
@@ -134,8 +135,10 @@ def pause(reset=True):
             if event.type == pygame.KEYDOWN:
                 if event.key == setting.options["pause"]:
                     paused = False
-                    # 일시 정지 중에 컴퓨터의 대기가 완료되면
+                    # 일시 정지 중에 작동했던 비동기 이벤트는
                     # 해제 즉시 작동하도록 처리
+                    if turn_ended:
+                        pygame.event.post(pygame.event.Event(EVENT_TURN_END))
                     if computer_thought:
                         pygame.event.post(pygame.event.Event(EVENT_COMPUTER_THINK))
                     # 실제로 설정이 바뀌지 않았을 수도 있으나,
@@ -146,6 +149,9 @@ def pause(reset=True):
                 paused = False
                 pygame.event.post(pygame.event.Event(EVENT_OPTION_CHANGED))
 
+            # 턴 종료 대기가 일시정지 중 완료
+            if event.type == EVENT_TURN_END:
+                turn_ended = True
             # 컴퓨터가 일시정지 중 동작 완료
             if event.type == EVENT_COMPUTER_THINK:
                 computer_thought = True
