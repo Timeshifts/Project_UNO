@@ -2,6 +2,7 @@ import random
 import pygame
 import threading
 import time
+from constant import EVENT_END_GAME
 
 # 1장 20번슬라이드
 
@@ -97,7 +98,21 @@ class GameManager:
 
         print(f"{self.winner_index} 번 유저 승리!!")
         self.end = 1
+
+        # (직접 조작하는) 플레이어가 승리하였는가?
+        player_win = (self.winner_index == 0)
+
+        pygame.event.post(
+            pygame.event.Event(
+            EVENT_END_GAME, 
+            {"player_win": player_win, 
+             # TODO: 몇 번 스토리 맵 진행 중이었는지로 바꿔주세요.
+             # 일반 모드에서는 -1이어도 되고, 안 적어도 됩니다.
+             "story_map": -1}) 
+        )
+
         # 전체 타이머 종료 추가
+        
 
     # 턴 시작 함수
     def turn_start(self):
@@ -370,7 +385,7 @@ class GameManager:
             time.sleep(1)
 
     def game_count_down(self):
-        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(300,))
+        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(10,))
         self.game_timer_thread.start()
 
     def turn_count_down(self):

@@ -87,8 +87,8 @@ def main():
     # 상태 - 초기 화면인지, 로비인지, 게임 중인지 등등
     state = "main_menu"
 
-    # 일시정지 중인가?
-    paused = False
+    # main에서 바로 end_prompt를 그리기 위함.
+    end_prompt = False
 
     # 메인 배경과 음악
     background = get_background(state, size)
@@ -107,6 +107,7 @@ def main():
     single_turn = 0
 
     while True:
+        
         for event in pygame.event.get():
             # 사용자가 X 버튼을 누르는 등의 동작으로 창 종료 시, 메뉴에서 종료 선택 시 종료 처리
             if event.type in (pygame.QUIT, EVENT_QUIT_GAME):
@@ -115,10 +116,7 @@ def main():
                 pygame.quit()
                 sys.exit(0)
 
-            # 게임 종료 상황에 이 Event를 post해 주세요.
-            # player_win: (True, False) - 플레이어가 이겼는지 졌는지를 넣어주시면 됩니다.
-            # story_map: int - 스토리를 클리어했을 경우 0번부터의 스토리 번호를 넣어주세요.
-            # 일반 게임에서는 story_map을 생략해도 좋습니다.
+            # 게임 종료 상황
             # 요구 사항 '플레이어가 마우스 클릭하거나 키를 누르면 시작 메뉴로'를 위해 필요합니다.
             if event.type == EVENT_END_GAME:
                 # 게임 승리/패배 효과음 출력
@@ -126,10 +124,12 @@ def main():
                     pygame.event.post(pygame.event.Event(
                     EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "victory.mp3"} 
                     ))
+                    end_prompt = "승리하였습니다! 키보드/마우스로 시작 화면으로 돌아갑니다."
                 else:
                     pygame.event.post(pygame.event.Event(
                     EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "wild.mp3"} 
                     ))
+                    end_prompt = "패배하였습니다. 키보드/마우스로 시작 화면으로 돌아갑니다."
                 # 스토리 모드였다면 다음 지역 해금
                 if "story_map" in event.dict.keys():
                     progress = story_object.STORY_MENU.story_progress
@@ -137,7 +137,7 @@ def main():
                         progress = event.story_map
                         story_object.STORY_MENU.save_progress()
                 state = "end_game"
-                
+
             # 게임 종료 상황에
             if state == "end_game":
                 # 플레이어가 마우스를 클릭하거나 아무 키나 누르면
@@ -278,8 +278,9 @@ def main():
                 pygame.mixer.music.set_volume(setting.get_volume("bgm"))
 
             # 오브젝트별로 이벤트 처리
-            for obj in game_objects:
-                obj.handle_event(event)
+            if state != "end_game":
+                for obj in game_objects:
+                    obj.handle_event(event)
 
         # 기본 화면 표시
         screen.blit(background, (0, 0))
@@ -287,6 +288,13 @@ def main():
         # 각각의 오브젝트 그리기
         for obj in game_objects:
             obj.draw(screen)
+
+        # 게임 종료 상황 prompt만 여기서 처리하겠습니다.
+        if state == "end_game":
+            prompt_text = setting.get_font(50).render(end_prompt, True, "White")
+            prompt_text_rect = prompt_text.get_rect(
+            center=(size[0] / 2, size[1] * 0.25))
+            screen.blit(prompt_text, prompt_text_rect)
 
         # 화면 갱신, FPS 60
         pygame.display.flip()
