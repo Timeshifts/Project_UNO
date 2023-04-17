@@ -670,19 +670,6 @@ class Single:
                 if self.count == max_count:
                     self.effect = 0
                     self.count = 0
-        # if self.game.wild == True:
-        #     card_color = ["blue", "green", "red", "yellow"]
-        #     for i in range(4):
-        #         color_x = 200
-        #         color_y = 200
-        #         color_img = pygame.image.load(
-        #             RESOURCE_PATH / card_folder / f"{card_color[i]}.png"
-        #         )
-        #         color_img = pygame.transform.scale(color_img, (color_x, color_y))
-        #         screen.blit(
-        #             color_img,
-        #             (200, 200),
-        #         )
 
     # 메뉴 선택 시 처리
     def select_card(self, index):
@@ -694,7 +681,6 @@ class Single:
         if self.game.wild == True:
             if index in range(4):
                 card_color = ["blue", "green", "red", "yellow"]
-                # print(f"선택색 : {card_color[index - (self.max_card + 2)]}")
                 self.game.grave_top_color = card_color[index]
                 if self.game.wild_card == "wild_four":
                     target = 0
@@ -717,12 +703,10 @@ class Single:
                 self.effect = self.hand_card[0][index]
                 self.effect_index = index
                 if self.game.players[0].use_card(index) == "wild":
-                    # if self.game.wild == True:
                     self.update_card()
                     self.init_draw()
                     self.highlight = 0
                     self.game.turn_timer_end = True
-                    # pygame.event.post(pygame.event.Event(EVENT_WILD))
                 else:
                     self.game.turn_end(option=1)
             if index == self.max_card:  # 덱
