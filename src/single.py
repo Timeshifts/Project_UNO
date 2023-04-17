@@ -245,50 +245,28 @@ class Single:
         # 우노 버튼
         uno_x = 200
         uno_y = 200
-        if self.game.players[0].is_uno == False:
-            self.button.append(
-                Button(
-                    pygame.transform.scale(
-                        pygame.image.load(RESOURCE_PATH / "single" / "uno_button.png"),
-                        (uno_x, uno_y),
+        self.button.append(
+            Button(
+                pygame.transform.scale(
+                    pygame.image.load(RESOURCE_PATH / "single" / "uno_button.png"),
+                    (uno_x, uno_y),
+                ),
+                pygame.transform.scale(
+                    pygame.image.load(
+                        RESOURCE_PATH / "single" / "uno_button_highlight.png"
                     ),
-                    pygame.transform.scale(
-                        pygame.image.load(
-                            RESOURCE_PATH / "single" / "uno_button_highlight.png"
-                        ),
-                        (uno_x, uno_y),
-                    ),
-                    pos=(
-                        self.size[0] * 3 / 4 - uno_x * setting.get_screen_scale() / 2,
-                        self.size[1] / 2,
-                    ),
-                    text_input="",
-                    font=setting.get_font(50),
-                    base_color="Black",
-                    hovering_color="Black",
-                )
+                    (uno_x, uno_y),
+                ),
+                pos=(
+                    self.size[0] * 3 / 4 - uno_x * setting.get_screen_scale() / 2,
+                    self.size[1] / 2,
+                ),
+                text_input="",
+                font=setting.get_font(50),
+                base_color="Black",
+                hovering_color="Black",
             )
-        else:
-            self.button.append(
-                Button(
-                    pygame.transform.scale(
-                        pygame.image.load(RESOURCE_PATH / "single" / "uno_effect.png"),
-                        (uno_x, uno_y),
-                    ),
-                    pygame.transform.scale(
-                        pygame.image.load(RESOURCE_PATH / "single" / "uno_effect.png"),
-                        (uno_x, uno_y),
-                    ),
-                    pos=(
-                        self.size[0] * 3 / 4 - uno_x * setting.get_screen_scale() / 2,
-                        self.size[1] / 2,
-                    ),
-                    text_input="",
-                    font=setting.get_font(50),
-                    base_color="Black",
-                    hovering_color="Black",
-                )
-            )
+        )
         self.rect.append(self.button[self.max_card + 1].rect)
         # wild 색 선택 버튼
         if self.game.wild == True:
@@ -489,6 +467,21 @@ class Single:
                 self.size[1] / 2 - color_card_y / 2,
             ),
         )
+        # 우노 성공할 경우
+        if self.game.players[0].is_uno == True:
+            uno_x = 400 * setting.get_screen_scale()
+            uno_y = 300 * setting.get_screen_scale()
+            uno = pygame.transform.scale(
+                pygame.image.load(RESOURCE_PATH / "single" / "uno_effect.png"),
+                (uno_x, uno_y),
+            )
+            screen.blit(
+                uno,
+                (
+                    self.size[0] * 3 / 4 - uno_x * 5 / 7 * setting.get_screen_scale(),
+                    self.size[1] / 2 - uno_y / 2,
+                ),
+            )
         # 턴 방향
         rotation_x = 943 * setting.get_screen_scale()
         rotation_y = 238 * setting.get_screen_scale()
@@ -571,6 +564,21 @@ class Single:
                 ),
             )
             self.effect = 0
+        if self.effect == "get_my":
+            get_card_x = 130 * setting.get_screen_scale()
+            get_card_y = 182 * setting.get_screen_scale()
+            get_card = pygame.image.load(
+                RESOURCE_PATH / card_folder / "card_back_effect.png"
+            )
+            get_card = pygame.transform.scale(get_card, (get_card_x, get_card_y))
+            screen.blit(
+                get_card,
+                (
+                    self.size[0] * 3 / 8 - get_card_x / 2 - get_card_x * 2 / 3,
+                    self.size[1] / 2 + get_card_y / 2,
+                ),
+            )
+            self.effect = 0
 
     # 메뉴 선택 시 처리
     def select_card(self, index):
@@ -592,6 +600,7 @@ class Single:
         if index == self.max_card:  # 덱
             self.game.players[0].get_card()
             self.game.turn_end()
+            self.effect = "get_my"
         if index == self.max_card + 1:  # 우노버튼
             self.game.players[0].press_uno()
         if self.game.wild == True:
