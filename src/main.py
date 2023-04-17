@@ -225,9 +225,12 @@ def main():
                     state = "single"
                     background = get_background(state, size)
                     load_bgm(
-                        RESOURCE_PATH / "sound" / "bg_story_game.mp3", setting.get_volume("bgm")
+                        RESOURCE_PATH / "sound" / "bg_story_game.mp3",
+                        setting.get_volume("bgm"),
                     )
-                    single = Single((width, height), size, computer_count, name, event.index)
+                    single = Single(
+                        (width, height), size, computer_count, name, event.index
+                    )
                 # 그게 없으면 일반 게임
                 else:
                     # 컴퓨터 개수
