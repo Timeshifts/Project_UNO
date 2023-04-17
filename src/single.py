@@ -674,7 +674,7 @@ class Single:
         if self.game.wild == True:
             if index >= self.max_card + 2:
                 card_color = ["blue", "green", "red", "yellow"]
-                print(f"선택색 : {card_color[index - (self.max_card + 2)]}")
+                # print(f"선택색 : {card_color[index - (self.max_card + 2)]}")
                 self.game.grave_top_color = card_color[index - (self.max_card + 2)]
                 self.game.wild = False
                 self.game.turn_end()

@@ -6,6 +6,7 @@ from menu import Menu
 # 덤으로 -1일 경우에는 확인 창을 치우는 역할도 합니다.
 enter_story = -1
 
+
 # 2차 요구사항 - '대전을 시작할 것인지 묻는 창'
 class StoryConfirm(Menu):
     stage_map = ("공릉역", "철길", "쪼매떡", "미래관")
@@ -18,12 +19,18 @@ class StoryConfirm(Menu):
         super().draw(screen)
         # 확인 메시지 출력
         font = setting.get_font(70)
-        text = font.render(f"{self.stage_map[enter_story]}에서 스토리 대전을 시작하시겠습니까?", True, "Black")
-        pygame.draw.rect(screen, "White", text.get_rect(center=(self.size[0] / 2, self.size[1] * 0.25)))
+        text = font.render(
+            f"{self.stage_map[enter_story]}에서 스토리 대전을 시작하시겠습니까?", True, "Black"
+        )
+        pygame.draw.rect(
+            screen,
+            "White",
+            text.get_rect(center=(self.size[0] / 2, self.size[1] * 0.25)),
+        )
 
         text_rect = text.get_rect(center=(self.size[0] / 2, self.size[1] * 0.25))
         screen.blit(text, text_rect)
-    
+
     # 메뉴 선택 시 처리
     def select_menu(self, index):
         global enter_story
@@ -56,16 +63,18 @@ class StoryMenu(Menu):
     avail_menu = ("", "", "", "", "돌아가기")
 
     # 2차 요구사항 - '지도 화면에서는 각 지역별 특색을 선택시 미리 확인할 수 있어야 합니다.'
-    local_rule = ("첫 분배 시 컴퓨터가 기술 카드를 50% 더 높은 확률로 받게 됩니다. 컴퓨터가 기술카드를 조합하여 2장 이상의 카드를 한번에 내는 콤보를 사용합니다.",
-                  "2명의 컴퓨터 플레이어와 대전하여, 첫 카드를 제외한 모든 카드가 같은 수만큼 플레이어들에게 분배됩니다.",
-                  "1명의 컴퓨터 플레이어와 대전하여, 매 5턴마다 낼 수 있는 카드의 색상이 무작위로 변경됩니다.",
-                  "3명의 컴퓨터 플레이어와 대전하여, 매 20턴마다 플레이어들이 손에 든 카드가 서로 뒤바뀝니다.",
-                  "" ) # 돌아가기 버튼 오류 방지 placeholder
+    local_rule = (
+        "첫 분배 시 컴퓨터가 기술 카드를 50% 더 높은 확률로 받게 됩니다. 컴퓨터가 기술카드를 조합하여 2장 이상의 카드를 한번에 내는 콤보를 사용합니다.",
+        "2명의 컴퓨터 플레이어와 대전하여, 첫 카드를 제외한 모든 카드가 같은 수만큼 플레이어들에게 분배됩니다.",
+        "1명의 컴퓨터 플레이어와 대전하여, 매 5턴마다 낼 수 있는 카드의 색상이 무작위로 변경됩니다.",
+        "3명의 컴퓨터 플레이어와 대전하여, 매 20턴마다 플레이어들이 손에 든 카드가 서로 뒤바뀝니다.",
+        "",
+    )  # 돌아가기 버튼 오류 방지 placeholder
 
     # 버튼이 있어야 할 위치 반환
     def pos_formula(self, i):
         if i == 0:
-            return (self.size[0] * 0.1, self.size[1] * 0.7)
+            return (self.size[0] * 0.1, self.size[1] * 0.6)
         elif i == 1:
             return (self.size[0] * 0.4, self.size[1] * 0.28)
         elif i == 2:
@@ -74,8 +83,7 @@ class StoryMenu(Menu):
             return (self.size[0] * 0.9, self.size[1] * 0.2)
         else:
             return (self.size[0] * 0.5, self.size[1] * 0.8)
-    
-    
+
     def draw(self, screen):
         super().draw(screen)
 
@@ -86,17 +94,24 @@ class StoryMenu(Menu):
         shadow_image = pygame.transform.scale(shadow_image, (shadow_x, shadow_y))
         for i in range(self.story_amount):
             if i > StoryMenu.story_progress:
-                screen.blit(shadow_image, 
-                            (self.pos_formula(i)[0] - shadow_x / 2,
-                            self.pos_formula(i)[1] - shadow_y / 2))
-        
+                screen.blit(
+                    shadow_image,
+                    (
+                        self.pos_formula(i)[0] - shadow_x / 2,
+                        self.pos_formula(i)[1] - shadow_y / 2,
+                    ),
+                )
+
         # 특색 표시
         font = setting.get_font(30)
         local_rule_id = self.highlight if self.selected == -1 else self.selected
         local_rule_text = f"특색: {self.local_rule[local_rule_id]}"
-        if local_rule_text == "특색: ": local_rule_text = ""
+        if local_rule_text == "특색: ":
+            local_rule_text = ""
         local_rule_text = font.render(local_rule_text, True, "White")
-        local_rule_rect = local_rule_text.get_rect(center=(self.size[0] / 2, self.size[1] * 0.05))
+        local_rule_rect = local_rule_text.get_rect(
+            center=(self.size[0] / 2, self.size[1] * 0.05)
+        )
         screen.blit(local_rule_text, local_rule_rect)
 
     # 파일에 저장된 진행도 불러오기
@@ -124,12 +139,16 @@ class StoryMenu(Menu):
         self.load_progress()
 
         story_img = lambda s: tuple(
-            RESOURCE_PATH / "story" / f"story_{i}.png"
-            for i in range(1, s+1))
-        
-        super().__init__(pos, size, scale=(0.75, 0.75),
-                         button_img=story_img(self.story_amount),
-                         hovering_img=RESOURCE_PATH / "main" / "main_button_highlight.png")
+            RESOURCE_PATH / "story" / f"story_{i}.png" for i in range(1, s + 1)
+        )
+
+        super().__init__(
+            pos,
+            size,
+            scale=(0.75, 0.75),
+            button_img=story_img(self.story_amount),
+            hovering_img=RESOURCE_PATH / "main" / "main_button_highlight.png",
+        )
 
     # 메뉴 선택 시 처리
     def select_menu(self, index):
@@ -143,14 +162,16 @@ class StoryMenu(Menu):
             return
         global enter_story
         # 진입 불가 스토리는 확인 창 없이 return
-        if index > StoryMenu.story_progress: return
+        if index > StoryMenu.story_progress:
+            return
         enter_story = index
 
     # 이벤트 처리 - 미개방 지역 선택을 방지하기 위해 재정의
     def handle_event(self, event: pygame.event.Event):
         # 스토리 확인 창이 나오는 중에는 스토리 선택은 작동하지 않게 처리
         global enter_story
-        if enter_story != -1: return
+        if enter_story != -1:
+            return
         for i in range(self.max_menu):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.rect[i].collidepoint(event.pos):
@@ -159,7 +180,7 @@ class StoryMenu(Menu):
             elif event.type == pygame.MOUSEMOTION:
                 if self.rect[i].collidepoint(event.pos):
                     # 해금되지 않은 스토리에는 반응하지 않되, '돌아가기'에는 반응
-                    if (i <= StoryMenu.story_progress) or i == self.max_menu -1:
+                    if (i <= StoryMenu.story_progress) or i == self.max_menu - 1:
                         # highlight 대상을 변경
                         self.highlight = i
                         # 키보드 선택 해제
@@ -196,7 +217,7 @@ class StoryMenu(Menu):
                         # 해금된 마지막 스토리에서 미해금으로 이동 시, (예: 3번 -> 4번)
                         # 돌아가기로 이동 (예: 4번 -> 돌아가기)
                         if self.selected > StoryMenu.story_progress:
-                            self.selected = self.max_menu -1
+                            self.selected = self.max_menu - 1
                         self.highlight = self.selected
             # 버튼이 누르고 있어도 계속 동작하지 않게 뗄 때까지는 작동 방지
             elif event.type == pygame.KEYUP:
@@ -207,7 +228,6 @@ class StoryMap:
     global enter_story
 
     def __init__(self, pos, size):
-        
         self.STORY_MENU = StoryMenu(pos, size)
         self.STORY_CONFIRM = StoryConfirm(pos, size)
 
@@ -222,7 +242,7 @@ class StoryMap:
             self.STORY_MENU.handle_event(event)
         else:
             self.STORY_CONFIRM.handle_event(event)
-    
+
     def resize(self, size):
         self.STORY_MENU.resize(size)
         self.STORY_CONFIRM.resize(size)
