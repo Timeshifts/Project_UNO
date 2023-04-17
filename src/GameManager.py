@@ -44,6 +44,7 @@ class GameManager:
         self.no_act = False
         self.paused = False  # 일시 정지 중 타이머 정지를 위한 불린변수
         self.player_score = []  # 점수 저장
+        self.story = -1 # 몇 번 스토리 모드? (-1이면 일반 게임)
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -61,6 +62,22 @@ class GameManager:
         # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
         for i in range(self.computer_count):
             self.players.append(Computer(True))
+
+        if self.story == 0:
+            print("스토리 A 특성 적용")
+            self.start_cards_integer = 1
+            self.story_A_computer_count = self.computer_count
+        elif self.story == 1:
+            print("스토리 B 특성 적용")
+            self.start_cards_integer = 15
+        elif self.story == 2:
+            print("스토리 C 특성 적용")
+            self.is_top_card_change = True
+            self.top_card_change_num = 5
+        elif self.story == 3:
+            print("스토리 D 특성 적용")
+            self.is_hand_change = True
+            self.hand_change_num = 20
 
         for i in range(self.story_A_computer_count):
             self.players.append(StoryA_User(True))
@@ -110,9 +127,7 @@ class GameManager:
                 EVENT_END_GAME,
                 {
                     "player_win": player_win,
-                    # TODO: 몇 번 스토리 맵 진행 중이었는지로 바꿔주세요.
-                    # 일반 모드에서는 -1이어도 되고, 안 적어도 됩니다.
-                    "story_map": -1,
+                    "story_map": self.story+1,
                 },
             )
         )
