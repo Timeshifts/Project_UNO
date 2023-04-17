@@ -385,7 +385,7 @@ class GameManager:
             time.sleep(1)
 
     def game_count_down(self):
-        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(10,))
+        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(300,))
         self.game_timer_thread.start()
 
     def turn_count_down(self):
