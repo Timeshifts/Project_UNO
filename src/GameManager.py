@@ -66,7 +66,6 @@ class GameManager:
 
         if self.story == 0:
             print("스토리 A 특성 적용")
-            self.start_cards_integer = 1
             self.story_A_computer_count = self.computer_count
         elif self.story == 1:
             print("스토리 B 특성 적용")
