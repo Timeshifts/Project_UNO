@@ -60,13 +60,11 @@ class GameManager:
 
         self.players.append(User(False))
 
-        # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
-        for i in range(self.computer_count):
-            self.players.append(Computer(True))
-
         if self.story == 0:
             print("스토리 A 특성 적용")
-            self.story_A_computer_count = self.computer_count
+            self.story_A_computer_count = 1
+            self.computer_count = 0
+            # self.start_cards_integer = 1
         elif self.story == 1:
             print("스토리 B 특성 적용")
             self.start_cards_integer = 15
@@ -78,6 +76,10 @@ class GameManager:
             print("스토리 D 특성 적용")
             self.is_hand_change = True
             self.hand_change_num = 20
+
+        # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
+        for i in range(self.computer_count):
+            self.players.append(Computer(True))
 
         for i in range(self.story_A_computer_count):
             self.players.append(StoryA_User(True))
@@ -197,7 +199,8 @@ class GameManager:
 
     def computer_wait(self, option=0):
         time.sleep(0.25)
-        pygame.event.post(pygame.event.Event(EVENT_TURN_END, {"option": option}))
+        pygame.event.post(pygame.event.Event(
+            EVENT_TURN_END, {"option": option}))
 
     def turn_end_act(self):
         # print("비동기 동작")
@@ -256,12 +259,14 @@ class GameManager:
         if card.name.isdigit() == False:
             if card.name == "color":
                 self.wild_color()
-                if self.turn == 0: self.turn_jump(-1)
+                if self.turn == 0:
+                    self.turn_jump(-1)
 
             elif card.name == "four":
                 print("다음 턴 유저에게, 카드 4장 공격")
                 self.wild_four()
-                if self.turn == 0: self.turn_jump(-1)
+                if self.turn == 0:
+                    self.turn_jump(-1)
 
             # elif card.name == "target":
             #     self.wild_target()
@@ -426,11 +431,13 @@ class GameManager:
             time.sleep(0.2)
 
     def game_count_down(self):  # 전체 시간
-        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(100,))
+        self.game_timer_thread = threading.Thread(
+            target=self.game_timer, args=(100,))
         self.game_timer_thread.start()
 
     def turn_count_down(self):  # 턴 시간
-        self.turn_timer_thread = threading.Thread(target=self.turn_timer, args=(15,))
+        self.turn_timer_thread = threading.Thread(
+            target=self.turn_timer, args=(15,))
         self.turn_timer_thread.start()
 
     def top_card_change(self):
