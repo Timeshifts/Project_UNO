@@ -87,7 +87,13 @@ class Single:
                 self.possible_cards_num = self.game.players[0].play()
                 if self.game.timer_zero == True:  # 턴 타이머 종료된 경우
                     if self.game.no_act == False:
-                        self.game.players[0].get_card()
+                        if self.game.wild == True:
+                            # 와일드카드 정하다 시간 초과 -> 랜덤 선택
+                            self.game.wild
+                            self.grave_top_color = random.choice(self.game.random_color)
+                        else:
+                            # 일반적인 시간 초과
+                            self.game.players[0].get_card()
                     self.game.turn_end(option=2)
                 if self.set_first == 0:
                     self.game.turn_start()
@@ -124,7 +130,7 @@ class Single:
         self.set_first = 1
 
     def computer_wait(self):
-        time.sleep(random.randint(1, 3))
+        time.sleep(random.random() * 2 + 1)
         pygame.event.post(pygame.event.Event(EVENT_COMPUTER_THINK))
 
     def init_draw(self):
