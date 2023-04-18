@@ -257,10 +257,12 @@ class GameManager:
         if card.name.isdigit() == False:
             if card.name == "color":
                 self.wild_color()
+                if self.turn == 0: self.turn_jump(-1)
 
             elif card.name == "four":
                 print("다음 턴 유저에게, 카드 4장 공격")
                 self.wild_four()
+                if self.turn == 0: self.turn_jump(-1)
 
             # elif card.name == "target":
             #     self.wild_target()
