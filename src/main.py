@@ -217,7 +217,7 @@ def main():
                             True, True, True, False, False]
                     elif event.index == 2:
                         single_lobby.computer_chk = [
-                            True, False, False, False, False]
+                            True, True, False, False, False]
                     elif event.index == 3:
                         single_lobby.computer_chk = [
                             True, True, True, False, False]
