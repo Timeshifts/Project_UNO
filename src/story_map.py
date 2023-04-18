@@ -142,12 +142,16 @@ class StoryMenu(Menu):
             RESOURCE_PATH / "story" / f"story_{i}.png" for i in range(1, s + 1)
         )
 
+        story_img_highlight = lambda s: tuple(
+            RESOURCE_PATH / "story" / f"story_{i}_highlight.png" for i in range(1, s + 1)
+        )
+
         super().__init__(
             pos,
             size,
             scale=(0.75, 0.75),
             button_img=story_img(self.story_amount),
-            hovering_img=RESOURCE_PATH / "main" / "main_button_highlight.png",
+            hovering_img=story_img_highlight(self.story_amount),
         )
 
     # 메뉴 선택 시 처리
