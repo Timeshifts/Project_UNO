@@ -210,13 +210,17 @@ def main():
                 if "index" in event.dict.keys():
                     single_lobby.name = "You"
                     if event.index == 0:
-                        single_lobby.computer_chk = [True, False, False, False, False]
+                        single_lobby.computer_chk = [
+                            True, False, False, False, False]
                     elif event.index == 1:
-                        single_lobby.computer_chk = [True, True, False, False, False]
+                        single_lobby.computer_chk = [
+                            True, True, True, False, False]
                     elif event.index == 2:
-                        single_lobby.computer_chk = [True, False, False, False, False]
+                        single_lobby.computer_chk = [
+                            True, False, False, False, False]
                     elif event.index == 3:
-                        single_lobby.computer_chk = [True, True, True, False, False]
+                        single_lobby.computer_chk = [
+                            True, True, True, False, False]
                     # 컴퓨터 개수
                     computer_count = single_lobby.computer_chk.count(True)
                     name = single_lobby.name
