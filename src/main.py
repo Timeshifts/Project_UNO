@@ -276,6 +276,14 @@ def main():
                 story_object.resize(size)
                 game_objects.append(story_object)
 
+            # 업적 열기
+            if event.type == EVENT_OPEN_ACHIEVEMENT:
+                # 메인 메뉴 제거
+                if state == "main_menu":
+                    game_objects.remove(main_menu)
+                # TODO: 업적 창 집어넣기
+                print("업적 창")
+
             # 옵션 열기
             if event.type == EVENT_OPEN_OPTION:
                 # 메인 메뉴 제거
