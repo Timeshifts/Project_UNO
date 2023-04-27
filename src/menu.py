@@ -42,8 +42,13 @@ class Menu:
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
+        
         # 현재 선택된 대상, -1일 경우 마우스 조작 중
-        self.selected = -1
+        if self.max_menu == 1:
+            self.selected = 0
+        else:
+            self.selected = -1
+
         self.init_draw()
 
     def init_draw(self):
