@@ -1,4 +1,4 @@
-import sys, setting, pause, story_map, setting_menu  # , GameManager
+import sys, setting, pause, story_map, setting_menu, achievement
 from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN_OPTION
 from single_lobby import SingleLobby, EVENT_MAIN
 from single import Single, EVENT_MAIN
@@ -102,6 +102,7 @@ def main():
     # single = Single((width, height), size, 1, "Test")
     rename = Rename((width, height), size)
     story_object = story_map.StoryMap((0, 0), size)
+    achi_object = achievement.AchievementMenu((0, 0), size)
 
     # 싱글게임 진행 중인지 확인
     single_turn = 0
@@ -112,6 +113,7 @@ def main():
             if event.type in (pygame.QUIT, EVENT_QUIT_GAME):
                 setting.save_setting()
                 story_object.STORY_MENU.save_progress()
+                achi_object.save_progress()
                 pygame.quit()
                 sys.exit(0)
 
@@ -172,6 +174,8 @@ def main():
                     game_objects.remove(single_lobby)
                 elif state == "story_map":
                     game_objects.remove(story_object)  # 스토리 모드 제거
+                elif state == "achievement":
+                    game_objects.remove(achi_object) # 업적 메뉴 제거
                 elif state in ("single", "end_game"):
                     game_objects.remove(single)
                     del single  # single 객체 삭제
@@ -275,6 +279,19 @@ def main():
                 )
                 story_object.resize(size)
                 game_objects.append(story_object)
+
+            # 업적 달성
+            # 어디서든 업적 달성을 알릴 수 있도록 이벤트화
+            if event.type == EVENT_ACQUIRE_ACHIEVEMENT:
+                achi_object.acquire(event.id)
+
+            # 업적 열기
+            if event.type == EVENT_OPEN_ACHIEVEMENT:
+                # 메인 메뉴 제거
+                if state == "main_menu":
+                    game_objects.remove(main_menu)
+                state = "achievement"
+                game_objects.append(achi_object)
 
             # 옵션 열기
             if event.type == EVENT_OPEN_OPTION:
