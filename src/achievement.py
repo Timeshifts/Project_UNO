@@ -3,68 +3,63 @@ from constant import *
 from menu import Menu
 
 # 업적 전체 리터럴, 추후 클래스에 들어갈 수 있습니다.
-# 이름은 가칭입니다. 좀 더 짧고 재미있는 이름으로 바꾸어도 좋을 것 같습니다.
+# 이름, 설명은 더미입니다. merge 이후 markdown을 읽어서 적용하겠습니다.
 achievements = {
     0: {
-    "icon": RESOURCE_PATH / "?.png",
+    "icon": RESOURCE_PATH / "achievement" / "0.png",
     "name": "싱글 플레이어 승리",
     "lore": "싱글 플레이어 게임에서 1회 승리하였습니다."
     },
     1: {
-    "icon": RESOURCE_PATH / "?.png",
-    "name": "스토리 모드 지역별 승리",
-    "lore": "스토리 모드의 모든 지역에서 각 1회 승리하였습니다."
-    },
-    2: {
-    "icon": RESOURCE_PATH / "?.png",
-    "name": "싱글 플레이어 10턴안에 승리",
-    "lore": "싱글 플레이어 게임을 10턴 이내에 승리하였습니다."
-    },
-    3: {
-    "icon": RESOURCE_PATH / "?.png",
-    "name": "기술카드 미사용 승리",
-    "lore": "어떤 기술 카드도 사용하지 않고 게임에서 승리하였습니다."
-    },
-    4: {
-    "icon": RESOURCE_PATH / "?.png",
-    "name": "다른 플레이어 UNO 선언 뒤 승리",
-    "lore": "다른 플레이어가 UNO를 선언한 상태에서 게임에서 승리하였습니다."
-    },
-    5: {
-    "icon": RESOURCE_PATH / "?.png",
-    "name": "멀티 플레이어 승리",
-    "lore": "멀티 플레이어 게임에서 1회 승리하였습니다."
-    },
-    6: {
-    "icon": RESOURCE_PATH / "?.png",
-    "name": "와일드 카드 미사용 승리",
-    "lore": "어떤 와일드 카드도 사용하지 않고 게임에서 승리하였습니다."
-    },
-    7: {
-    "icon": RESOURCE_PATH / "?.png",
-    "name": "시간 판정 승리",
-    "lore": "턴 제한시간이 종료된 이후 게임 점수 판정에서 승리하였습니다."
-    },
-    # 특정 지역 클리어 이후 다음 실행에서 나머지 지역을 클리어하는 경우 대비
-    1001: {
+    "icon": RESOURCE_PATH / "achievement" / "1.png",
     "name": "스토리 모드 A 지역 승리",
     "lore": "내부 체크용입니다.",
-    "hidden": True
     },
-    1002: {
+    2: {
+    "icon": RESOURCE_PATH / "achievement" / "2.png",
     "name": "스토리 모드 B 지역 승리",
     "lore": "내부 체크용입니다.",
     "hidden": True
     },
-    1003: {
+    3: {
+    "icon": RESOURCE_PATH / "achievement" / "3.png",
     "name": "스토리 모드 C 지역 승리",
     "lore": "내부 체크용입니다.",
-    "hidden": True
     },
-    1004: {
+    4: {
+    "icon": RESOURCE_PATH / "achievement" / "4.png",
     "name": "스토리 모드 D 지역 승리",
     "lore": "내부 체크용입니다.",
-    "hidden": True
+    },
+    5: {
+    "icon": RESOURCE_PATH / "achievement" / "5.png",
+    "name": "싱글 플레이어 10턴안에 승리",
+    "lore": "싱글 플레이어 게임을 10턴 이내에 승리하였습니다."
+    },
+    6: {
+    "icon": RESOURCE_PATH / "achievement" / "6.png",
+    "name": "기술카드 미사용 승리",
+    "lore": "어떤 기술 카드도 사용하지 않고 게임에서 승리하였습니다."
+    },
+    7: {
+    "icon": RESOURCE_PATH / "achievement" / "7.png",
+    "name": "다른 플레이어 UNO 선언 뒤 승리",
+    "lore": "다른 플레이어가 UNO를 선언한 상태에서 게임에서 승리하였습니다."
+    },
+    8: {
+    "icon": RESOURCE_PATH / "achievement" / "8.png",
+    "name": "멀티 플레이어 승리",
+    "lore": "멀티 플레이어 게임에서 1회 승리하였습니다."
+    },
+    9: {
+    "icon": RESOURCE_PATH / "achievement" / "9.png",
+    "name": "와일드 카드 미사용 승리",
+    "lore": "어떤 와일드 카드도 사용하지 않고 게임에서 승리하였습니다."
+    },
+    10: {
+    "icon": RESOURCE_PATH / "achievement" / "10.png",
+    "name": "시간 판정 승리",
+    "lore": "턴 제한시간이 종료된 이후 게임 점수 판정에서 승리하였습니다."
     }
 }
 
