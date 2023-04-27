@@ -18,8 +18,7 @@ achievements = {
     2: {
     "icon": RESOURCE_PATH / "achievement" / "2.png",
     "name": "스토리 모드 B 지역 승리",
-    "lore": "내부 체크용입니다.",
-    "hidden": True
+    "lore": "내부 체크용입니다."
     },
     3: {
     "icon": RESOURCE_PATH / "achievement" / "3.png",
