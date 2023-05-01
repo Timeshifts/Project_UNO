@@ -510,21 +510,6 @@ class Single:
                 self.size[1] / 2 - color_card_y / 2,
             ),
         )
-        # 우노 성공할 경우
-        if self.game.players[0].is_uno == True:
-            uno_x = 400 * setting.get_screen_scale()
-            uno_y = 300 * setting.get_screen_scale()
-            uno = pygame.transform.scale(
-                pygame.image.load(RESOURCE_PATH / "single" / "uno_effect.png"),
-                (uno_x, uno_y),
-            )
-            screen.blit(
-                uno,
-                (
-                    self.size[0] * 3 / 4 - uno_x * 5 / 7 * setting.get_screen_scale(),
-                    self.size[1] / 2 - uno_y / 2,
-                ),
-            )
         # 턴 방향
         rotation_x = 943 * setting.get_screen_scale()
         rotation_y = 238 * setting.get_screen_scale()
@@ -624,6 +609,54 @@ class Single:
             self.effect = 0
         elif self.effect != 0:
             max_count = 2  # 효과 보여주는 횟수
+            if "skip" in self.effect:  # skip 카드 낼때
+                skip_x = 300 * setting.get_screen_scale()
+                skip_y = 300 * setting.get_screen_scale()
+                skip_effect = pygame.image.load(RESOURCE_PATH / "single" / "skip.png")
+                skip_effect = pygame.transform.scale(skip_effect, (skip_x, skip_y))
+                screen.blit(
+                    skip_effect,
+                    (
+                        self.size[0] * 3 / 8 - skip_x / 2,
+                        self.size[1] / 2 - skip_y / 2,
+                    ),
+                )
+            if "again" in self.effect:  # again 카드 낼때
+                again_x = 300 * setting.get_screen_scale()
+                again_y = 300 * setting.get_screen_scale()
+                again_effect = pygame.image.load(RESOURCE_PATH / "single" / "again.png")
+                again_effect = pygame.transform.scale(again_effect, (again_x, again_y))
+                screen.blit(
+                    again_effect,
+                    (
+                        self.size[0] * 3 / 8 - again_x / 2,
+                        self.size[1] / 2 - again_y / 2,
+                    ),
+                )
+            if "pick" in self.effect:  # pick 카드 낼때
+                pick_x = 300 * setting.get_screen_scale()
+                pick_y = 300 * setting.get_screen_scale()
+                pick_effect = pygame.image.load(RESOURCE_PATH / "single" / "pick.png")
+                pick_effect = pygame.transform.scale(pick_effect, (pick_x, pick_y))
+                screen.blit(
+                    pick_effect,
+                    (
+                        self.size[0] * 3 / 8 - pick_x / 2,
+                        self.size[1] / 2 - pick_y / 2,
+                    ),
+                )
+            if "four" in self.effect:  # four 카드 낼때
+                four_x = 300 * setting.get_screen_scale()
+                four_y = 300 * setting.get_screen_scale()
+                four_effect = pygame.image.load(RESOURCE_PATH / "single" / "four.png")
+                four_effect = pygame.transform.scale(four_effect, (four_x, four_y))
+                screen.blit(
+                    four_effect,
+                    (
+                        self.size[0] * 3 / 8 - four_x / 2,
+                        self.size[1] / 2 - four_y / 2,
+                    ),
+                )
             if self.game.turn == 0:  # 플레이어가 카드 낼때
                 give_card_x = 130 * setting.get_screen_scale()
                 give_card_y = 182 * setting.get_screen_scale()
@@ -653,8 +686,23 @@ class Single:
                 if self.count == max_count:
                     self.effect = 0
                     self.count = 0
+                # 우노 성공할 경우
+                if self.game.players[0].is_uno == True:
+                    uno_x = 400 * setting.get_screen_scale()
+                    uno_y = 300 * setting.get_screen_scale()
+                    uno = pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "uno_effect.png"),
+                        (uno_x, uno_y),
+                    )
+                    screen.blit(
+                        uno,
+                        (
+                            self.size[0] * 3 / 8 - uno_x / 2,
+                            self.size[1] / 2 - uno_y / 2,
+                        ),
+                    )
             else:  # 컴퓨터 카드 낼때
-                i == self.game.turn
+                # i == self.game.turn
                 give_card_x = 130 * setting.get_screen_scale()
                 give_card_y = 182 * setting.get_screen_scale()
                 give_card = pygame.image.load(
@@ -676,6 +724,21 @@ class Single:
                 if self.count == max_count:
                     self.effect = 0
                     self.count = 0
+                # 우노 성공할 경우
+                if self.game.players[self.game.turn].is_uno == True:
+                    uno_x = 400 * setting.get_screen_scale()
+                    uno_y = 300 * setting.get_screen_scale()
+                    uno = pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "uno_effect.png"),
+                        (uno_x, uno_y),
+                    )
+                    screen.blit(
+                        uno,
+                        (
+                            self.size[0] * 3 / 8 - uno_x / 2,
+                            self.size[1] / 2 - uno_y / 2,
+                        ),
+                    )
 
     # 메뉴 선택 시 처리
     def select_card(self, index):

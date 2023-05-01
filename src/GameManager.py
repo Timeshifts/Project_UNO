@@ -199,8 +199,7 @@ class GameManager:
 
     def computer_wait(self, option=0):
         time.sleep(0.25)
-        pygame.event.post(pygame.event.Event(
-            EVENT_TURN_END, {"option": option}))
+        pygame.event.post(pygame.event.Event(EVENT_TURN_END, {"option": option}))
 
     def turn_end_act(self):
         # print("비동기 동작")
@@ -431,13 +430,11 @@ class GameManager:
             time.sleep(0.2)
 
     def game_count_down(self):  # 전체 시간
-        self.game_timer_thread = threading.Thread(
-            target=self.game_timer, args=(100,))
+        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(100,))
         self.game_timer_thread.start()
 
     def turn_count_down(self):  # 턴 시간
-        self.turn_timer_thread = threading.Thread(
-            target=self.turn_timer, args=(15,))
+        self.turn_timer_thread = threading.Thread(target=self.turn_timer, args=(15,))
         self.turn_timer_thread.start()
 
     def top_card_change(self):
@@ -630,7 +627,9 @@ class Computer(Player):
             self.get_card()
             return_value = "get"
 
-        if len(self.hand) == 1 or len(self.hand) == 2:
+        # if len(self.hand) == 1 or len(self.hand) == 2:
+        #     self.press_uno()
+        if len(self.hand) == 2:
             self.press_uno()
 
         return return_value
@@ -664,7 +663,7 @@ class StoryA_User(Player):
         else:
             self.get_card()
 
-        if len(self.hand) == 1:
+        if len(self.hand) == 2:
             self.press_uno()
 
 
