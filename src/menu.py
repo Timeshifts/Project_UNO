@@ -27,6 +27,10 @@ class Menu:
             self.scale = kwargs["scale"]
         else:
             self.scale = (1.0, 1.0)
+        if "showkey" in kwargs:
+            self.showkey = kwargs["showkey"]
+        else:
+            self.showkey = True
 
         # button_img에는 단일 이미지나 이미지 tuple을 넣을 수 있으며,
         # 이미지 tuple을 통해 각 버튼마다 다른 이미지를 구현할 수 있습니다.
@@ -106,6 +110,7 @@ class Menu:
             else:
                 self.button[i].changeHighlight(False, screen)
         # 키
+        if not self.showkey: return
         key = ["up", "down", "left", "right", "enter", "pause"]
         for i in range(len(key)):
             # key_value = pygame.key.name(setting.options[key[i]])
