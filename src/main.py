@@ -144,6 +144,13 @@ def main():
                     if progress < event.story_map and event.player_win:
                         story_map.StoryMenu.story_progress = event.story_map
                         story_object.STORY_MENU.save_progress()
+                    # 과 함께 업적 1~4 달성
+                    pygame.event.post(pygame.event.Event(
+                        EVENT_ACQUIRE_ACHIEVEMENT, {"id": event.story_map}))
+                elif event.player_win:
+                    # 업적 0: 싱글 플레이어 승리
+                    pygame.event.post(pygame.event.Event(
+                        EVENT_ACQUIRE_ACHIEVEMENT, {"id": 0}))
                 state = "end_game"
 
             # 게임 종료 상황에
@@ -292,6 +299,7 @@ def main():
                     game_objects.remove(main_menu)
                 state = "achievement"
                 game_objects.append(achi_object)
+                achi_object.resize(size)
 
             # 옵션 열기
             if event.type == EVENT_OPEN_OPTION:
