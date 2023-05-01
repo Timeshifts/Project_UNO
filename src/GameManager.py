@@ -663,7 +663,7 @@ class StoryA_User(Player):
         else:
             self.get_card()
 
-        if len(self.hand) == 1:
+        if len(self.hand) == 2:
             self.press_uno()
 
 
