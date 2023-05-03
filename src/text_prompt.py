@@ -1,14 +1,13 @@
 import pygame
-from button import Button
 import setting
 from constant import *
 from menu import Menu
 
-# 싱글플레이
-class Rename(Menu):
+# rename에서 뽑아낸 텍스트 입력 창입니다.
+class Text_Prompt(Menu):
     # 가능한 메뉴 목록
     avail_menu = ["DONE", "CANCEL"]
-    name = "My Name"
+    input = "My Name"
 
     # 버튼이 있어야 할 위치 반환
     get_position = lambda self, index: (
@@ -16,18 +15,34 @@ class Rename(Menu):
         self.pos[1] + self.size[1] * 1.2 * index,
     )
 
-    def __init__(self, pos=(0, 0), size=(150, 50)):
+    def __init__(self, pos=(0, 0), size=(150, 50), **kwargs):
+        if "prompt" in kwargs:
+            self.prompt = kwargs["prompt"]
+        else:
+            self.prompt = "Enter New Name"
+        if "max_char" in kwargs:
+            self.max_char = kwargs["max_char"]
+        else:
+            self.max_char = 8
+        self.done_event = kwargs["done_event"]
+        if "cancel_event" in kwargs:
+            self.cancel_event = kwargs["cancel_event"]
+        else:
+            self.cancel_event = self.done_event
+        if "init_input" in kwargs:
+            self.input = kwargs["init_input"]
+
         super().__init__(pos, size)
         self.init_draw()
 
     def init_draw(self):
         super().init_draw()
-        self.prompt_text = setting.get_font(50).render("Enter New Name (max 8 chars):", True, "White")
+        self.prompt_text = setting.get_font(50).render(f"{self.prompt} (max {self.max_char} chars):", True, "White")
         self.prompt_text_rect = self.prompt_text.get_rect(
             center=(self.size[0] / 2, self.size[1] * 0.15)
         )
         # 본인 이름 수정
-        self.text_name = setting.get_font(50).render(self.name, True, "White")
+        self.text_name = setting.get_font(50).render(self.input, True, "White")
         self.text_name_rect = self.text_name.get_rect(
             center=(self.size[0] / 2, self.size[1] * 0.3)
         )
@@ -35,7 +50,7 @@ class Rename(Menu):
     def resize(self, size):
         super().resize(size)
 
-        self.text_name = setting.get_font(50).render(self.name, True, "White")
+        self.text_name = setting.get_font(50).render(self.input, True, "White")
         self.text_name_rect = self.text_name.get_rect(
             center=(self.size[0] / 2, self.size[1] * 0.3)
         )
@@ -61,10 +76,10 @@ class Rename(Menu):
         pygame.event.post(se_event)
 
         if self.avail_menu[index] == "DONE":
-            pygame.event.post(pygame.event.Event(EVENT_START_LOBBY, {"name": self.name}))
+            pygame.event.post(pygame.event.Event(self.done_event, {"name": self.input}))
         elif self.avail_menu[index] == "CANCEL":
             # 싱글플레이 로비로 복귀
-            pygame.event.post(pygame.event.Event(EVENT_START_LOBBY))  
+            pygame.event.post(pygame.event.Event(self.cancel_event))  
 
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
@@ -100,15 +115,15 @@ class Rename(Menu):
                         )
                         self.highlight = self.selected
                     elif event.key == pygame.K_BACKSPACE:
-                        if len(self.name) > 0:
-                            self.name = self.name[:-1]
+                        if len(self.input) > 0:
+                            self.input = self.input[:-1]
                             self.resize(self.size) # 입력 중인 이름 중앙으로 다시 가져오기
                     else:
-                        if len(self.name) < 8:
+                        if len(self.input) < self.max_char:
                             if event.unicode != 0: # 글자가 없는(예: F1) 키 제외
-                                self.name += event.unicode
+                                self.input += event.unicode
                             self.resize(self.size) # 입력 중인 이름 중앙으로 다시 가져오기
-                    self.text_name = setting.get_font(50).render(self.name, True, "BLACK")
+                    self.text_name = setting.get_font(50).render(self.input, True, "BLACK")
                     self.text_name_rect.size = self.text_name.get_size()
 
             # 버튼이 누르고 있어도 계속 동작하지 않게 뗄 때까지는 작동 방지

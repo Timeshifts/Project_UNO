@@ -2,7 +2,7 @@ import sys, setting, pause, story_map, setting_menu, achievement
 from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN_OPTION
 from single_lobby import SingleLobby, EVENT_MAIN
 from single import Single, EVENT_MAIN
-from rename import Rename
+from text_prompt import Text_Prompt
 from constant import *
 
 # pygame 검사
@@ -100,7 +100,7 @@ def main():
     game_objects.append(main_menu)  # 메인 메뉴 생성하여 게임 오브젝트에 추가
     single_lobby = SingleLobby((width, height), size)
     # single = Single((width, height), size, 1, "Test")
-    rename = Rename((width, height), size)
+    rename = Text_Prompt((width, height), size, done_event=EVENT_START_LOBBY)
     story_object = story_map.StoryMap((0, 0), size)
     achi_object = achievement.AchievementMenu((0, 0), size)
 
@@ -266,6 +266,9 @@ def main():
             if event.type == EVENT_OPEN_RENAME:
                 state = "rename"
                 game_objects.remove(single_lobby)
+                rename = Text_Prompt((width, height), size, 
+                                     done_event=EVENT_START_LOBBY,
+                                     init_input=single_lobby.name)
                 rename.resize(size)
                 game_objects.append(rename)
 
