@@ -30,6 +30,6 @@ class Main_menu(Menu):
         elif self.avail_menu[index] == "STORY":
             pygame.event.post(pygame.event.Event(EVENT_OPEN_STORYMAP))  # 스토리 모드
         elif self.avail_menu[index] == "MULTIPLAY":
-            pass # 멀티플레이 로비
+            pygame.event.post(pygame.event.Event(EVENT_START_LOBBY_MULTI)) # 멀티플레이 로비
         elif self.avail_menu[index] == "ACHIEVEMENT":
             pygame.event.post(pygame.event.Event(EVENT_OPEN_ACHIEVEMENT))  # 업적 열기
