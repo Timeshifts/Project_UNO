@@ -42,12 +42,16 @@ def get_background(state, size):
         return pygame.transform.scale(
             pygame.image.load(RESOURCE_PATH / "single" / "single_background.png"), size
         )
-    elif state in ("single_lobby", "multi_lobby"):
+    elif state =="single_lobby":
         return pygame.transform.scale(
             pygame.image.load(RESOURCE_PATH / "single" / "single_robby_background.png"),
             size,
         )
-
+    elif state == "multi_lobby":
+        return pygame.transform.scale(
+            pygame.image.load(RESOURCE_PATH / "single" / "multi_robby_background.png"),
+            size,
+        )
 
 # 배경 음악 재생
 def load_bgm(path, volume=1.0):
