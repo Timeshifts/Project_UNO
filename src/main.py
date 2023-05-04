@@ -1,7 +1,8 @@
 import sys, setting, pause, story_map, setting_menu, achievement
 from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN_OPTION
-from single_lobby import SingleLobby, EVENT_MAIN
-from single import Single, EVENT_MAIN
+from single_lobby import SingleLobby
+from multi_lobby import MultiLobby
+from single import Single
 from text_prompt import Text_Prompt
 from constant import *
 
@@ -41,7 +42,7 @@ def get_background(state, size):
         return pygame.transform.scale(
             pygame.image.load(RESOURCE_PATH / "single" / "single_background.png"), size
         )
-    elif state == "single_lobby":
+    elif state in ("single_lobby", "multi_lobby"):
         return pygame.transform.scale(
             pygame.image.load(RESOURCE_PATH / "single" / "single_robby_background.png"),
             size,
@@ -99,7 +100,7 @@ def main():
     main_menu = Main_menu((width / 2, height / 2 + 100), size)
     game_objects.append(main_menu)  # 메인 메뉴 생성하여 게임 오브젝트에 추가
     single_lobby = SingleLobby((width, height), size)
-    # single = Single((width, height), size, 1, "Test")
+    multi_lobby = MultiLobby((width, height), size)
     rename = Text_Prompt((width, height), size, done_event=EVENT_START_LOBBY)
     story_object = story_map.StoryMap((0, 0), size)
     achi_object = achievement.AchievementMenu((0, 0), size)
@@ -183,6 +184,8 @@ def main():
                     game_objects.remove(story_object)  # 스토리 모드 제거
                 elif state == "achievement":
                     game_objects.remove(achi_object) # 업적 메뉴 제거
+                elif state == "multi_lobby":
+                    game_objects.remove(multi_lobby)
                 elif state in ("single", "end_game"):
                     game_objects.remove(single)
                     del single  # single 객체 삭제
@@ -204,8 +207,8 @@ def main():
                     game_objects.remove(main_menu)
                 elif state == "rename":
                     # 변경 창에서 바꾼 이름을 싱글 로비에 반영
-                    if "name" in event.dict.keys():
-                        single_lobby.name = event.name
+                    if "input" in event.dict.keys():
+                        single_lobby.name = event.input
                     game_objects.remove(rename)
                 state = "single_lobby"
                 background = get_background(state, size)
@@ -214,6 +217,33 @@ def main():
                 )
                 game_objects.append(single_lobby)
                 single_lobby.resize(size)  # 임시
+            elif event.type == EVENT_START_LOBBY_MULTI:
+                # 메인 메뉴 제거, 멀티 로비 진입
+                if state == "main_menu":
+                    game_objects.remove(main_menu)
+                elif state == "rename":
+                    # 변경 창에서 바꾼 이름을 멀티 로비에 반영
+                    if "input" in event.dict.keys():
+                        multi_lobby.name = event.input
+                        # TODO: 다른 플레이어에게 이름 변경 알리기
+                    game_objects.remove(rename)
+                elif state == "passwd_change":
+                    # 변경 창에서 바꾼 비밀번호를 멀티에 반영
+                    if "input" in event.dict.keys():
+                        multi_lobby.password = event.input
+                    game_objects.remove(rename)
+                elif state == "ip_change":
+                    # 변경 창에서 바꾼 ip를 멀티에 반영
+                    if "input" in event.dict.keys():
+                        multi_lobby.host_ip = event.input
+                    game_objects.remove(rename)
+                state = "multi_lobby"
+                background = get_background(state, size)
+                load_bgm(
+                    RESOURCE_PATH / "sound" / "bg_game.mp3", setting.get_volume("bgm")
+                )
+                game_objects.append(multi_lobby)
+                multi_lobby.resize(size)  # 임시
 
             # 게임 시작
             if event.type == EVENT_START_SINGLE:
@@ -262,18 +292,76 @@ def main():
                 # single.computer_count = computer_count
                 single_turn = 1
 
-            # 이름 변경 열기
-            if event.type == EVENT_OPEN_RENAME:
-                state = "rename"
-                game_objects.remove(single_lobby)
-                rename = Text_Prompt((width, height), size, 
-                                     done_event=EVENT_START_LOBBY,
-                                     init_input=single_lobby.name)
+            # 접속 IP 입력 (클라이언트 측)
+            if event.type == EVENT_OPEN_ENTER_IP:
+                game_objects.remove(multi_lobby)
+                rename = Text_Prompt((width, height), 
+                                        size, 
+                                        prompt="Enter IP",
+                                        max_char=15,
+                                        done_event=EVENT_START_LOBBY_MULTI,
+                                        init_input=multi_lobby.host_ip)
+                state = "ip_change"
+                
                 rename.resize(size)
                 game_objects.append(rename)
+            elif event.type == EVENT_CLOSE_ENTER_IP:
+                # IP 변경 제거
+                game_objects.remove(rename)
 
-            # 이름 변경 닫기
-            if event.type == EVENT_CLOSE_RENAME:
+            # 비밀번호 입력 (클라이언트 측)
+            if event.type == EVENT_OPEN_CLIENT_PASSWORD:
+                game_objects.remove(multi_lobby)
+                rename = Text_Prompt((width, height), 
+                                        size, 
+                                        prompt="Enter password",
+                                        max_char=6,
+                                        done_event=EVENT_START_LOBBY_MULTI,
+                                        init_input=multi_lobby.password)
+                state = "passwd_change"
+                
+                rename.resize(size)
+                game_objects.append(rename)
+            elif event.type == EVENT_CLOSE_CLIENT_PASSWORD:
+                # 비밀번호 변경 제거
+                game_objects.remove(rename)
+
+            # 비밀번호 변경 (서버 측)
+            if event.type == EVENT_OPEN_HOST_PASSWORD:
+                game_objects.remove(multi_lobby)
+                rename = Text_Prompt((width, height), 
+                                        size, 
+                                        prompt="Enter password",
+                                        max_char=6,
+                                        done_event=EVENT_START_LOBBY_MULTI,
+                                        init_input=multi_lobby.password)
+                state = "passwd_change"
+                
+                rename.resize(size)
+                game_objects.append(rename)
+            elif event.type == EVENT_CLOSE_HOST_PASSWORD:
+                # 비밀번호 변경 제거
+                game_objects.remove(rename)
+
+            # 이름 변경 열기
+            if event.type == EVENT_OPEN_RENAME:
+                if state == "single_lobby":
+                    game_objects.remove(single_lobby)
+                    rename = Text_Prompt((width, height), 
+                                         size, 
+                                         done_event=EVENT_START_LOBBY,
+                                         init_input=single_lobby.name)
+                else:
+                    game_objects.remove(multi_lobby)
+                    rename = Text_Prompt((width, height), 
+                                         size, 
+                                         done_event=EVENT_START_LOBBY_MULTI,
+                                         init_input=multi_lobby.name)
+                state = "rename"
+                
+                rename.resize(size)
+                game_objects.append(rename)
+            elif event.type == EVENT_CLOSE_RENAME:
                 # 이름 변경 제거
                 game_objects.remove(rename)
 

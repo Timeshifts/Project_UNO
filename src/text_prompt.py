@@ -76,7 +76,7 @@ class Text_Prompt(Menu):
         pygame.event.post(se_event)
 
         if self.avail_menu[index] == "DONE":
-            pygame.event.post(pygame.event.Event(self.done_event, {"name": self.input}))
+            pygame.event.post(pygame.event.Event(self.done_event, {"input": self.input}))
         elif self.avail_menu[index] == "CANCEL":
             # 싱글플레이 로비로 복귀
             pygame.event.post(pygame.event.Event(self.cancel_event))  
