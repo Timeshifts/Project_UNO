@@ -178,8 +178,8 @@ class Single:
         card_y = 182
         for i in range(self.max_card):
             # 버튼 삽입
-            if self.game.turn == 0:
-                if i in self.possible_cards_num:
+            if self.game.turn == 0:  # 내 턴일때
+                if i in self.possible_cards_num:  # 낼수 있는 카드
                     self.button.append(
                         Button(
                             pygame.transform.scale(
@@ -205,7 +205,7 @@ class Single:
                             hovering_color="Black",
                         )
                     )
-                else:
+                else:  # 낼수 없는 카드
                     self.button.append(
                         Button(
                             pygame.transform.scale(
@@ -231,7 +231,7 @@ class Single:
                             hovering_color="Black",
                         )
                     )
-            else:
+            else:  # 내 턴이 아닐때
                 self.button.append(
                     Button(
                         pygame.transform.scale(
@@ -783,7 +783,8 @@ class Single:
                 self.effect = "get_my"
                 self.game.turn_end()
             if index == self.max_card + 1:  # 우노버튼
-                self.game.players[0].press_uno()
+                self.game.players[self.game.turn].press_uno()
+                print("우노 버튼")
 
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
@@ -817,7 +818,7 @@ class Single:
         # 컴퓨터 비동기 대기 완료
         if event.type == EVENT_COMPUTER_THINK:
             self.computer_act()
-        if self.game.turn == 0:
+        if self.game.turn == 0:  # 내 턴일때
             # 겹친 구간에서 위에 있는 카드가 선택되게 하기 위한 조정
             for i in range(self.max_card + 1, -1, -1):
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -879,3 +880,17 @@ class Single:
                 # 버튼이 누르고 있어도 계속 동작하지 않게 뗄 때까지는 작동 방지
                 elif event.type == pygame.KEYUP:
                     self.pressed = False
+        else:  # 내 턴이 아닐때, 우노 버튼만 동작
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.rect[self.max_card + 1].collidepoint(event.pos):
+                    self.select_card(self.max_card + 1)
+            elif event.type == pygame.KEYDOWN:
+                if self.pressed == False:
+                    self.pressed = True
+                    # 엔터 키가 눌렸을 때
+                    if event.key == setting.options["enter"]:
+                        # 키보드로 선택한 것이 있다면 그 메뉴를 선택
+                        self.select_card(self.max_card + 1)
+            # 버튼이 누르고 있어도 계속 동작하지 않게 뗄 때까지는 작동 방지
+            elif event.type == pygame.KEYUP:
+                self.pressed = False

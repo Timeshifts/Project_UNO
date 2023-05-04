@@ -46,6 +46,7 @@ class GameManager:
         self.player_score = []  # 점수 저장
         self.story = -1  # 몇 번 스토리 모드? (-1이면 일반 게임)
         self.wild_card = 0
+        self.set_uno = False
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -248,6 +249,7 @@ class GameManager:
         if len(self.deck) == 0:
             self.set_deck_from_grave()
         self.players[a].is_uno = False
+        self.set_uno = False
         self.players[a].hand.append(self.deck.pop())
 
     def get_card(self, card):
@@ -565,7 +567,12 @@ class Player:
 
     def press_uno(self):
         if self.is_authority == True and len(self.hand) == 2:
-            self.is_uno = True
+            if Gm.set_uno == False:
+                self.is_uno = True
+                print("우노 성공")
+        if self.is_authority == False and len(self.hand) == 2:  # 남의 턴에 우노 버튼 클릭
+            Gm.set_uno = True
+            print("우노 방해")
 
     def use_card(self, index):
         self.current_card = self.hand[index]
@@ -617,6 +624,9 @@ class Computer(Player):
         self.possible_cards_num.clear()
         self.judge_possible_cards()
 
+        if Gm.set_uno == False and len(self.hand) == 2:
+            self.press_uno()
+
         if len(self.possible_cards_num) != 0:
             ran = random.choice(self.possible_cards_num)
             # ran = random.randrange(len(self.possible_cards))
@@ -626,11 +636,6 @@ class Computer(Player):
         else:
             self.get_card()
             return_value = "get"
-
-        # if len(self.hand) == 1 or len(self.hand) == 2:
-        #     self.press_uno()
-        if len(self.hand) == 2:
-            self.press_uno()
 
         return return_value
 
