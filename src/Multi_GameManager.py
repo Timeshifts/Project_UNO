@@ -317,7 +317,10 @@ class GameManager:
     def give_authority(self, turn):
         self.players[turn].is_authority = True
         self.players[turn].is_turn_used = False
+  
 
+
+  
     """
     예전 방식의 턴 리버스, 일단 주석처리
     def turn_reverse(self):
