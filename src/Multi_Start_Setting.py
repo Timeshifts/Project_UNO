@@ -32,10 +32,12 @@ elif a == 2:
     Client.client_start()
     
     while True:
+        msg = input()
+        Client.send(msg)
         if Client.msg_queue.empty() == True:
             time.sleep(0.2)
         else:
-            M = pickle.loads(Client.msg_queue.get())
+            M = Client.msg_queue.get()
             
             if M == "start":
                 print("게임 시작")
