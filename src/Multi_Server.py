@@ -2,6 +2,7 @@ import socket
 import threading
 import time
 import queue
+import pickle
 
 class Multi_Server:
     def __init__(self):
@@ -15,9 +16,9 @@ class Multi_Server:
     
     def receive(self, client_socket):
         while True:
-            msg = client_socket.recv(1024)
+            msg = pickle.loads(client_socket.recv(1024))
             print("받음")
-            self.msg_queue.put(msg.decode())
+            self.msg_queue.put(msg)
     
     def handle_client(self):
         while True:
@@ -36,10 +37,10 @@ class Multi_Server:
             if self.msg_queue.empty() == True:
                 time.sleep(0.2)
             else:
-                M = self.msg_queue.get().encode()
+                M = self.msg_queue.get()
                 
                 for i in range(len(self.socket_array)):
-                    self.socket_array[i].send(M)
+                    self.socket_array[i].send(pickle.dumps(M))
     
     def server_start(self):
         thread_handle_client = threading.Thread(target=self.handle_client)

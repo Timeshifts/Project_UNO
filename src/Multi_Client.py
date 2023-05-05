@@ -1,6 +1,7 @@
 import socket
 import threading
 import queue
+import pickle
 
 class Multi_Client:
     def __init__(self, ip):
@@ -12,12 +13,12 @@ class Multi_Client:
     
     def receive(self):
         while True:
-            msg = self.client_socket.recv(1024)
+            msg = pickle.loads(self.client_socket.recv(1024))
             self.msg_queue.put(msg)
-            print(f"서버가 뿌린 메세지 : {msg.decode()}")
+            print(f"서버가 뿌린 메세지 : {msg}")
 
     def send(self, M):
-        self.client_socket.send(M.encode())
+        self.client_socket.send(pickle.dumps(M))
     
     def client_start(self):
         thread_for_receive = threading.Thread(target=self.receive)

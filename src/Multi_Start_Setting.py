@@ -2,6 +2,7 @@ import Multi_Server
 import Multi_Client
 import time
 import Multi_GameManager
+import pickle
 
 print("\n숫자를 입력하세요")
 print("1 : 서버생성")
@@ -34,7 +35,7 @@ elif a == 2:
         if Client.msg_queue.empty() == True:
             time.sleep(0.2)
         else:
-            M = Client.msg_queue.get().decode()
+            M = pickle.loads(Client.msg_queue.get())
             
             if M == "start":
                 print("게임 시작")
