@@ -6,6 +6,7 @@ import pickle
 class Multi_Client:
     def __init__(self, ip):
         self.ip = ip
+        self.name = 'MY NAME'
         self.msg_queue = queue.Queue()
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect((ip, 12000))

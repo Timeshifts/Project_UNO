@@ -5,7 +5,7 @@ import time
 from constant import EVENT_END_GAME, EVENT_TURN_END
 
 class GameManager:
-    def __init__(self):
+    def __init__(self,server):
         self.turn = 0  # 지금 누구 턴인지 나타내는 정수 변수
         self.turn_count = 0  # 총 몇번의 턴이 진행되었는지
         self.players = []  # 플레이어 객체들을 담을 배열
@@ -43,6 +43,7 @@ class GameManager:
         self.player_score = []  # 점수 저장
         self.story = -1  # 몇 번 스토리 모드? (-1이면 일반 게임)
         self.wild_card = 0
+        self.server = server
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -542,6 +543,51 @@ class GameManager:
     def defence(self):
         self.players[self.turn].defence_int += 1
 
+    def initialization(self):
+        game_dic = {}
+        self.card_shuffle()
+        for i in range(len(self.server.socket_array)):
+            self.players.append(User(False,i))
+
+        self.turn = random.randint(0, self.player_num - 1)
+
+        # 플레이어들에게 카드 나눠줌
+        for i in range(len(self.players)):
+            self.players[i].hand = self.roulette_wheel_selection(
+                self.players[i].skill_card_weight
+            )
+        # 덱에서 카드 한장 빼서 세팅해놓음
+        self.setting_card(self.deck)
+        game_dic['initial_card_shuffle'] = self.deck
+        game_dic['initial_players'] = self.deck
+        game_dic['initial_turn'] = self.deck
+        game_dic['initial_setting_card'] = self.deck        
+
+        # self.players.append(User(False))
+
+        # # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
+        # for i in range(self.computer_count):
+        #     self.players.append(Computer(True))
+
+        # for i in range(self.story_A_computer_count):
+        #     self.players.append(StoryA_User(True))
+
+        # self.player_num = len(self.players)
+
+        # self.turn = random.randint(0, self.player_num - 1)
+
+
+        # # 덱 셔플
+        # self.card_shuffle()
+
+        # # 플레이어들에게 카드 나눠줌
+        # for i in range(len(self.players)):
+        #     self.players[i].hand = self.roulette_wheel_selection(
+        #         self.players[i].skill_card_weight
+        #     )
+
+        # # 덱에서 카드 한장 빼서 세팅해놓음
+        # self.setting_card(self.deck)
 
 # -------------------------------------------------------------------------------------------------
 
@@ -591,8 +637,9 @@ class Player:
 
 
 class User(Player):
-    def __init__(self, is_computer):
+    def __init__(self, is_computer,idx):
         super().__init__(is_computer)
+        self.idx = idx
 
     def play(self):
         self.possible_cards.clear()

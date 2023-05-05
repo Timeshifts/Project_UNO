@@ -3,6 +3,7 @@ import threading
 import time
 import queue
 import pickle
+import Multi_GameManager
 
 class Multi_Server:
     def __init__(self):
@@ -14,6 +15,7 @@ class Multi_Server:
         self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)       # 방금 사용하고 close한 port를 즉시 다시 사용할 수 있다.
         self.server_socket.bind((self.host_ip, self.port))
         self.server_socket.listen(6)
+        self.MGM = Multi_GameManager.GameManager()
     
     def receive(self, client_socket):
         while True:
@@ -26,7 +28,7 @@ class Multi_Server:
             connect_socket, addr = self.server_socket.accept()
             
             print(f"{addr} 연결됨")
-            
+        
             self.socket_array.append(connect_socket)
             
             thread_receive = threading.Thread(target=self.receive, args=(connect_socket,))
@@ -51,3 +53,7 @@ class Multi_Server:
         thread_send = threading.Thread(target=self.send)
         thread_send.daemon = True
         thread_send.start()
+
+    # def game_start(self):
+    #     self.MGM.game_start()
+    #     self.MGM.turn_start()
