@@ -11,6 +11,7 @@ class Multi_Server:
         self.msg_queue = queue.Queue()
         self.socket_array = []
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)       # 방금 사용하고 close한 port를 즉시 다시 사용할 수 있다.
         self.server_socket.bind((self.host_ip, self.port))
         self.server_socket.listen(6)
     
