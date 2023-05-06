@@ -7,7 +7,7 @@ from constant import *
 class SingleLobby:
     # 가능한 메뉴 목록
     computer = ["1", "2", "3", "4", "5"]
-    avail_menu = ["RENAME", "START", "BACK"]
+    avail_menu = ["이름 변경", "게임 시작", "돌아가기"]
     name = "My Name"
 
     # 버튼이 있어야 할 위치 반환
@@ -107,9 +107,9 @@ class SingleLobby:
                 if i >= self.max_computer:
                     self.button[i].changeHighlight(False, screen)
 
-        # Add a Player 텍스트
+        # 플레이어 대기열 텍스트
         font = setting.get_font(50)
-        text_player = font.render("Add a Player", True, "White")
+        text_player = font.render("플레이어 대기열", True, "White")
         text_player_rect = text_player.get_rect(
             center=(self.size[0] * 7 / 8, self.size[1] / 12)
         )
@@ -158,14 +158,14 @@ class SingleLobby:
                 self.computer_chk[index] = 1
         else:
             index -= self.max_computer
-            if self.avail_menu[index] == "RENAME":
+            if self.avail_menu[index] == "이름 변경":
                 pygame.event.post(pygame.event.Event(EVENT_OPEN_RENAME))  # 이름 변경
-            elif self.avail_menu[index] == "START":
+            elif self.avail_menu[index] == "게임 시작":
                 if self.computer_chk.count(0) == 5: # 모두 0인 경우
                     pass
                 else:
                     pygame.event.post(pygame.event.Event(EVENT_START_SINGLE))  # 게임 시작
-            elif self.avail_menu[index] == "BACK":
+            elif self.avail_menu[index] == "돌아가기":
                 pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 메인 메뉴
 
     # 이벤트 처리

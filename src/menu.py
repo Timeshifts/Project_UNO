@@ -111,11 +111,10 @@ class Menu:
                 self.button[i].changeHighlight(False, screen)
         # 키
         if not self.showkey: return
-        key = ["up", "down", "left", "right", "enter", "pause"]
-        for i in range(len(key)):
-            # key_value = pygame.key.name(setting.options[key[i]])
+        key = {"위":"up", "아래":"down", "왼쪽":"left", "오른쪽":"right", "선택":"enter", "일시정지":"pause"}
+        for i, name in enumerate(key):
             key_value = setting.get_font(30).render(
-                f"{key[i]} : {pygame.key.name(setting.options[key[i]])}", True, "White"
+                f"{name} : {pygame.key.name(setting.options[key[name]])}", True, "White"
             )
             screen.blit(
                 key_value,
