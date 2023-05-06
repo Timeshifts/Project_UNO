@@ -37,7 +37,7 @@ class MultiLobby(Menu):
         self.pos = pos
         self.size = size
         self.pressed = False
-        self.other_chk = [True, False, False, False, False]
+        self.other_chk = [1, 0, 0, 0, 0]   # 0: 없음, 1: 기본 컴퓨터, 2: A지역 컴퓨터, 3: 멀티 플레이어
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -51,11 +51,19 @@ class MultiLobby(Menu):
 
         for i in range(self.max_other):
             # 버튼 삽입
-            if self.other_chk[i] == True:
+            if self.other_chk[i] == 1: # 기본 컴퓨터
                 image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
                 text = self.other[i]
                 color = "White"
-            else:
+            elif self.other_chk[i] == 2: # A지역 컴퓨터
+                image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+                text = f"{self.other[i]} (A)"
+                color = "White"
+            elif self.other_chk[i] == 3: # 멀티 플레이어
+                image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+                text = "name"
+                color = "White"
+            else: # 없음
                 image = pygame.image.load(
                     RESOURCE_PATH / "single" / "list_unpicked.png"
                 )
@@ -171,7 +179,10 @@ class MultiLobby(Menu):
         list_y = 180 * setting.get_screen_scale()
 
         if index < self.max_other:
-            if self.other_chk[index] == True:
+            if self.other_chk[index] == 1: # 기본 컴퓨터 → A지역 컴퓨터
+                self.button[index].ChangeText(f"{self.other[index]} (A)", "White", "White")
+                self.other_chk[index] = 2
+            elif self.other_chk[index] == 2: # A지역 컴퓨터 → 없음
                 self.button[index].ChangeImage(
                     pygame.transform.scale(
                         pygame.image.load(RESOURCE_PATH / "single" / "list_unpicked.png"),
@@ -179,8 +190,20 @@ class MultiLobby(Menu):
                     )
                 )
                 self.button[index].ChangeText("+", "Black", "Black")
-                self.other_chk[index] = False
-            else:
+                self.other_chk[index] = 0
+            elif self.other_chk[index] == 3: # 멀티 플레이어 → 없음
+                self.button[index].ChangeImage(
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "list_unpicked.png"),
+                        (list_x, list_y)
+                    )
+                )
+                self.button[index].ChangeText("+", "Black", "Black")
+                self.other_chk[index] = 0
+                # 플레이어 추방 코드 추가
+                #
+                #
+            else: # 없음 → 기본 컴퓨터
                 self.button[index].ChangeImage(
                     pygame.transform.scale(
                         pygame.image.load(RESOURCE_PATH / "single" / "list.png"),
@@ -188,7 +211,7 @@ class MultiLobby(Menu):
                     )
                 )
                 self.button[index].ChangeText(self.other[index], "White", "White")
-                self.other_chk[index] = True
+                self.other_chk[index] = 1
         else:
             index -= self.max_other
             if self.avail_menu[index] == "RENAME":
@@ -253,7 +276,7 @@ class MultiLobby(Menu):
                     print("비밀번호가 틀렸습니다.")
             elif self.avail_menu[index] == "START":
                 # server_connected: 게임 시작
-                if self.other_chk.count(True) == 0:
+                if self.other_chk.count(0) == 5:
                     pass
                 else:
                     # pygame.event.post(pygame.event.Event(EVENT_START_SINGLE))
