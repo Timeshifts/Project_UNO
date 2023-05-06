@@ -10,11 +10,12 @@ clock = pygame.time.Clock()
 
 class Single:
     def __init__(
-        self, pos=(0, 0), size=(150, 50), computer_count=1, name="ME", story=-1
+        self, pos=(0, 0), size=(150, 50), computer_count=0, story_A_computer_count=0, name="ME", story=-1
     ):
         # self.menu = self.avail_menu
         # self.max_menu = len(self.menu)
         self.computer_count = computer_count
+        self.story_A_computer_count = story_A_computer_count
         self.name = name
         self.button = []
         self.rect = []
@@ -74,8 +75,10 @@ class Single:
         self.game = GM.Gm
         self.game.story = self.story
         self.game.computer_count = self.computer_count
+        self.game.story_A_computer_count = self.story_A_computer_count
         self.game.start_cards_integer = 5
         self.game.game_start()
+        self.computer_count += self.story_A_computer_count # 컴퓨터 총 개수로 통일
         self.update_card()
 
     def turn_start(self):

@@ -25,7 +25,7 @@ class SingleLobby:
         self.pos = pos
         self.size = size
         self.pressed = False
-        self.computer_chk = [True, False, False, False, False]
+        self.computer_chk = [1, 0, 0, 0, 0]  # 0: 없음, 1: 기본 컴퓨터, 2: A지역 컴퓨터
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -39,7 +39,7 @@ class SingleLobby:
 
         for i in range(self.max_computer):
             # 버튼 삽입
-            if self.computer_chk[i] == True:
+            if self.computer_chk[i] == 1:
                 image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
                 text = self.computer[i]
                 color = "White"
@@ -131,7 +131,7 @@ class SingleLobby:
         list_y = 180 * setting.get_screen_scale()
 
         if index < self.max_computer:
-            if self.computer_chk[index] == True:
+            if self.computer_chk[index] == 1:
                 self.button[index].ChangeImage(
                     pygame.transform.scale(
                         pygame.image.load(RESOURCE_PATH / "single" / "list_unpicked.png"),
@@ -139,7 +139,7 @@ class SingleLobby:
                     )
                 )
                 self.button[index].ChangeText("+", "Black", "Black")
-                self.computer_chk[index] = False
+                self.computer_chk[index] = 0
             else:
                 self.button[index].ChangeImage(
                     pygame.transform.scale(
@@ -148,13 +148,13 @@ class SingleLobby:
                     )
                 )
                 self.button[index].ChangeText(self.computer[index], "White", "White")
-                self.computer_chk[index] = True
+                self.computer_chk[index] = 1
         else:
             index -= self.max_computer
             if self.avail_menu[index] == "RENAME":
                 pygame.event.post(pygame.event.Event(EVENT_OPEN_RENAME))  # 이름 변경
             elif self.avail_menu[index] == "START":
-                if self.computer_chk.count(True) == 0:
+                if self.computer_chk.count(0) == 5: # 모두 0인 경우
                     pass
                 else:
                     pygame.event.post(pygame.event.Event(EVENT_START_SINGLE))  # 게임 시작

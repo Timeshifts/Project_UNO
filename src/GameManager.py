@@ -63,9 +63,8 @@ class GameManager:
 
         if self.story == 0:
             print("스토리 A 특성 적용")
-            self.story_A_computer_count = 1
-            self.computer_count = 0
-            # self.start_cards_integer = 1
+            # self.story_A_computer_count = 1
+            # self.computer_count = 0
         elif self.story == 1:
             print("스토리 B 특성 적용")
             self.start_cards_integer = 15
@@ -87,8 +86,10 @@ class GameManager:
 
         self.player_num = len(self.players)
 
-        # 일단 임시로 주석처리리
-        # random.shuffle(self.players)
+        # 플레이어 수
+        print(f"컴퓨터 플레이어 : {self.player_num}")
+        print(f"일반 컴퓨터 : {self.computer_count}")
+        print(f"A 컴퓨터 : {self.story_A_computer_count}")
 
         self.turn = random.randint(0, self.player_num - 1)
 
@@ -629,7 +630,6 @@ class Computer(Player):
 
         if len(self.possible_cards_num) != 0:
             ran = random.choice(self.possible_cards_num)
-            # ran = random.randrange(len(self.possible_cards))
             self.use_card(ran)
             return_value = f"{self.current_card.color}_{self.current_card.name}"
             self.current_card = 0
@@ -650,27 +650,38 @@ class StoryA_User(Player):
 
     def computer_play(self):
         self.possible_cards.clear()
+        self.possible_cards_num.clear()
         self.judge_possible_cards()
         is_combo = False
-        if len(self.possible_cards) != 0:
-            for i in range(len(self.possible_cards)):
+
+        if Gm.set_uno == False and len(self.hand) == 2:
+            self.press_uno()
+        
+        for i in range(len(self.possible_cards_num)):
+            print(f"{self.possible_cards_num[i]} : {self.possible_cards[i].color}_{self.possible_cards[i].name}")
+
+        if len(self.possible_cards_num) != 0:
+            for i in range(len(self.possible_cards_num)):
                 if (
                     self.possible_cards[i].name == "again"
                     or self.possible_cards[i].name == "skip"
                 ):
                     print("--------콤보 공격--------")
-                    self.use_card(self.hand.index(self.possible_cards[i]))
+                    self.use_card(self.possible_cards_num[i])
+                    return_value = f"{self.current_card.color}_{self.current_card.name}"
+                    self.current_card = 0
                     is_combo = True
                     break
             if is_combo == False:
-                ran = random.randrange(len(self.possible_cards))
+                ran = random.choice(self.possible_cards_num)
                 self.use_card(ran)
+                return_value = f"{self.current_card.color}_{self.current_card.name}"
+                self.current_card = 0
         else:
             self.get_card()
+            return_value = "get"
 
-        if len(self.hand) == 2:
-            self.press_uno()
-
+        return return_value
 
 # -------------------------------------------------------------------------------------------------
 
