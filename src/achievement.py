@@ -61,6 +61,34 @@ achievements = {
     }
 }
 
+# 달성 즉시 업적 확인 창
+class AchievementIndicator():
+    def __init__(self, id: int, gameobject: list, lifespan: int=180):
+        self.id = id
+        self.gameobject = gameobject
+        # 180프레임 = 렉 없을 때 3초
+        self.lifespan = lifespan
+        self.image = pygame.image.load(
+            RESOURCE_PATH / "achievement" / f"name_{self.id+1}.png"
+        )
+        self.image = pygame.transform.scale(self.image,
+                                            (300 * setting.get_screen_scale(),
+                                            300 * setting.get_screen_scale()))
+
+    def resize(self, size):
+        pass
+    
+    def handle_event(self, event):
+        pass
+
+    def draw(self, screen: pygame.Surface):
+        screen.blit(self.image, (0, 0))
+        self.lifespan -= 1
+        if self.lifespan < 0:
+            self.gameobject.remove(self)
+
+    
+
 class AchievementMenu():
 
     # 달성한 업적 ({id: 시간}으로 저장)
@@ -220,6 +248,6 @@ class AchievementResume(Menu):
             # "id": 3 부분을 바꿔 다른 업적으로
             # 변경할 수 있습니다.
             #########################
-            # pygame.event.post(pygame.event.Event(
-            #    EVENT_ACQUIRE_ACHIEVEMENT, {"id": 3}))
+            pygame.event.post(pygame.event.Event(
+                EVENT_ACQUIRE_ACHIEVEMENT, {"id": 2}))
             pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 메인

@@ -386,7 +386,10 @@ def main():
             # 업적 달성
             # 어디서든 업적 달성을 알릴 수 있도록 이벤트화
             if event.type == EVENT_ACQUIRE_ACHIEVEMENT:
-                achi_object.acquire(event.id)
+                # 이미 달성한 업적이면 무시
+                if event.id not in achi_object.acquired:
+                    achi_object.acquire(event.id)
+                    game_objects.append(achievement.AchievementIndicator(event.id, game_objects))
 
             # 업적 열기
             if event.type == EVENT_OPEN_ACHIEVEMENT:
