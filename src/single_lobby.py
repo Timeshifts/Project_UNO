@@ -39,11 +39,15 @@ class SingleLobby:
 
         for i in range(self.max_computer):
             # 버튼 삽입
-            if self.computer_chk[i] == 1:
+            if self.computer_chk[i] == 1: # 기본 컴퓨터
                 image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
                 text = self.computer[i]
                 color = "White"
-            else:
+            elif self.computer_chk[i] == 2: # A지역 컴퓨터
+                image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+                text = f"{self.computer[i]} (A)"
+                color = "White"
+            else: # 없음
                 image = pygame.image.load(
                     RESOURCE_PATH / "single" / "list_unpicked.png"
                 )
@@ -132,6 +136,9 @@ class SingleLobby:
 
         if index < self.max_computer:
             if self.computer_chk[index] == 1:
+                self.button[index].ChangeText(f"{self.computer[index]} (A)", "White", "White")
+                self.computer_chk[index] = 2
+            elif self.computer_chk[index] == 2:
                 self.button[index].ChangeImage(
                     pygame.transform.scale(
                         pygame.image.load(RESOURCE_PATH / "single" / "list_unpicked.png"),

@@ -87,7 +87,7 @@ class GameManager:
         self.player_num = len(self.players)
 
         # 플레이어 수
-        print(f"컴퓨터 플레이어 : {self.player_num}")
+        print(f"총 플레이어 : {self.player_num}")
         print(f"일반 컴퓨터 : {self.computer_count}")
         print(f"A 컴퓨터 : {self.story_A_computer_count}")
 
