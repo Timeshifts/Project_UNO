@@ -248,6 +248,6 @@ class AchievementResume(Menu):
             # "id": 3 부분을 바꿔 다른 업적으로
             # 변경할 수 있습니다.
             #########################
-            pygame.event.post(pygame.event.Event(
-                EVENT_ACQUIRE_ACHIEVEMENT, {"id": 2}))
+            #pygame.event.post(pygame.event.Event(
+            #    EVENT_ACQUIRE_ACHIEVEMENT, {"id": 2}))
             pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 메인

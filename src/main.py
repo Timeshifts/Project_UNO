@@ -1,4 +1,4 @@
-import sys, setting, pause, story_map, setting_menu, achievement
+import sys, setting, pause, story_map, setting_menu, achievement, endgame
 from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN_OPTION
 from single_lobby import SingleLobby
 from multi_lobby import MultiLobby
@@ -93,9 +93,6 @@ def main():
     # 상태 - 초기 화면인지, 로비인지, 게임 중인지 등등
     state = "main_menu"
 
-    # main에서 바로 end_prompt를 그리기 위함.
-    end_prompt = False
-
     # 메인 배경과 음악
     background = get_background(state, size)
     load_bgm(RESOURCE_PATH / "sound" / "bg_main.mp3", setting.get_volume("bgm"))
@@ -104,11 +101,12 @@ def main():
     # 넣고 뺄 때 문제가 생기지 않습니다.
     main_menu = Main_menu((width / 2, height / 2 + 100), size)
     game_objects.append(main_menu)  # 메인 메뉴 생성하여 게임 오브젝트에 추가
-    single_lobby = SingleLobby((width, height), size)
-    multi_lobby = MultiLobby((width, height), size)
-    text_prompt = Text_Prompt((width, height), size, done_event=EVENT_START_LOBBY)
+    single_lobby = SingleLobby(size, size)
+    multi_lobby = MultiLobby(size, size)
+    text_prompt = Text_Prompt(size, size, done_event=EVENT_START_LOBBY)
     story_object = story_map.StoryMap((0, 0), size)
     achi_object = achievement.AchievementMenu((0, 0), size)
+    endgame_prompt = None
 
     # 싱글게임 진행 중인지 확인
     single_turn = 0
@@ -135,7 +133,6 @@ def main():
                             {"path": RESOURCE_PATH / "sound" / "victory.mp3"},
                         )
                     )
-                    end_prompt = "승리하였습니다! 키보드/마우스로 시작 화면으로 돌아갑니다."
                 else:
                     pygame.event.post(
                         pygame.event.Event(
@@ -143,7 +140,11 @@ def main():
                             {"path": RESOURCE_PATH / "sound" / "wild.mp3"},
                         )
                     )
-                    end_prompt = "패배하였습니다. 키보드/마우스로 시작 화면으로 돌아갑니다."
+                
+                if endgame_prompt == None:
+                    endgame_prompt = endgame.EndGamePrompt(size, size, name, single, event.player_win, computer_count)
+                    game_objects.append(endgame_prompt)
+
                 # 스토리 모드였다면 다음 지역 해금
                 if "story_map" in event.dict.keys():
                     progress = story_map.StoryMenu.story_progress
@@ -157,12 +158,20 @@ def main():
                     # 업적 0: 싱글 플레이어 승리
                     pygame.event.post(pygame.event.Event(
                         EVENT_ACQUIRE_ACHIEVEMENT, {"id": 0}))
+                if event.player_win:
+                    # 나머지 업적 flag를 읽어 업적 획득
+                    for achi in single.game.achi_flag:
+                        pygame.event.post(pygame.event.Event(
+                        EVENT_ACQUIRE_ACHIEVEMENT, {"id": achi}))
                 state = "end_game"
 
             # 게임 종료 상황에
             if state == "end_game":
                 # 플레이어가 마우스를 클릭하거나 아무 키나 누르면
                 if event.type in (pygame.MOUSEBUTTONDOWN, pygame.KEYDOWN):
+                    # endgame_prompt는 지우고
+                    game_objects.remove(endgame_prompt)
+                    endgame_prompt = None
                     # 메인으로 돌아가기
                     pygame.event.post(pygame.event.Event(EVENT_MAIN))
 
@@ -445,50 +454,6 @@ def main():
         # 각각의 오브젝트 그리기
         for obj in game_objects:
             obj.draw(screen)
-
-        # 게임 종료 상황 prompt
-        if state == "end_game":
-            # 검은 배경 상자
-            box = pygame.transform.scale(
-                pygame.image.load(RESOURCE_PATH / "single" / "box.png"),
-                (size[0], size[1]),
-            )
-            box_rect = box.get_rect(center=(size[0] / 2, size[1] / 2))
-            screen.blit(box, box_rect)
-            # 게임 승리/패배 표시
-            prompt_text = setting.get_font(50).render(end_prompt, True, "White")
-            prompt_text_rect = prompt_text.get_rect(center=(size[0] / 2, size[1] / 4))
-            screen.blit(prompt_text, prompt_text_rect)
-            # 승리자 표시
-            if single.game.winner_index == 0:
-                winner_name = name
-            else:
-                winner_name = f"Player_{single.game.winner_index}"
-            winner = setting.get_font(50).render(
-                f"승리자 : {winner_name}",
-                True,
-                "White",
-            )
-            winner_rect = winner.get_rect(
-                center=(size[0] / 2, size[1] / 15 + size[1] / 3)
-            )
-            screen.blit(winner, winner_rect)
-            # 시간이 다되어서 끝난 경우 점수 표시
-            if single.game.is_someone_win == False:
-                for i in range(computer_count + 1):
-                    if i == 0:
-                        player_name = name
-                    else:
-                        player_name = f"Player_{i}"
-                    score = setting.get_font(50).render(
-                        f"{player_name}의 점수 : {single.game.player_score[i]}",
-                        True,
-                        "White",
-                    )
-                    score_rect = score.get_rect(
-                        center=(size[0] / 2, size[1] * (i + 2) / 15 + size[1] / 3)
-                    )
-                    screen.blit(score, score_rect)
 
         # 화면 갱신, FPS 60
         pygame.display.flip()
