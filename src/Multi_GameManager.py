@@ -43,6 +43,7 @@ class GameManager:
         self.player_score = []  # 점수 저장
         self.story = -1  # 몇 번 스토리 모드? (-1이면 일반 게임)
         self.wild_card = 0
+        self.game_dic = {}
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -56,7 +57,8 @@ class GameManager:
         self.game_timer_end = False
         self.game_count_down()
 
-        self.players.append(User(False))
+
+        # self.players.append(User(False))
 
         if self.story == 0:
             print("스토리 A 특성 적용")
@@ -75,34 +77,34 @@ class GameManager:
             self.is_hand_change = True
             self.hand_change_num = 20
 
-        # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
-        for i in range(self.computer_count):
-            self.players.append(Computer(True))
+        # # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
+        # for i in range(self.computer_count):
+        #     self.players.append(Computer(True))
 
-        for i in range(self.story_A_computer_count):
-            self.players.append(StoryA_User(True))
+        # for i in range(self.story_A_computer_count):
+        #     self.players.append(StoryA_User(True))
 
-        self.player_num = len(self.players)
+        # self.player_num = len(self.players)
 
         # 일단 임시로 주석처리리
         # random.shuffle(self.players)
 
-        self.turn = random.randint(0, self.player_num - 1)
+        # self.turn = random.randint(0, self.player_num - 1)
 
         # 덱 초기화
-        self.set_deck()
+        # self.set_deck()
 
         # 덱 셔플
-        self.card_shuffle()
+        # self.card_shuffle()
 
-        # 플레이어들에게 카드 나눠줌
-        for i in range(len(self.players)):
-            self.players[i].hand = self.roulette_wheel_selection(
-                self.players[i].skill_card_weight
-            )
+        # # 플레이어들에게 카드 나눠줌
+        # for i in range(len(self.players)):
+        #     self.players[i].hand = self.roulette_wheel_selection(
+        #         self.players[i].skill_card_weight
+        #     )
 
         # 덱에서 카드 한장 빼서 세팅해놓음
-        self.setting_card(self.deck)
+        # self.setting_card(self.deck)
 
         # pygame.time.wait(2000)
 
@@ -318,7 +320,10 @@ class GameManager:
     def give_authority(self, turn):
         self.players[turn].is_authority = True
         self.players[turn].is_turn_used = False
+  
 
+
+  
     """
     예전 방식의 턴 리버스, 일단 주석처리
     def turn_reverse(self):
@@ -543,6 +548,20 @@ class GameManager:
 
     def defence(self):
         self.players[self.turn].defence_int += 1
+
+    def initial_sync(self):
+        self.deck = self.game_dic.pop('shuffle_deck') # 덱
+        self.turn = self.game_dic['turn']  # 지금 누구 턴인지 나타내는 정수 변수
+        self.players = self.game_dic['players']   # 플레이어 객체들을 담을 배열
+        self.player_num =self.game_dic['players_num']  # 전체 플레이어 수
+        self.computer_count = self.game_dic['computer_count']  # 컴퓨터의 수가 몇인지 나타낼 정수 변수
+        self.story_A_computer_count =  self.game_dic['story_A_computer_count']  # story A 특성 유저를 얼마나? 넣을지
+    
+    def sync(self):
+        self.turn = self.game_dic['turn']
+        self.players = self.game_dic['players']   # 플레이어 객체들을 담을 배열
+        self.player_num =self.game_dic['players_num']  # 전체 플레이어 수
+
 
 
 # -------------------------------------------------------------------------------------------------

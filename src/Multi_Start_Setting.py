@@ -8,6 +8,7 @@ print("\n숫자를 입력하세요")
 print("1 : 서버생성") 
 print("2 : 아이피 입력")
 
+
 a = int(input())
 
 # -----------------------------------------------
@@ -121,7 +122,6 @@ elif a == 2:
         
         # Client의 msg_queue가 채워져있으면 else 문으로 간다. 이는 서버로부터 메세지를 받았음을 의미
         else:
-            
             # msg_queue로부터 메세지를 pop해온다.
             M = Client.msg_queue.get()
             
@@ -147,14 +147,25 @@ elif a == 2:
             if M == "start":
                 print("게임 시작")
                 MGM = Multi_GameManager.GameManager()
+                MGM.game_dic = dic
+                print(MGM.game_dic['players'])
+                print(MGM.game_dic['turn'])
+                MGM.initial_sync()
+
                 MGM.game_start()
                 MGM.turn_start()
                 MGM.turn_end()
     # -----------------------------------------------
 
 
+   
+# # 게임 시작
+# dic = Server.init_game()
+# Server.send()
+
 # -----------------------------------------------
 # 나중에, 화면에 그리기 코드와 매핑되면 아래 sleep(1) 쓰는 와일문은 삭제
 # -----------------------------------------------
+
 while True:
     time.sleep(1)
