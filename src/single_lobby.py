@@ -7,7 +7,7 @@ from constant import *
 class SingleLobby:
     # 가능한 메뉴 목록
     computer = ["1", "2", "3", "4", "5"]
-    avail_menu = ["RENAME", "START", "BACK"]
+    avail_menu = ["이름 변경", "게임 시작", "돌아가기"]
     name = "My Name"
 
     # 버튼이 있어야 할 위치 반환
@@ -25,7 +25,7 @@ class SingleLobby:
         self.pos = pos
         self.size = size
         self.pressed = False
-        self.computer_chk = [True, False, False, False, False]
+        self.computer_chk = [1, 0, 0, 0, 0]  # 0: 없음, 1: 기본 컴퓨터, 2: A지역 컴퓨터
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -39,11 +39,15 @@ class SingleLobby:
 
         for i in range(self.max_computer):
             # 버튼 삽입
-            if self.computer_chk[i] == True:
+            if self.computer_chk[i] == 1: # 기본 컴퓨터
                 image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
                 text = self.computer[i]
                 color = "White"
-            else:
+            elif self.computer_chk[i] == 2: # A지역 컴퓨터
+                image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+                text = f"{self.computer[i]} (A)"
+                color = "White"
+            else: # 없음
                 image = pygame.image.load(
                     RESOURCE_PATH / "single" / "list_unpicked.png"
                 )
@@ -103,9 +107,9 @@ class SingleLobby:
                 if i >= self.max_computer:
                     self.button[i].changeHighlight(False, screen)
 
-        # Add a Player 텍스트
+        # 플레이어 대기열 텍스트
         font = setting.get_font(50)
-        text_player = font.render("Add a Player", True, "White")
+        text_player = font.render("플레이어 대기열", True, "White")
         text_player_rect = text_player.get_rect(
             center=(self.size[0] * 7 / 8, self.size[1] / 12)
         )
@@ -131,7 +135,10 @@ class SingleLobby:
         list_y = 180 * setting.get_screen_scale()
 
         if index < self.max_computer:
-            if self.computer_chk[index] == True:
+            if self.computer_chk[index] == 1:
+                self.button[index].ChangeText(f"{self.computer[index]} (A)", "White", "White")
+                self.computer_chk[index] = 2
+            elif self.computer_chk[index] == 2:
                 self.button[index].ChangeImage(
                     pygame.transform.scale(
                         pygame.image.load(RESOURCE_PATH / "single" / "list_unpicked.png"),
@@ -139,7 +146,7 @@ class SingleLobby:
                     )
                 )
                 self.button[index].ChangeText("+", "Black", "Black")
-                self.computer_chk[index] = False
+                self.computer_chk[index] = 0
             else:
                 self.button[index].ChangeImage(
                     pygame.transform.scale(
@@ -148,17 +155,17 @@ class SingleLobby:
                     )
                 )
                 self.button[index].ChangeText(self.computer[index], "White", "White")
-                self.computer_chk[index] = True
+                self.computer_chk[index] = 1
         else:
             index -= self.max_computer
-            if self.avail_menu[index] == "RENAME":
+            if self.avail_menu[index] == "이름 변경":
                 pygame.event.post(pygame.event.Event(EVENT_OPEN_RENAME))  # 이름 변경
-            elif self.avail_menu[index] == "START":
-                if self.computer_chk.count(True) == 0:
+            elif self.avail_menu[index] == "게임 시작":
+                if self.computer_chk.count(0) == 5: # 모두 0인 경우
                     pass
                 else:
                     pygame.event.post(pygame.event.Event(EVENT_START_SINGLE))  # 게임 시작
-            elif self.avail_menu[index] == "BACK":
+            elif self.avail_menu[index] == "돌아가기":
                 pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 메인 메뉴
 
     # 이벤트 처리

@@ -256,19 +256,16 @@ def main():
                 if "index" in event.dict.keys():
                     single_lobby.name = "You"
                     if event.index == 0:
-                        single_lobby.computer_chk = [
-                            True, False, False, False, False]
+                        single_lobby.computer_chk = [2, 0, 0, 0, 0]
                     elif event.index == 1:
-                        single_lobby.computer_chk = [
-                            True, True, True, False, False]
+                        single_lobby.computer_chk = [1, 1, 1, 0, 0]
                     elif event.index == 2:
-                        single_lobby.computer_chk = [
-                            True, True, False, False, False]
+                        single_lobby.computer_chk = [1, 1, 0, 0, 0]
                     elif event.index == 3:
-                        single_lobby.computer_chk = [
-                            True, True, True, False, False]
+                        single_lobby.computer_chk = [1, 1, 1, 0, 0]
                     # 컴퓨터 개수
-                    computer_count = single_lobby.computer_chk.count(True)
+                    computer_count = single_lobby.computer_chk.count(1)
+                    story_A_computer_count = single_lobby.computer_chk.count(2)
                     name = single_lobby.name
                     # 스토리 맵 제거
                     game_objects.remove(story_object)
@@ -279,18 +276,19 @@ def main():
                         setting.get_volume("bgm"),
                     )
                     single = Single(
-                        (width, height), size, computer_count, name, event.index
+                        (width, height), size, computer_count, story_A_computer_count, name, event.index
                     )
                 # 그게 없으면 일반 게임
                 else:
                     # 컴퓨터 개수
-                    computer_count = single_lobby.computer_chk.count(True)
+                    computer_count = single_lobby.computer_chk.count(1)
+                    story_A_computer_count = single_lobby.computer_chk.count(2)
                     name = single_lobby.name
                     # 게임 로비 제거
                     game_objects.remove(single_lobby)
                     state = "single"
                     background = get_background(state, size)
-                    single = Single((width, height), size, computer_count, name)
+                    single = Single((width, height), size, computer_count, story_A_computer_count, name)
 
                 game_objects.append(single)
                 # single.name = name

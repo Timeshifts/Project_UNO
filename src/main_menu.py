@@ -6,7 +6,7 @@ from menu import Menu
 # 메인 메뉴
 class Main_menu(Menu):
     # 가능한 메뉴 목록
-    avail_menu = ["SINGLEPLAY", "MULTIPLAY", "STORY", "ACHIEVEMENT", "OPTIONS", "QUIT"]
+    avail_menu = ["싱글플레이", "멀티플레이", "스토리모드", "업적", "설정", "게임 종료"]
 
     # 버튼이 있어야 할 위치 반환
     def pos_formula(self, i): 
@@ -21,15 +21,15 @@ class Main_menu(Menu):
     # 메뉴 선택 시 처리
     def select_menu(self, index):
         super().select_menu(index)
-        if self.avail_menu[index] == "QUIT":
+        if self.avail_menu[index] == "게임 종료":
             pygame.event.post(pygame.event.Event(EVENT_QUIT_GAME))  # 게임 종료
-        elif self.avail_menu[index] == "OPTIONS":
+        elif self.avail_menu[index] == "설정":
             pygame.event.post(pygame.event.Event(EVENT_OPEN_OPTION))  # 옵션 열기
-        elif self.avail_menu[index] == "SINGLEPLAY":
+        elif self.avail_menu[index] == "싱글플레이":
             pygame.event.post(pygame.event.Event(EVENT_START_LOBBY))  # 싱글플레이 로비
-        elif self.avail_menu[index] == "STORY":
+        elif self.avail_menu[index] == "스토리모드":
             pygame.event.post(pygame.event.Event(EVENT_OPEN_STORYMAP))  # 스토리 모드
-        elif self.avail_menu[index] == "MULTIPLAY":
+        elif self.avail_menu[index] == "멀티플레이":
             pygame.event.post(pygame.event.Event(EVENT_START_LOBBY_MULTI)) # 멀티플레이 로비
-        elif self.avail_menu[index] == "ACHIEVEMENT":
+        elif self.avail_menu[index] == "업적":
             pygame.event.post(pygame.event.Event(EVENT_OPEN_ACHIEVEMENT))  # 업적 열기

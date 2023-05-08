@@ -23,7 +23,7 @@ EVENT_RESUME = pygame.event.custom_type()
 
 class Quit_Menu(Menu):
     # 가능한 메뉴 목록
-    avail_menu = ["돌아가기", "시작 화면", "게임 종료"]
+    avail_menu = ["이전 선택", "시작 화면", "게임 종료"]
 
     # 버튼이 있어야 할 위치 반환
     pos_formula = lambda self, i: (self.size[0] * (5 + 10 * i) / 30, self.size[1] / 2)
@@ -53,7 +53,7 @@ class Quit_Menu(Menu):
         pygame.event.post(se_event)
         if self.avail_menu[index] == "게임 종료":
             pygame.event.post(pygame.event.Event(EVENT_QUIT_GAME))  # 게임 종료
-        elif self.avail_menu[index] == "돌아가기":
+        elif self.avail_menu[index] == "이전 선택":
             pygame.event.post(pygame.event.Event(EVENT_PAUSE_MENU))  # 정지 메뉴로 복귀
         elif self.avail_menu[index] == "시작 화면":
             pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 시작 화면으로 복귀
@@ -61,7 +61,7 @@ class Quit_Menu(Menu):
 
 class Paused_Menu(Menu):
     # 가능한 메뉴 목록
-    avail_menu = ["OPTIONS", "RESUME", "EXIT"]
+    avail_menu = ["설정", "계속하기", "나가기"]
 
     # 버튼이 있어야 할 위치 반환
     pos_formula = lambda self, i: (self.size[0] * (5 + 10 * i) / 30, self.size[1] / 2)
@@ -75,7 +75,7 @@ class Paused_Menu(Menu):
     def init_draw(self):
         super().init_draw()
 
-        self.PAUSED_TEXT = setting.get_font(45).render("Game is paused.", True, "Black")
+        self.PAUSED_TEXT = setting.get_font(45).render("게임 일시정지", True, "Black")
         self.PAUSED_RECT = self.PAUSED_TEXT.get_rect(center=(self.size[0] / 2, self.size[1] * 0.2))
 
     # 스크린에 자신을 그리기
@@ -89,11 +89,11 @@ class Paused_Menu(Menu):
             EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
         )
         pygame.event.post(se_event)
-        if self.avail_menu[index] == "EXIT":
+        if self.avail_menu[index] == "나가기":
             pygame.event.post(pygame.event.Event(EVENT_QUIT_MENU))  # 게임 종료 메뉴 호출
-        elif self.avail_menu[index] == "OPTIONS":
+        elif self.avail_menu[index] == "설정":
             pygame.event.post(pygame.event.Event(EVENT_OPEN_OPTION))  # 옵션 열기
-        elif self.avail_menu[index] == "RESUME":
+        elif self.avail_menu[index] == "계속하기":
             pygame.event.post(pygame.event.Event(EVENT_RESUME))  # 일시정지 해제
 
 

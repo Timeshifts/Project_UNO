@@ -27,7 +27,7 @@ class MultiLobby(Menu):
     )
 
     def __init__(self, pos=(0, 0), size=(150, 50)):
-        self.avail_menu = ["CLIENT", "SERVER", "BACK"]
+        self.avail_menu = ["방 접속하기", "방 만들기", "돌아가기"]
 
         self.menu = self.avail_menu
         self.max_menu = len(self.menu)
@@ -37,7 +37,7 @@ class MultiLobby(Menu):
         self.pos = pos
         self.size = size
         self.pressed = False
-        self.other_chk = [True, False, False, False, False]
+        self.other_chk = [1, 0, 0, 0, 0]   # 0: 없음, 1: 기본 컴퓨터, 2: A지역 컴퓨터, 3: 멀티 플레이어
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -51,11 +51,19 @@ class MultiLobby(Menu):
 
         for i in range(self.max_other):
             # 버튼 삽입
-            if self.other_chk[i] == True:
+            if self.other_chk[i] == 1: # 기본 컴퓨터
                 image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
                 text = self.other[i]
                 color = "White"
-            else:
+            elif self.other_chk[i] == 2: # A지역 컴퓨터
+                image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+                text = f"{self.other[i]} (A)"
+                color = "White"
+            elif self.other_chk[i] == 3: # 멀티 플레이어
+                image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+                text = "name"
+                color = "White"
+            else: # 없음
                 image = pygame.image.load(
                     RESOURCE_PATH / "single" / "list_unpicked.png"
                 )
@@ -171,7 +179,10 @@ class MultiLobby(Menu):
         list_y = 180 * setting.get_screen_scale()
 
         if index < self.max_other:
-            if self.other_chk[index] == True:
+            if self.other_chk[index] == 1: # 기본 컴퓨터 → A지역 컴퓨터
+                self.button[index].ChangeText(f"{self.other[index]} (A)", "White", "White")
+                self.other_chk[index] = 2
+            elif self.other_chk[index] == 2: # A지역 컴퓨터 → 없음
                 self.button[index].ChangeImage(
                     pygame.transform.scale(
                         pygame.image.load(RESOURCE_PATH / "single" / "list_unpicked.png"),
@@ -179,8 +190,20 @@ class MultiLobby(Menu):
                     )
                 )
                 self.button[index].ChangeText("+", "Black", "Black")
-                self.other_chk[index] = False
-            else:
+                self.other_chk[index] = 0
+            elif self.other_chk[index] == 3: # 멀티 플레이어 → 없음
+                self.button[index].ChangeImage(
+                    pygame.transform.scale(
+                        pygame.image.load(RESOURCE_PATH / "single" / "list_unpicked.png"),
+                        (list_x, list_y)
+                    )
+                )
+                self.button[index].ChangeText("+", "Black", "Black")
+                self.other_chk[index] = 0
+                # 플레이어 추방 코드 추가
+                #
+                #
+            else: # 없음 → 기본 컴퓨터
                 self.button[index].ChangeImage(
                     pygame.transform.scale(
                         pygame.image.load(RESOURCE_PATH / "single" / "list.png"),
@@ -188,12 +211,12 @@ class MultiLobby(Menu):
                     )
                 )
                 self.button[index].ChangeText(self.other[index], "White", "White")
-                self.other_chk[index] = True
+                self.other_chk[index] = 1
         else:
             index -= self.max_other
-            if self.avail_menu[index] == "RENAME":
+            if self.avail_menu[index] == "이름 변경":
                 pygame.event.post(pygame.event.Event(EVENT_OPEN_RENAME))  # 이름 변경
-            elif self.avail_menu[index] == "PASSWORD":
+            elif self.avail_menu[index] == "비밀번호":
                 if self.state == "server_connected":
                     # server_connected: 비밀번호 변경
                     pygame.event.post(pygame.event.Event(EVENT_OPEN_HOST_PASSWORD))
@@ -203,39 +226,39 @@ class MultiLobby(Menu):
             elif self.avail_menu[index] == "IP":
                 # client_connecting: IP 변경
                 pygame.event.post(pygame.event.Event(EVENT_OPEN_ENTER_IP))
-            elif self.avail_menu[index] == "SERVER":
+            elif self.avail_menu[index] == "방 만들기":
                 # client_or_server: 서버 선택
                 self.host_ip = socket.gethostbyname(socket.gethostname())
                 self.state = "server_connected"
                 self.other = ["1", "2", "3", "4", "5"]
                 self.max_other = 5
-                self.avail_menu = ["RENAME", "PASSWORD", "START", "BACK"]
+                self.avail_menu = ["이름 변경", "비밀번호", "게임 시작", "돌아가기"]
                 self.menu = self.avail_menu
                 self.max_menu = 4
                 self.init_draw()
-            elif self.avail_menu[index] == "CLIENT":
+            elif self.avail_menu[index] == "방 접속하기":
                 # client_or_server: 클라이언트 선택
                 if self.state == "client_or_server":
                     self.host_ip = ""
                     self.state = "client_connecting"
-                    self.avail_menu = ["IP", "CONNECT", "BACK"]
+                    self.avail_menu = ["IP", "연결하기", "돌아가기"]
                     self.menu = self.avail_menu
                     self.max_menu = 3
                     self.init_draw()
-            elif self.avail_menu[index] == "CONNECT":
+            elif self.avail_menu[index] == "연결하기":
                 # client_connecting: 접속 시도 -> 비밀번호 입력
                 self.host_ip = ""
                 # TODO: 실제로 서버와 연결해서 비밀번호 필요 여부 확인
                 if True: # TODO: 비밀번호가 필요하다면
                     self.password = ""
                     self.state = "client_password"
-                    self.avail_menu = ["PASSWORD", "JOIN", "BACK"]
+                    self.avail_menu = ["비밀번호", "접속하기", "돌아가기"]
                     self.menu = self.avail_menu
                     self.max_menu = 3
                     self.init_draw()
                 else:
                     pass
-            elif self.avail_menu[index] == "JOIN":
+            elif self.avail_menu[index] == "접속하기":
                 # client_password: 비밀번호 입력 -> 접속
                 # TODO: 서버와 통신하여 비밀번호 검증
                 if True: # TODO: 비밀번호가 일치한다면
@@ -245,32 +268,32 @@ class MultiLobby(Menu):
                     # TODO: 서버와 통신하여 타 플레이어 정보 받아오기
                     self.other = ["1", "2", "3", "4", "5"]
                     self.max_other = 5
-                    self.avail_menu = ["RENAME", "BACK"]
+                    self.avail_menu = ["이름 변경", "돌아가기"]
                     self.menu = self.avail_menu
                     self.max_menu = 2
                     self.init_draw()
                 else:
                     print("비밀번호가 틀렸습니다.")
-            elif self.avail_menu[index] == "START":
+            elif self.avail_menu[index] == "게임 시작":
                 # server_connected: 게임 시작
-                if self.other_chk.count(True) == 0:
+                if self.other_chk.count(0) == 5:
                     pass
                 else:
                     # pygame.event.post(pygame.event.Event(EVENT_START_SINGLE))
                     # TODO: 멀티플레이 게임 시작
                     pass
-            elif self.avail_menu[index] == "BACK":
+            elif self.avail_menu[index] == "돌아가기":
                 if self.state == "client_or_server":
                     pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 메인 메뉴
                 elif self.state == "client_connecting":
                     self.state = "client_or_server"
-                    self.avail_menu = ["CLIENT", "SERVER", "BACK"]
+                    self.avail_menu = ["방 접속하기", "방 만들기", "돌아가기"]
                     self.menu = self.avail_menu
                     self.max_menu = 3
                     self.init_draw()
                 elif self.state == "client_password":
                     self.state = "client_connecting"
-                    self.avail_menu = ["IP", "CONNECT", "BACK"]
+                    self.avail_menu = ["IP", "연결하기", "돌아가기"]
                     self.menu = self.avail_menu
                     self.max_menu = 3
                     self.init_draw()
@@ -279,7 +302,7 @@ class MultiLobby(Menu):
                     self.state = "client_or_server"
                     self.other = []
                     self.max_other = 0
-                    self.avail_menu = ["CLIENT", "SERVER", "BACK"]
+                    self.avail_menu = ["방 접속하기", "방 만들기", "돌아가기"]
                     self.menu = self.avail_menu
                     self.max_menu = 3
                     self.init_draw()
@@ -288,7 +311,7 @@ class MultiLobby(Menu):
                     self.state = "client_or_server"
                     self.other = []
                     self.max_other = 0
-                    self.avail_menu = ["CLIENT", "SERVER", "BACK"]
+                    self.avail_menu = ["방 접속하기", "방 만들기", "돌아가기"]
                     self.menu = self.avail_menu
                     self.max_menu = 3
                     self.init_draw()
