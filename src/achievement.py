@@ -63,7 +63,16 @@ achievements = {
 
 # 달성 즉시 업적 확인 창
 class AchievementIndicator():
+
+    # 현재 몇 번째 칸에 업적이 보여지고 있는가?
+    showing_count = []
+
     def __init__(self, id: int, gameobject: list, lifespan: int=180):
+        for i in range(10):
+            if i not in self.showing_count:
+                self.showing_count.append(i)
+                self.i = i
+                break
         self.id = id
         self.gameobject = gameobject
         # 180프레임 = 렉 없을 때 3초
@@ -82,9 +91,12 @@ class AchievementIndicator():
         pass
 
     def draw(self, screen: pygame.Surface):
-        screen.blit(self.image, (0, 0))
+        screen.blit(self.image, 
+                    (300 * self.i * setting.get_screen_scale(),
+                     0))
         self.lifespan -= 1
         if self.lifespan < 0:
+            self.showing_count.remove(self.i)
             self.gameobject.remove(self)
 
     
@@ -249,5 +261,5 @@ class AchievementResume(Menu):
             # 변경할 수 있습니다.
             #########################
             #pygame.event.post(pygame.event.Event(
-            #    EVENT_ACQUIRE_ACHIEVEMENT, {"id": 2}))
+            #    EVENT_ACQUIRE_ACHIEVEMENT, {"id": 3}))
             pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 메인
