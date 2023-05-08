@@ -47,6 +47,7 @@ class GameManager:
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
+        print("테스트용")
         # 추후에 다중 플레이어 게임을 고려한 코드인데, 추후 수정 가능성 있음
         # 게임 시작전에, 다중 플레이어들의 수를 받고, 미리 플레이어 객체를 생성한걸
         # 받아와서 여기다가 붙혀넣는 것
@@ -137,6 +138,7 @@ class GameManager:
 
     # 턴 시작 함수
     def turn_start(self):
+        print("테스트용2")
         self.turn_count += 1
 
         if self.is_top_card_change == True:

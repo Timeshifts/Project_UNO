@@ -8,6 +8,11 @@ from constant import EVENT_END_GAME, EVENT_TURN_END
 
 
 class GameManager:
+    # 모든 업적이 승리와 관련되어 있으므로,
+    # 이번에 달성할 수 있는 업적인지를 한번에 나타낼 수 있습니다.
+    # 단, 단순 승리 업적은 원래 위치에서 처리하도록 하겠습니다.
+    achi_flag = [5, 6, 9]
+
     def __init__(self):
         self.turn = 0  # 지금 누구 턴인지 나타내는 정수 변수
         self.turn_count = 0  # 총 몇번의 턴이 진행되었는지
@@ -47,6 +52,19 @@ class GameManager:
         self.story = -1  # 몇 번 스토리 모드? (-1이면 일반 게임)
         self.wild_card = 0
         self.set_uno = False
+        self.achi_flag = [5, 6, 9]
+
+    # 특정 업적 달성을 위한 제약 조건 달성 시 True,
+    # 특정 업적 달성을 위한 제약 조건을 위반했을 때 False
+    # 예: 기술 카드 사용 -> 기술 카드 사용 금지 업적에 False
+    @staticmethod
+    def toggle_achi(num, state):
+        if state:
+            if num-1 not in GameManager.achi_flag:
+                GameManager.achi_flag.append(num-1)
+        else:
+            if num-1 in GameManager.achi_flag:
+                GameManager.achi_flag.remove(num-1)
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -63,9 +81,8 @@ class GameManager:
 
         if self.story == 0:
             print("스토리 A 특성 적용")
-            self.story_A_computer_count = 1
-            self.computer_count = 0
-            # self.start_cards_integer = 1
+            # self.story_A_computer_count = 1
+            # self.computer_count = 0
         elif self.story == 1:
             print("스토리 B 특성 적용")
             self.start_cards_integer = 15
@@ -87,8 +104,10 @@ class GameManager:
 
         self.player_num = len(self.players)
 
-        # 일단 임시로 주석처리리
-        # random.shuffle(self.players)
+        # 플레이어 수
+        print(f"총 플레이어 : {self.player_num}")
+        print(f"일반 컴퓨터 : {self.computer_count}")
+        print(f"A 컴퓨터 : {self.story_A_computer_count}")
 
         self.turn = random.randint(0, self.player_num - 1)
 
@@ -113,10 +132,12 @@ class GameManager:
 
     def game_end(self):
         self.game_timer_end = True
+        scored = False
 
         if self.is_someone_win == True:
             self.winner_index = self.turn
         else:
+            scored = True
             self.winner_index = self.player_score_calculate()
 
         print(f"{self.winner_index} 번 유저 승리!!")
@@ -124,6 +145,10 @@ class GameManager:
 
         # (직접 조작하는) 플레이어가 승리하였는가?
         player_win = self.winner_index == 0
+
+        if player_win and scored:
+            # 점수 판단으로 승리 - 11번 업적(전략가) 달성 가능
+            self.toggle_achi(11, True)
 
         pygame.event.post(
             pygame.event.Event(
@@ -140,6 +165,8 @@ class GameManager:
     # 턴 시작 함수
     def turn_start(self):
         self.turn_count += 1
+        # 10턴 초과: 6번 업적(압도) 달성 불가능
+        if self.turn_count > 10: self.toggle_achi(6, False)
 
         if self.is_top_card_change == True:
             self.top_card_change()
@@ -258,12 +285,19 @@ class GameManager:
         self.grave_top_color = self.grave_top.color
 
         if card.name.isdigit() == False:
+            # 기술 카드 사용: 7번 업적(수학자) 달성 불가능
+            if self.turn == 0: self.toggle_achi(7, False)
+                
             if card.name == "color":
+                # 와일드 카드 사용: 10번 업적(순수) 달성 불가능
+                if self.turn == 0: self.toggle_achi(10, False)
                 self.wild_color()
                 if self.turn == 0:
                     self.turn_jump(-1)
 
             elif card.name == "four":
+                # 와일드 카드 사용: 10번 업적(순수) 달성 불가능
+                if self.turn == 0: self.toggle_achi(10, False)
                 print("다음 턴 유저에게, 카드 4장 공격")
                 self.wild_four()
                 if self.turn == 0:
@@ -625,11 +659,12 @@ class Computer(Player):
         self.judge_possible_cards()
 
         if Gm.set_uno == False and len(self.hand) == 2:
+            # 컴퓨터의 우노 사용 - 8번 업적(사냥꾼) 획득 가능
+            GameManager.toggle_achi(8, True)
             self.press_uno()
 
         if len(self.possible_cards_num) != 0:
             ran = random.choice(self.possible_cards_num)
-            # ran = random.randrange(len(self.possible_cards))
             self.use_card(ran)
             return_value = f"{self.current_card.color}_{self.current_card.name}"
             self.current_card = 0
@@ -650,27 +685,38 @@ class StoryA_User(Player):
 
     def computer_play(self):
         self.possible_cards.clear()
+        self.possible_cards_num.clear()
         self.judge_possible_cards()
         is_combo = False
-        if len(self.possible_cards) != 0:
-            for i in range(len(self.possible_cards)):
+
+        if Gm.set_uno == False and len(self.hand) == 2:
+            self.press_uno()
+        
+        for i in range(len(self.possible_cards_num)):
+            print(f"{self.possible_cards_num[i]} : {self.possible_cards[i].color}_{self.possible_cards[i].name}")
+
+        if len(self.possible_cards_num) != 0:
+            for i in range(len(self.possible_cards_num)):
                 if (
                     self.possible_cards[i].name == "again"
                     or self.possible_cards[i].name == "skip"
                 ):
                     print("--------콤보 공격--------")
-                    self.use_card(self.hand.index(self.possible_cards[i]))
+                    self.use_card(self.possible_cards_num[i])
+                    return_value = f"{self.current_card.color}_{self.current_card.name}"
+                    self.current_card = 0
                     is_combo = True
                     break
             if is_combo == False:
-                ran = random.randrange(len(self.possible_cards))
+                ran = random.choice(self.possible_cards_num)
                 self.use_card(ran)
+                return_value = f"{self.current_card.color}_{self.current_card.name}"
+                self.current_card = 0
         else:
             self.get_card()
+            return_value = "get"
 
-        if len(self.hand) == 2:
-            self.press_uno()
-
+        return return_value
 
 # -------------------------------------------------------------------------------------------------
 

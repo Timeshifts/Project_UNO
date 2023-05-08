@@ -6,7 +6,7 @@ from menu import Menu
 # rename에서 뽑아낸 텍스트 입력 창입니다.
 class Text_Prompt(Menu):
     # 가능한 메뉴 목록
-    avail_menu = ["DONE", "CANCEL"]
+    avail_menu = ["완료", "취소"]
     input = "My Name"
 
     # 버튼이 있어야 할 위치 반환
@@ -75,9 +75,9 @@ class Text_Prompt(Menu):
         )
         pygame.event.post(se_event)
 
-        if self.avail_menu[index] == "DONE":
+        if self.avail_menu[index] == "완료":
             pygame.event.post(pygame.event.Event(self.done_event, {"input": self.input}))
-        elif self.avail_menu[index] == "CANCEL":
+        elif self.avail_menu[index] == "취소":
             # 싱글플레이 로비로 복귀
             pygame.event.post(pygame.event.Event(self.cancel_event))  
 
