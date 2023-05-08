@@ -138,7 +138,6 @@ class AchievementMenu():
             AchievementMenu.acquired[achievement] = datetime.datetime.now()
             self.save_progress()
 
-        # TODO: 게임 중 업적 창 띄워주기
         print(f"{achievement} 번 업적 {datetime.datetime.now()}에 달성")
     
 
