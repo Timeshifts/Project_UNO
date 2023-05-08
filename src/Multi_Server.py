@@ -17,12 +17,10 @@ class Multi_Server:
         self.server_socket.bind((self.host_ip, self.port))
         self.server_socket.listen(6)
         self.MGM = Multi_GameManager.GameManager()
-        self.init_bool = True      # 게임 시작시 초기화를 위한 변수
-        self.game_dic = {}
-    
+        self.game_dic = {}    
     def receive(self, client_socket):
         while True:
-            msg = pickle.loads(client_socket.recv(1024))
+            msg = pickle.loads(client_socket.recv(4096))
             print("받음")
             self.msg_queue.put(msg)
     
@@ -42,10 +40,6 @@ class Multi_Server:
         while True:
             if self.msg_queue.empty() == True:
                 time.sleep(0.2)
-            if self.init_bool == False:
-                for i in range(len(self.socket_array)):
-                    self.socket_array[i].send(pickle.dumps(self.MGM.game_dic))
-                self.init_bool = True
             else:
                 M = self.msg_queue.get()
                 for i in range(len(self.socket_array)):
@@ -64,16 +58,17 @@ class Multi_Server:
 
 
     def init_game(self):
+        self.MGM.set_deck()
         self.MGM.card_shuffle()
         for i in range(len(self.socket_array)):
-            self.MGM.players.append(self.MGM.User(False))
+            self.MGM.players.append(Multi_GameManager.User(False))
 
         # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
         for i in range(self.MGM.computer_count):
-            self.MGM.players.append(self.MGM.Computer(True))
+            self.MGM.players.append(Multi_GameManager.Computer(True))
 
         for i in range(self.MGM.story_A_computer_count):
-            self.MGM.players.append(self.MGM.StoryA_User(True))
+            self.MGM.players.append(Multi_GameManager.StoryA_User(True))
 
         # 총 플레이어의 수
         self.MGM.player_num = len(self.MGM.players)
@@ -87,8 +82,11 @@ class Multi_Server:
                 self.MGM.players[i].skill_card_weight
             )
 
+        self.game_dic['game_state'] = True
         self.game_dic['shuffle_deck'] = self.MGM.deck
         self.game_dic['players'] = self.MGM.players
         self.game_dic['players_num'] = self.MGM.player_num
         self.game_dic['computer_count'] = self.MGM.computer_count
+        self.game_dic['story_A_computer_count'] = self.MGM.story_A_computer_count
         self.game_dic['turn'] = self.MGM.turn
+        return self.game_dic

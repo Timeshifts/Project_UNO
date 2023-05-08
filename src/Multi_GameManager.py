@@ -5,7 +5,7 @@ import time
 from constant import EVENT_END_GAME, EVENT_TURN_END
 
 class GameManager:
-    def __init__(self,server):
+    def __init__(self):
         self.turn = 0  # 지금 누구 턴인지 나타내는 정수 변수
         self.turn_count = 0  # 총 몇번의 턴이 진행되었는지
         self.players = []  # 플레이어 객체들을 담을 배열
@@ -103,7 +103,7 @@ class GameManager:
         #     )
 
         # 덱에서 카드 한장 빼서 세팅해놓음
-        self.setting_card(self.deck)
+        # self.setting_card(self.deck)
 
         # pygame.time.wait(2000)
 
@@ -547,7 +547,20 @@ class GameManager:
     def defence(self):
         self.players[self.turn].defence_int += 1
 
-        
+    def initial_sync(self):
+        self.deck = self.game_dic.pop('shuffle_deck') # 덱
+        self.turn = self.game_dic['turn']  # 지금 누구 턴인지 나타내는 정수 변수
+        self.players = self.game_dic['players']   # 플레이어 객체들을 담을 배열
+        self.player_num =self.game_dic['players_num']  # 전체 플레이어 수
+        self.computer_count = self.game_dic['computer_count']  # 컴퓨터의 수가 몇인지 나타낼 정수 변수
+        self.story_A_computer_count =  self.game_dic['story_A_computer_count']  # story A 특성 유저를 얼마나? 넣을지
+    
+    def sync(self):
+        self.turn = self.game_dic['turn']
+        self.players = self.game_dic['players']   # 플레이어 객체들을 담을 배열
+        self.player_num =self.game_dic['players_num']  # 전체 플레이어 수
+
+
 
 # -------------------------------------------------------------------------------------------------
 

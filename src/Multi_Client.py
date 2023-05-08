@@ -14,7 +14,7 @@ class Multi_Client:
     
     def receive(self):
         while True:
-            msg = pickle.loads(self.client_socket.recv(1024))
+            msg = pickle.loads(self.client_socket.recv(4096))
             self.msg_queue.put(msg)
             print(f"서버가 뿌린 메세지 : {msg}")
 
