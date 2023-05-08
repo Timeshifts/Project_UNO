@@ -56,7 +56,8 @@ class GameManager:
         self.game_timer_end = False
         self.game_count_down()
 
-        self.players.append(User(False))
+
+        # self.players.append(User(False))
 
         if self.story == 0:
             print("스토리 A 특성 적용")
@@ -75,31 +76,31 @@ class GameManager:
             self.is_hand_change = True
             self.hand_change_num = 20
 
-        # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
-        for i in range(self.computer_count):
-            self.players.append(Computer(True))
+        # # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
+        # for i in range(self.computer_count):
+        #     self.players.append(Computer(True))
 
-        for i in range(self.story_A_computer_count):
-            self.players.append(StoryA_User(True))
+        # for i in range(self.story_A_computer_count):
+        #     self.players.append(StoryA_User(True))
 
-        self.player_num = len(self.players)
+        # self.player_num = len(self.players)
 
         # 일단 임시로 주석처리리
         # random.shuffle(self.players)
 
-        self.turn = random.randint(0, self.player_num - 1)
+        # self.turn = random.randint(0, self.player_num - 1)
 
         # 덱 초기화
-        self.set_deck()
+        # self.set_deck()
 
         # 덱 셔플
-        self.card_shuffle()
+        # self.card_shuffle()
 
-        # 플레이어들에게 카드 나눠줌
-        for i in range(len(self.players)):
-            self.players[i].hand = self.roulette_wheel_selection(
-                self.players[i].skill_card_weight
-            )
+        # # 플레이어들에게 카드 나눠줌
+        # for i in range(len(self.players)):
+        #     self.players[i].hand = self.roulette_wheel_selection(
+        #         self.players[i].skill_card_weight
+        #     )
 
         # 덱에서 카드 한장 빼서 세팅해놓음
         self.setting_card(self.deck)
@@ -546,12 +547,23 @@ class GameManager:
     def defence(self):
         self.players[self.turn].defence_int += 1
 
-    def initialization(self):
+    def init_game(self):
         game_dic = {}
         self.card_shuffle()
         for i in range(len(self.server.socket_array)):
-            self.players.append(User(False,i))
+            self.players.append(User(False))
 
+        # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
+        for i in range(self.computer_count):
+            self.players.append(Computer(True))
+
+        for i in range(self.story_A_computer_count):
+            self.players.append(StoryA_User(True))
+
+        # 총 플레이어의 수
+        self.player_num = len(self.players)
+
+        # 턴 선택
         self.turn = random.randint(0, self.player_num - 1)
 
         # 플레이어들에게 카드 나눠줌
@@ -559,38 +571,12 @@ class GameManager:
             self.players[i].hand = self.roulette_wheel_selection(
                 self.players[i].skill_card_weight
             )
-        # 덱에서 카드 한장 빼서 세팅해놓음
-        self.setting_card(self.deck)
-        game_dic['initial_card_shuffle'] = self.deck
-        game_dic['initial_players'] = self.deck
-        game_dic['initial_turn'] = self.deck
-        game_dic['initial_setting_card'] = self.deck        
 
-        # self.players.append(User(False))
-
-        # # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
-        # for i in range(self.computer_count):
-        #     self.players.append(Computer(True))
-
-        # for i in range(self.story_A_computer_count):
-        #     self.players.append(StoryA_User(True))
-
-        # self.player_num = len(self.players)
-
-        # self.turn = random.randint(0, self.player_num - 1)
-
-
-        # # 덱 셔플
-        # self.card_shuffle()
-
-        # # 플레이어들에게 카드 나눠줌
-        # for i in range(len(self.players)):
-        #     self.players[i].hand = self.roulette_wheel_selection(
-        #         self.players[i].skill_card_weight
-        #     )
-
-        # # 덱에서 카드 한장 빼서 세팅해놓음
-        # self.setting_card(self.deck)
+        game_dic['initial_shuffle_deck'] = self.deck
+        game_dic['initial_players'] = self.players
+        game_dic['initial_players_num'] = self.player_num
+        game_dic['initial_turn'] = self.turn
+        self.server.send(game_dic)
 
 # -------------------------------------------------------------------------------------------------
 
@@ -640,9 +626,8 @@ class Player:
 
 
 class User(Player):
-    def __init__(self, is_computer,idx):
+    def __init__(self, is_computer):
         super().__init__(is_computer)
-        self.idx = idx
 
     def play(self):
         self.possible_cards.clear()
