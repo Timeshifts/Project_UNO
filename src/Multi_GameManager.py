@@ -43,7 +43,7 @@ class GameManager:
         self.player_score = []  # 점수 저장
         self.story = -1  # 몇 번 스토리 모드? (-1이면 일반 게임)
         self.wild_card = 0
-        self.server = server
+        self.game_dic = {}
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
@@ -547,36 +547,7 @@ class GameManager:
     def defence(self):
         self.players[self.turn].defence_int += 1
 
-    def init_game(self):
-        game_dic = {}
-        self.card_shuffle()
-        for i in range(len(self.server.socket_array)):
-            self.players.append(User(False))
-
-        # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
-        for i in range(self.computer_count):
-            self.players.append(Computer(True))
-
-        for i in range(self.story_A_computer_count):
-            self.players.append(StoryA_User(True))
-
-        # 총 플레이어의 수
-        self.player_num = len(self.players)
-
-        # 턴 선택
-        self.turn = random.randint(0, self.player_num - 1)
-
-        # 플레이어들에게 카드 나눠줌
-        for i in range(len(self.players)):
-            self.players[i].hand = self.roulette_wheel_selection(
-                self.players[i].skill_card_weight
-            )
-
-        game_dic['initial_shuffle_deck'] = self.deck
-        game_dic['initial_players'] = self.players
-        game_dic['initial_players_num'] = self.player_num
-        game_dic['initial_turn'] = self.turn
-        self.server.send(game_dic)
+        
 
 # -------------------------------------------------------------------------------------------------
 

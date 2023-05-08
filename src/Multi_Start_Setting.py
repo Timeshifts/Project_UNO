@@ -22,10 +22,6 @@ if a == 1:
     print("시작하려면 1을 입력하세요")
     msg = int(input())
     print("게임 시작")
-    while True:
-        MGM = Multi_GameManager.GameManager(Server)
-        MGM.game_start()
-        MGM.turn_start()
             
     
 elif a == 2:
@@ -37,20 +33,23 @@ elif a == 2:
 
 
     
-
-# while True:
-#     msg = input()
-#     Client.send(msg)
-#     if Client.msg_queue.empty() == True:
-#         time.sleep(0.2)
-#     else:
-#         M = Client.msg_queue.get()
+# 게임 시작
+Server.MGM.init_game()
+Server.init_bool = False
+Server.send( )
+while True:
+    msg = input()
+    Client.send(msg)
+    if Client.msg_queue.empty() == True:
+        time.sleep(0.2)
+    else:
+        M = Client.msg_queue.get()
         
-#         if M == "start":
-#             print("게임 시작")
-#             MGM = Multi_GameManager.GameManager(Server)
-#             MGM.game_start()
-#             MGM.turn_start()
+        if M == "start":
+            print("게임 시작")
+            MGM = Multi_GameManager.GameManager()
+            MGM.game_start()
+            MGM.turn_start()
 
 
 
