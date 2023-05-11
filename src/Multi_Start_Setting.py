@@ -90,9 +90,6 @@ if a == 1:
             if M == "start":
                 print("게임 시작")
                 MGM = Multi_GameManager.GameManager()
-                MGM.game_start()
-                MGM.turn_start()
-                MGM.turn_end()
     # -----------------------------------------------
 
 
@@ -152,9 +149,6 @@ elif a == 2:
                 print(MGM.game_dic['turn'])
                 MGM.initial_sync()
 
-                MGM.game_start()
-                MGM.turn_start()
-                MGM.turn_end()
     # -----------------------------------------------
 
 
