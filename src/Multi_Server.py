@@ -116,11 +116,11 @@ class Multi_Server:
                 self.MGM.players[i].skill_card_weight
             )
 
-        self.game_dic['game_state'] = True
+        # self.game_dic['game_state'] = True
         self.game_dic['shuffle_deck'] = self.MGM.deck
         self.game_dic['players'] = self.MGM.players
-        self.game_dic['players_num'] = self.MGM.player_num
-        self.game_dic['computer_count'] = self.MGM.computer_count
-        self.game_dic['story_A_computer_count'] = self.MGM.story_A_computer_count
+        # self.game_dic['players_num'] = self.MGM.player_num
+        # self.game_dic['computer_count'] = self.MGM.computer_count
+        # self.game_dic['story_A_computer_count'] = self.MGM.story_A_computer_count
         self.game_dic['turn'] = self.MGM.turn
         return self.game_dic

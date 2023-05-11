@@ -637,7 +637,6 @@ class Player:
 
 # -------------------------------------------------------------------------------------------------
 
-
 class User(Player):
     def __init__(self, is_computer):
         super().__init__(is_computer)
