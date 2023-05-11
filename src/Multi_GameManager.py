@@ -580,6 +580,19 @@ class GameManager:
 
     def defence(self):
         self.players[self.turn].defence_int += 1
+        
+    
+    def uno_thread(self):
+        while True:
+            if self.Clinet.uno_queue.empty() == False:
+                M = self.Client.uno_queue.get()
+                index = int(M[4])
+                boolean = bool(M[6:])
+                
+                self.players[index].is_uno = boolean
+                 
+            
+            time.sleep(0.1)    
 
 
 # -------------------------------------------------------------------------------------------------

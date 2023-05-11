@@ -11,6 +11,7 @@ class Multi_Client:
         self.ip = ip
         self.name = 'MY NAME'
         self.msg_queue = queue.Queue()
+        self.uno_queue = queue.Queue()
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.thread_for_receive = 0
     
