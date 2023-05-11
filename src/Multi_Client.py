@@ -23,7 +23,11 @@ class Multi_Client:
     def receive(self):
         while True:
             msg = pickle.loads(self.client_socket.recv(4096))
-            self.msg_queue.put(msg)
+            
+            if msg[0:3] == "uno":
+                self.uno_queue.put(msg)
+            else:
+                self.msg_queue.put(msg)
             
             # "wrong" 받으면 와일문 탈출, 잘못된 패스워드를 입력한 경우이다.
             if msg == "wrong":
@@ -33,6 +37,7 @@ class Multi_Client:
             # "kicked" 받으면 와일문 탈출, 강퇴당한 경우이다.
             if msg == "kicked":
                 self.send("deleted")
+                
             # -----------------------------------------------
     
             

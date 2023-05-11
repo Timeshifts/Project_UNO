@@ -72,15 +72,6 @@ class GameManager:
         self.game_timer_end = False
         self.game_count_down()
         
-        # self.game_dic['game_state'] = True
-        self.game_dic['shuffle_deck'] = self.MGM.deck
-        self.game_dic['players'] = self.MGM.players
-        # self.game_dic['players_num'] = self.MGM.player_num
-        self.game_dic['computer_count'] = self.MGM.computer_count
-        self.game_dic['story_A_computer_count'] = self.MGM.story_A_computer_count
-        self.game_dic['turn'] = self.MGM.turn
-        
-        
         a = 0
         while True:
             if self.client.msg_queue.empty() == False:
@@ -600,7 +591,7 @@ class GameManager:
 
 class Player:
     def __init__(self, is_computer):
-        self.is_computer = is_computer
+        self.is_computer = is_computer # players
         self.hand = []
         self.possible_cards = []
         self.is_authority = False

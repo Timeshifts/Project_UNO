@@ -747,9 +747,6 @@ class Single:
             EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
         )
         pygame.event.post(se_event)
-        
-        
-        
 
         if self.game.wild == True:
             if index in range(4):
@@ -787,9 +784,10 @@ class Single:
                     self.highlight = 0
                     self.game.turn_timer_end = True
                 else:
+                    self.game.Client.send("use_card_" + str(index))
                     self.game.turn_end(option=1)
                 
-                self.game.Client.send("use_card_" + str(index))
+                
                 
             if index == self.max_card:  # 덱
                 self.game.players[0].get_card()
