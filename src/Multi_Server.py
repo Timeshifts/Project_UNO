@@ -20,6 +20,7 @@ class Multi_Server:
         self.game_dic = {}
         self.is_password = False
         self.password = ""
+        self.random_request = False
     
     
     def single_send(self, index, msg):
@@ -43,6 +44,11 @@ class Multi_Server:
             
             if msg == "deleted":
                 break
+            elif msg[0:6] == "random":
+                if self.random_request == False:
+                    self.random_request = True
+                    
+                    num = int(msg[15:])
             else:
                 self.msg_queue.put(msg)
     

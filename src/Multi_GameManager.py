@@ -609,11 +609,6 @@ class Player:
             print("우노 방해")
 
     def use_card(self, index):
-        self.client.send(index)
-        
-        while True:
-            if self.client.msg_queue.empty() == False:
-                break
         self.current_card = self.hand[index]
         self.hand.remove(self.current_card)
         self.is_turn_used = True
@@ -647,8 +642,27 @@ class User(Player):
         self.possible_cards.clear()
         self.possible_cards_num.clear()
         self.judge_possible_cards()
-
-        return self.possible_cards_num
+        
+        if self.is_computer == False:
+            return self.possible_cards_num
+        else:
+            while True:
+                if self.client.msg_queue.empty() == False:
+                    M = self.client.msg_queue.get()
+                    
+                    if M == "get_card":
+                        self.get_card()
+                        return_value = "get"
+                        break
+                    
+                    if M[0:8] == "use_card":
+                        index = int(M[10:])
+                        self.use_card(index)
+                        return_value = f"{self.current_card.color}_{self.current_card.name}"
+                        self.current_card = 0
+                        break
+                    
+            return return_value
 
 
 # -------------------------------------------------------------------------------------------------

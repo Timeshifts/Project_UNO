@@ -23,7 +23,6 @@ class Multi_Client:
         while True:
             msg = pickle.loads(self.client_socket.recv(4096))
             self.msg_queue.put(msg)
-            print(f"서버가 뿌린 메세지 : {msg}")
             
             # "wrong" 받으면 와일문 탈출, 잘못된 패스워드를 입력한 경우이다.
             if msg == "wrong":
