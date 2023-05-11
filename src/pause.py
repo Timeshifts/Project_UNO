@@ -1,6 +1,6 @@
 import pygame, sys
 from constant import *
-import setting, setting_menu
+import setting, setting_menu, achievement
 from button import *
 from menu import Menu
 
@@ -61,10 +61,10 @@ class Quit_Menu(Menu):
 
 class Paused_Menu(Menu):
     # 가능한 메뉴 목록
-    avail_menu = ["설정", "계속하기", "나가기"]
+    avail_menu = ["계속하기", "설정", "업적", "나가기"]
 
     # 버튼이 있어야 할 위치 반환
-    pos_formula = lambda self, i: (self.size[0] * (5 + 10 * i) / 30, self.size[1] / 2)
+    pos_formula = lambda self, i: (self.size[0] * (4.5 + 7 * i) / 30, self.size[1] / 2)
 
     # x축 정렬 메뉴? y축 정렬 메뉴?
     axis = "x"
@@ -93,6 +93,8 @@ class Paused_Menu(Menu):
             pygame.event.post(pygame.event.Event(EVENT_QUIT_MENU))  # 게임 종료 메뉴 호출
         elif self.avail_menu[index] == "설정":
             pygame.event.post(pygame.event.Event(EVENT_OPEN_OPTION))  # 옵션 열기
+        elif self.avail_menu[index] == "업적":
+            pygame.event.post(pygame.event.Event(EVENT_OPEN_ACHIEVEMENT))  # 업적 열기
         elif self.avail_menu[index] == "계속하기":
             pygame.event.post(pygame.event.Event(EVENT_RESUME))  # 일시정지 해제
 
@@ -102,9 +104,10 @@ class Paused_Menu(Menu):
 """
 
 
-def init_pause(settings: setting_menu.Setting_UI, main_screen: pygame.Surface):
+def init_pause(settings: setting_menu.Setting_UI, main_screen: pygame.Surface, achi_object: achievement.AchievementMenu):
     pause.settings = settings
     pause.screen = main_screen
+    pause.achi_object = achi_object
     pause.pause_object = []
 
 
@@ -112,6 +115,7 @@ def pause(reset=True):
     paused = True
     computer_thought = False
     turn_ended = False
+    achievement = False
     paused_menu = Paused_Menu((0, 0), pause.screen.get_size())
     quit_menu = Quit_Menu((0, 0), pause.screen.get_size())
     if reset:
@@ -162,6 +166,14 @@ def pause(reset=True):
                 se.set_volume(setting.get_volume("se"))
                 se.play()
 
+            # 업적 열기
+            if event.type == EVENT_OPEN_ACHIEVEMENT:
+                achievement = True
+                # 메인 메뉴 제거
+                pause.pause_object.remove(paused_menu)
+                pause.pause_object.append(pause.achi_object)
+                pause.achi_object.resize(size)
+
             # 옵션 열기
             if event.type == EVENT_OPEN_OPTION:
                 # 메인 일시정지 메뉴 제거
@@ -192,10 +204,19 @@ def pause(reset=True):
 
             # 시작 메뉴로 돌아가기
             if event.type == EVENT_MAIN:
-                # 일시 정지를 풀고
-                paused = False
-                # Main 루프에서 이벤트를 처리하도록 다시 넘겨주기
-                pygame.event.post(pygame.event.Event(EVENT_MAIN))
+                if achievement:
+                    # 설정 제거
+                    pause.pause_object.remove(pause.achi_object)
+                    # 메인 일시정지 메뉴로 복귀
+                    pause.pause_object.append(paused_menu)
+                    paused_menu.resize(size)
+                    quit_menu.resize(size)
+                    achievement = False
+                else:
+                    # 일시 정지를 풀고
+                    paused = False
+                    # Main 루프에서 이벤트를 처리하도록 다시 넘겨주기
+                    pygame.event.post(pygame.event.Event(EVENT_MAIN))
 
             # 해상도 변경 이벤트를 받아 화면 리사이징
             # 배경음악 음량 변경 즉시 적용

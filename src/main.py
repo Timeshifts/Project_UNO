@@ -181,7 +181,7 @@ def main():
                     "single_play" or "story_play"
                 ):
                     single.game.paused = True
-                    pause.init_pause(setting_UI, screen)
+                    pause.init_pause(setting_UI, screen, achi_object)
                     pause.pause()  # pause 상태에서의 루프
 
             # 효과음
