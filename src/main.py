@@ -266,6 +266,11 @@ def main():
                         multi_lobby.password = event.input
                         multi_lobby.mss.password(multi_lobby.password)  # 비밀번호를 서버에 적용
                     game_objects.remove(text_prompt)
+                elif state == "passwd_change_client":
+                    # 변경 창에서 바꾼 비밀번호를 확인
+                    if "input" in event.dict.keys():
+                        multi_lobby.password = event.input
+                    game_objects.remove(text_prompt)
                 elif state == "ip_change":
                     # 변경 창에서 바꾼 ip를 멀티에 반영
                     if "input" in event.dict.keys():
@@ -384,7 +389,7 @@ def main():
                     done_event=EVENT_START_LOBBY_MULTI,
                     init_input=multi_lobby.password,
                 )
-                state = "passwd_change"
+                state = "passwd_change_client"
 
                 text_prompt.resize(size)
                 game_objects.append(text_prompt)

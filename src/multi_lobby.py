@@ -266,7 +266,6 @@ class MultiLobby(Menu):
                 if self.state == "server_connected":
                     # server_connected: 비밀번호 변경
                     pygame.event.post(pygame.event.Event(EVENT_OPEN_HOST_PASSWORD))
-                    # self.mss.password(self.password)
                 else:
                     # client_password: 비밀번호 입력
                     pygame.event.post(pygame.event.Event(EVENT_OPEN_CLIENT_PASSWORD))
@@ -299,37 +298,43 @@ class MultiLobby(Menu):
                 # client_connecting: 접속 시도 -> 비밀번호 입력
                 else:
                     connect = self.mss.client(self.input_ip)  # ip 접속 시도
-                    if connect == "fail":  # 연결 실패
+                    # 연결 실패
+                    if connect == "fail":
                         print("연결 실패")
+                    # 연결 성공
+                    elif connect == "password":  # 비밀번호가 필요하다면
+                        self.password = ""
+                        self.state = "client_password"
+                        self.avail_menu = ["비밀번호", "접속하기", "돌아가기"]
+                        self.menu = self.avail_menu
+                        self.max_menu = 3
+                        self.init_draw()
+                    # 연결 성공
+                    elif connect == "authenticated":  # 비밀번호 필요없다면
+                        # TODO: 바로 연결
                         pass
-                    else:  # 연결 성공
-                        print(f"{connect}")
-                        # 비밀번호 필요 여부 확인
-                        if connect == "password":  # 비밀번호가 필요하다면
-                            self.password = ""
-                            self.state = "client_password"
-                            self.avail_menu = ["비밀번호", "접속하기", "돌아가기"]
-                            self.menu = self.avail_menu
-                            self.max_menu = 3
-                            self.init_draw()
-                        else:  # 비밀번호 필요없다면
-                            pass
             elif self.avail_menu[index] == "접속하기":
-                # client_password: 비밀번호 입력 -> 접속
-                # TODO: 서버와 통신하여 비밀번호 검증
-                if True:  # TODO: 비밀번호가 일치한다면
-                    # TODO: 정원 초과를 확인해서 오류 메시지 표시
-                    self.host_ip = socket.gethostbyname(socket.gethostname())
-                    self.state = "client_connected"
-                    # TODO: 서버와 통신하여 타 플레이어 정보 받아오기
-                    self.other = ["1", "2", "3", "4", "5"]
-                    self.max_other = 5
-                    self.avail_menu = ["이름 변경", "돌아가기"]
-                    self.menu = self.avail_menu
-                    self.max_menu = 2
-                    self.init_draw()
+                if self.password == "":  # 비밀번호를 입력하지 않으면
+                    pass
+                # client_connecting: 접속 시도 -> 비밀번호 입력
                 else:
-                    print("비밀번호가 틀렸습니다.")
+                    connect = self.mss.password_client(
+                        self.password
+                    )  # 서버와 통신하여 비밀번호 검증
+                    if connect == "wrong":  # 비밀번호 불일치
+                        print("비밀번호가 틀렸습니다.")
+                        pass
+                    elif connect == "authenticated":  # 비밀번호 일치
+                        # TODO: 정원 초과를 확인해서 오류 메시지 표시
+                        self.host_ip = socket.gethostbyname(socket.gethostname())
+                        self.state = "client_connected"
+                        # TODO: 서버와 통신하여 타 플레이어 정보 받아오기
+                        self.other = ["1", "2", "3", "4", "5"]
+                        self.max_other = 5
+                        self.avail_menu = ["이름 변경", "돌아가기"]
+                        self.menu = self.avail_menu
+                        self.max_menu = 2
+                        self.init_draw()
             elif self.avail_menu[index] == "게임 시작":
                 # server_connected: 게임 시작
                 if self.other_chk.count(0) == 5:  # 나 말고 없으면

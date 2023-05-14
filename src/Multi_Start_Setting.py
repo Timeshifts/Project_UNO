@@ -100,8 +100,8 @@ class Multi_Start_Setting:
         # 아이피 입력하면, 해당 아이피의 서버로 접속
         self.input_ip = ip
         print(f"{self.input_ip} 서버에 접속 중")
-        Client = Multi_Client.Multi_Client(self.input_ip)
-        connect = Client.client_start()
+        self.Client = Multi_Client.Multi_Client(self.input_ip)
+        connect = self.Client.client_start()
         # connect: 성공하면 True, 실패하면 False
 
         if connect:  # 연결 성공
@@ -111,13 +111,13 @@ class Multi_Start_Setting:
                 # Client.send(msg)
 
                 # Client의 msg_queue가 비어있으면 계속 대기한다.
-                if Client.msg_queue.empty() == True:
+                if self.Client.msg_queue.empty() == True:
                     time.sleep(0.2)
 
                 # Client의 msg_queue가 채워져있으면 else 문으로 간다. 이는 서버로부터 메세지를 받았음을 의미
                 else:
                     # msg_queue로부터 메세지를 pop해온다.
-                    M = Client.msg_queue.get()
+                    M = self.Client.msg_queue.get()
                     return M
 
                     # "password" 메세지를 받은경우, 패스워드를 입력한다.
@@ -152,6 +152,20 @@ class Multi_Start_Setting:
                         MGM.turn_end()
         else:  # 연결 실패
             return "fail"
+
+    def password_client(self, pw):
+        print("비밀번호 확인 중")
+        self.Client.send(pw)  # 비밀번호 확인
+        # Client는 서버로부터 메세지 받기까지 while문으로 대기한다.
+        while True:
+            # Client의 msg_queue가 비어있으면 계속 대기한다.
+            if self.Client.msg_queue.empty() == True:
+                time.sleep(0.2)
+            # Client의 msg_queue가 채워져있으면 else 문으로 간다. 이는 서버로부터 메세지를 받았음을 의미
+            else:
+                # msg_queue로부터 메세지를 pop해온다.
+                M = self.Client.msg_queue.get()
+                return M
         # -----------------------------------------------
 
     # # 게임 시작
