@@ -26,6 +26,7 @@ class Multi_Start_Setting:
         # -----------------------------------------------
 
     def password(self, pw):
+        # 서버 패스워드 설정
         self.Server.is_password = True
         self.Server.password = pw
         print(self.Server.password)
@@ -43,23 +44,22 @@ class Multi_Start_Setting:
         # # -----------------------------------------------
 
     def start(self):
-        print("시작")
+        # 게임 시작
+        print("게임 시작")
+        MGM = Multi_GameManager.GameManager()
+        MGM.game_dic = dic
+        print(MGM.game_dic["players"])
+        print(MGM.game_dic["turn"])
+        MGM.initial_sync()
+
+        MGM.game_start()
+        MGM.turn_start()
+        MGM.turn_end()
 
     def drop(self):
+        # 게임 강퇴
         print("강퇴")
-        # # 1번 입력시 게임 시작
-        # # 2번 입력시 강퇴, Server의 Socket 배열의 인덱스를 제거하는 방식
-        # print(" 1 : 시작")
-        # print(" 2 : 강퇴")
-
-        # while True:
-        #     b = int(input())
-
-        #     # 1번 입력하면 와일문을 바로 탈출 한다.
-        #     if b == 1:
-        #         break
-
-        #     # 2번 입력시 강퇴를 한다.
+        #     # 강퇴, Server의 Socket 배열의 인덱스를 제거하는 방식
         #     # 현재 연결된 소켓배열의 크기를 print로 host에게 보여준다.
         #     # 해당 인덱스 입력시, 해당 소켓에 "kicked" 메세지를 보내며
         #     # Server 객체의 socket 배열에서 pop 한다.
@@ -73,28 +73,6 @@ class Multi_Start_Setting:
 
         #         Server.single_send(c, "kicked")
         #         Server.socket_array.pop(c)
-
-        # # 1번 입력시 여기 코드에 도달하게 되며, 서버로 "start" 를 보낸다.
-        # Client.send("start")
-        # # -----------------------------------------------
-
-        # # 게임 시작 방식을 Client 방식과 통일 시킴
-        # # 서버로부터 "start" 받으면 로컬에서 게임매니저 실행
-        # while True:
-        #     # msg = input()
-        #     # Client.send(msg)
-        #     if Client.msg_queue.empty() == True:
-        #         time.sleep(0.2)
-        #     else:
-        #         M = Client.msg_queue.get()
-
-        #         if M == "start":
-        #             print("게임 시작")
-        #             MGM = Multi_GameManager.GameManager()
-        #             MGM.game_start()
-        #             MGM.turn_start()
-        #             MGM.turn_end()
-        # -----------------------------------------------
 
     def client(self, ip):
         # 아이피 입력하면, 해당 아이피의 서버로 접속
@@ -119,43 +97,13 @@ class Multi_Start_Setting:
                     # msg_queue로부터 메세지를 pop해온다.
                     M = self.Client.msg_queue.get()
                     return M
-
-                    # "password" 메세지를 받은경우, 패스워드를 입력한다.
-                    # 제대로된 패스워드를 입력하면 서버로부터 "authenticated" 를 받는다.
-                    if M == "password":
-                        print("\n패스워드를 입력하세요")
-                        Client.send(input())
-
-                    # "wrong" 메세지는 잘못된 패스워드를 입력한 경우
-                    if M == "wrong":
-                        print("잘못된 패스워드를 입력함")
-                        Client.client_end()
-                        break
-
-                    # "kicked"는 서버에 제대로 접속 했지만, 강퇴 당한 경우
-                    if M == "kicked":
-                        print("강퇴 당함")
-                        Client.client_end()
-                        break
-
-                    # "start"는 방장이 게임을 시작함
-                    if M == "start":
-                        print("게임 시작")
-                        MGM = Multi_GameManager.GameManager()
-                        MGM.game_dic = dic
-                        print(MGM.game_dic["players"])
-                        print(MGM.game_dic["turn"])
-                        MGM.initial_sync()
-
-                        MGM.game_start()
-                        MGM.turn_start()
-                        MGM.turn_end()
         else:  # 연결 실패
             return "fail"
 
     def password_client(self, pw):
+        # 클라이언트 비밀번호 확인
         print("비밀번호 확인 중")
-        self.Client.send(pw)  # 비밀번호 확인
+        self.Client.send(pw)
         # Client는 서버로부터 메세지 받기까지 while문으로 대기한다.
         while True:
             # Client의 msg_queue가 비어있으면 계속 대기한다.
@@ -166,7 +114,10 @@ class Multi_Start_Setting:
                 # msg_queue로부터 메세지를 pop해온다.
                 M = self.Client.msg_queue.get()
                 return M
-        # -----------------------------------------------
+
+    def kicked(self):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
+        print("강퇴")
+        self.Client.client_end()
 
     # # 게임 시작
     # dic = Server.init_game()

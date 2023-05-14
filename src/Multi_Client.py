@@ -36,7 +36,7 @@ class Multi_Client:
 
     def client_start(self):
         try:  # 해당하는 ip가 없는 경우 에러 예외 처리
-            self.client_socket.connect((self.ip, 12000)) # int 넣으면 에러 발생
+            self.client_socket.connect((self.ip, 12000))  # int 넣으면 에러 발생
             self.thread_for_receive = threading.Thread(target=self.receive)
             self.thread_for_receive.start()
             return True
@@ -48,6 +48,8 @@ class Multi_Client:
     def client_end(self):
         print(f"연결 끊김")
         self.thread_for_receive.join()
+        print("1")
         self.client_socket.close()
+        print("2")
 
     # -----------------------------------------------
