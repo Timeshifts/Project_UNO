@@ -38,13 +38,16 @@ class Multi_Server:
                     self.socket_array[i].send(pickle.dumps(M))
 
     def receive(self, client_socket):
-        while True:
-            msg = pickle.loads(client_socket.recv(4096))
+        try:
+            while True:
+                msg = pickle.loads(client_socket.recv(4096))
 
-            if msg == "deleted":
-                break
-            else:
-                self.msg_queue.put(msg)
+                if msg == "deleted":
+                    break
+                else:
+                    self.msg_queue.put(msg)
+        except:
+            print("원격 호스트에 의해 강제로 끊김")
 
     def handle_client(self):
         while True:

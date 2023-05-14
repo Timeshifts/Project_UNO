@@ -19,20 +19,23 @@ class Multi_Client:
         self.client_socket.send(pickle.dumps(M))
 
     def receive(self):
-        while True:
-            msg = pickle.loads(self.client_socket.recv(4096))
-            self.msg_queue.put(msg)
-            print(f"서버가 뿌린 메세지 : {msg}")
+        try:
+            while True:
+                msg = pickle.loads(self.client_socket.recv(4096))
+                self.msg_queue.put(msg)
+                print(f"서버가 뿌린 메세지 : {msg}")
 
-            # "wrong" 받으면 와일문 탈출, 잘못된 패스워드를 입력한 경우이다.
-            if msg == "wrong":
-                break
-            # -----------------------------------------------
+                # "wrong" 받으면 와일문 탈출, 잘못된 패스워드를 입력한 경우이다.
+                if msg == "wrong":
+                    break
+                # -----------------------------------------------
 
-            # "kicked" 받으면 와일문 탈출, 강퇴당한 경우이다.
-            if msg == "kicked":
-                self.send("deleted")
-            # -----------------------------------------------
+                # "kicked" 받으면 와일문 탈출, 강퇴당한 경우이다.
+                if msg == "kicked":
+                    self.send("deleted")
+                # -----------------------------------------------
+        except:
+            print("원격 호스트에 의해 강제로 끊김")
 
     def client_start(self):
         try:  # 해당하는 ip가 없는 경우 에러 예외 처리
@@ -48,8 +51,6 @@ class Multi_Client:
     def client_end(self):
         print(f"연결 끊김")
         self.thread_for_receive.join()
-        print("1")
         self.client_socket.close()
-        print("2")
 
     # -----------------------------------------------

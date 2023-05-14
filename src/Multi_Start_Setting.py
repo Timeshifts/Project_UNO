@@ -17,31 +17,16 @@ class Multi_Start_Setting:
         self.Server.server_start()
         self.host_ip = self.Server.host_ip
         print(f"당신의 아이피는 {self.host_ip} 입니다")
-        # -----------------------------------------------
-
         # 서버 만든 사람을 클라이언트로 등록시킴,
         # 따로 호스트 처리 안하고 싹다 클라이언트로 간편하게 처리하기 위함
         Client = Multi_Client.Multi_Client(self.host_ip)
         Client.client_start()
-        # -----------------------------------------------
 
     def password(self, pw):
         # 서버 패스워드 설정
         self.Server.is_password = True
         self.Server.password = pw
         print(self.Server.password)
-
-        # 비밀번호 설정, 1 입력시 비밀번호 설정하고
-        # 나머지 입력은 비밀번호 없는 버전
-        # 'sleep(1)'은 일단 콘솔상으로 텍스트 정리하기 위해서 딜레이줌, 추후에 삭제하면 됨
-        # time.sleep(0.1)
-        # print("\n비밀번호 설정을 하려면 1 입력")
-
-        # if int(input()) == 1:
-        #     print("비밀번호 1~4자리 입력")
-        #     Server.is_password = True
-        #     Server.password = input()
-        # # -----------------------------------------------
 
     def start(self):
         # 게임 시작
@@ -81,7 +66,6 @@ class Multi_Start_Setting:
         self.Client = Multi_Client.Multi_Client(self.input_ip)
         connect = self.Client.client_start()
         # connect: 성공하면 True, 실패하면 False
-
         if connect:  # 연결 성공
             # Client는 서버로부터 메세지 받기까지 while문으로 대기한다.
             while True:
