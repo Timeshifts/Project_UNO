@@ -2,6 +2,8 @@ import socket
 import threading
 import queue
 import pickle
+import pygame
+from constant import *
 
 
 # -----------------------------------------------
@@ -35,7 +37,8 @@ class Multi_Client:
                     self.send("deleted")
                 # -----------------------------------------------
         except:
-            print("원격 호스트에 의해 강제로 끊김")
+            print("서버: 원격 호스트에 의해 강제로 끊김")
+            pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 메인메뉴로 돌아가기
 
     def client_start(self):
         try:  # 해당하는 ip가 없는 경우 에러 예외 처리
@@ -44,7 +47,7 @@ class Multi_Client:
             self.thread_for_receive.start()
             return True
         except:
-            print("에러 : 해당하는 방 없음")
+            print("에러: 해당하는 방 없음")
             return False
 
     # 서버로부터 소켓 연결 끊기

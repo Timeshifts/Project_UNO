@@ -47,7 +47,7 @@ class Multi_Server:
                 else:
                     self.msg_queue.put(msg)
         except:
-            print("원격 호스트에 의해 강제로 끊김")
+            print("서버: 원격 호스트에 의해 강제로 끊김")
 
     def handle_client(self):
         while True:

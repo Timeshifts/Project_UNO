@@ -1,9 +1,16 @@
 import Multi_GameManager
 import random
 
+
 class Multi:
     def __init__(
-        self, pos=(0, 0), size=(150, 50), computer_count=0, story_A_computer_count=0, player_count=1, name="ME",
+        self,
+        pos=(0, 0),
+        size=(150, 50),
+        computer_count=0,
+        story_A_computer_count=0,
+        player_count=1,
+        name="ME",
     ):
         self.computer_count = computer_count
         self.story_A_computer_count = story_A_computer_count
@@ -11,16 +18,18 @@ class Multi:
         self.name = name
 
         client = None
-        self.MGM = Multi_GameManager.GameManager(client)
+        self.MGM = Multi_GameManager.GameManager()
         self.game_dic = {}
 
-        self.game_start()
+        self.game_start(self.game_dic)
 
     def game_start(self, clients):
         self.MGM.set_deck()
         self.MGM.card_shuffle()
         for client in clients:
-            self.MGM.players.append(Multi_GameManager.MultiUser(False,client.getpeername()))
+            self.MGM.players.append(
+                Multi_GameManager.MultiUser(False, client.getpeername())
+            )
 
         # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
         for i in range(self.MGM.computer_count):
@@ -41,7 +50,7 @@ class Multi:
                 self.MGM.players[i].skill_card_weight
             )
 
-        self.game_dic['shuffle_deck'] = self.MGM.deck
-        self.game_dic['players'] = self.MGM.players
-        self.game_dic['turn'] = 1
+        self.game_dic["shuffle_deck"] = self.MGM.deck
+        self.game_dic["players"] = self.MGM.players
+        self.game_dic["turn"] = 1
         return self.game_dic

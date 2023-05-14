@@ -210,6 +210,8 @@ def main():
                     game_objects.remove(single_lobby)
                 elif state == "multi_lobby":  # 멑티 플레이 제거
                     game_objects.remove(multi_lobby)
+                    del multi_lobby
+                    multi_lobby = MultiLobby(size, size)
                 elif state == "story_map":  # 스토리 모드 제거
                     game_objects.remove(story_object)
                 elif state == "achievement":  # 업적 메뉴 제거

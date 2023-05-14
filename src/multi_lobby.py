@@ -297,7 +297,7 @@ class MultiLobby(Menu):
                 self.menu = self.avail_menu
                 self.max_menu = 4
                 self.init_draw()
-            elif self.avail_menu[index] == "방 접속하기":  # 클라이언크 접속
+            elif self.avail_menu[index] == "방 접속하기":  # 클라이언트 접속
                 # client_or_server: 클라이언트 선택
                 if self.state == "client_or_server":
                     self.input_ip = ""
