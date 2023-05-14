@@ -98,13 +98,13 @@ class Multi_Start_Setting:
 
     def client(self, ip):
         # 아이피 입력하면, 해당 아이피의 서버로 접속
-        print(f"서버에 접속할 아이피를 입력하세요")
-
         self.input_ip = ip
+        print(f"{self.input_ip} 서버에 접속 중")
         Client = Multi_Client.Multi_Client(self.input_ip)
         connect = Client.client_start()
+        # connect: 성공하면 True, 실패하면 False
 
-        if connect:
+        if connect:  # 연결 성공
             # Client는 서버로부터 메세지 받기까지 while문으로 대기한다.
             while True:
                 # msg = input()
@@ -118,6 +118,7 @@ class Multi_Start_Setting:
                 else:
                     # msg_queue로부터 메세지를 pop해온다.
                     M = Client.msg_queue.get()
+                    return M
 
                     # "password" 메세지를 받은경우, 패스워드를 입력한다.
                     # 제대로된 패스워드를 입력하면 서버로부터 "authenticated" 를 받는다.
@@ -149,6 +150,8 @@ class Multi_Start_Setting:
                         MGM.game_start()
                         MGM.turn_start()
                         MGM.turn_end()
+        else:  # 연결 실패
+            return "fail"
         # -----------------------------------------------
 
     # # 게임 시작

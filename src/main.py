@@ -214,7 +214,7 @@ def main():
                     game_objects.remove(story_object)
                 elif state == "achievement":  # 업적 메뉴 제거
                     game_objects.remove(achi_object)
-                elif state in ("single", "multi", "end_game"): # single 혹은 multi 제거
+                elif state in ("single", "multi", "end_game"):  # single 혹은 multi 제거
                     if "single" in str(game_objects[0]):
                         game_objects.remove(single)
                         del single  # single 객체 삭제
@@ -334,7 +334,7 @@ def main():
                 # single.name = name
                 # single.computer_count = computer_count
                 single_turn = 1
-            elif event.type == EVENT_START_MULTI: # 멀티플레이 시작
+            elif event.type == EVENT_START_MULTI:  # 멀티플레이 시작
                 # 컴퓨터 개수
                 computer_count = multi_lobby.other_chk.count(1)
                 story_A_computer_count = multi_lobby.other_chk.count(2)
@@ -360,7 +360,7 @@ def main():
                 text_prompt = Text_Prompt(
                     (width, height),
                     size,
-                    prompt="Enter IP",
+                    prompt="IP 입력",
                     max_char=15,
                     done_event=EVENT_START_LOBBY_MULTI,
                     init_input=multi_lobby.input_ip,
@@ -379,7 +379,7 @@ def main():
                 text_prompt = Text_Prompt(
                     (width, height),
                     size,
-                    prompt="Enter password",
+                    prompt="비밀번호 입력",
                     max_char=6,
                     done_event=EVENT_START_LOBBY_MULTI,
                     init_input=multi_lobby.password,
@@ -398,7 +398,7 @@ def main():
                 text_prompt = Text_Prompt(
                     (width, height),
                     size,
-                    prompt="Enter password",
+                    prompt="비밀번호 입력",
                     max_char=6,
                     done_event=EVENT_START_LOBBY_MULTI,
                     init_input=multi_lobby.password,

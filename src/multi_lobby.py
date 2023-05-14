@@ -128,9 +128,17 @@ class MultiLobby(Menu):
                 center=(self.size[0] / 2, self.size[1] * 0.4)
             )
 
-            # 비밀번호 표시
+            # Host 비밀번호 표시
+            self.host_passwd_text_name = setting.get_font(50).render(
+                f"비밀번호: {self.password}", True, "White"
+            )
+            self.host_passwd_text_name_rect = self.host_passwd_text_name.get_rect(
+                center=(self.size[0] / 2, self.size[1] * 0.5)
+            )
+
+            # Client 비밀번호 표시
             self.passwd_text_name = setting.get_font(50).render(
-                f"Password Required: {self.password}", True, "White"
+                f"비밀번호: {self.password}", True, "White"
             )
             self.passwd_text_name_rect = self.passwd_text_name.get_rect(
                 center=(self.size[0] / 2, self.size[1] * 0.4)
@@ -185,7 +193,15 @@ class MultiLobby(Menu):
                 self.input_ip_text_name_rect,
             )
 
-        # 비밀번호 표시
+        # Host 비밀번호 표시
+        if self.password != "":  # 비밀번호가 있으면 표시
+            if self.state in ("server_connected"):
+                screen.blit(
+                    self.host_passwd_text_name,
+                    self.host_passwd_text_name_rect,
+                )
+
+        # Client 비밀번호 표시
         if self.state in ("client_password"):
             screen.blit(
                 self.passwd_text_name,
@@ -282,17 +298,22 @@ class MultiLobby(Menu):
                     pass
                 # client_connecting: 접속 시도 -> 비밀번호 입력
                 else:
-                    self.mss.client(self.input_ip)  # ip 접속 시도
-                    # TODO: 실제로 서버와 연결해서 비밀번호 필요 여부 확인
-                    if True:  # TODO: 비밀번호가 필요하다면
-                        self.password = ""
-                        self.state = "client_password"
-                        self.avail_menu = ["비밀번호", "접속하기", "돌아가기"]
-                        self.menu = self.avail_menu
-                        self.max_menu = 3
-                        self.init_draw()
-                    else:
+                    connect = self.mss.client(self.input_ip)  # ip 접속 시도
+                    if connect == "fail":  # 연결 실패
+                        print("연결 실패")
                         pass
+                    else:  # 연결 성공
+                        print(f"{connect}")
+                        # 비밀번호 필요 여부 확인
+                        if connect == "password":  # 비밀번호가 필요하다면
+                            self.password = ""
+                            self.state = "client_password"
+                            self.avail_menu = ["비밀번호", "접속하기", "돌아가기"]
+                            self.menu = self.avail_menu
+                            self.max_menu = 3
+                            self.init_draw()
+                        else:  # 비밀번호 필요없다면
+                            pass
             elif self.avail_menu[index] == "접속하기":
                 # client_password: 비밀번호 입력 -> 접속
                 # TODO: 서버와 통신하여 비밀번호 검증
@@ -311,7 +332,7 @@ class MultiLobby(Menu):
                     print("비밀번호가 틀렸습니다.")
             elif self.avail_menu[index] == "게임 시작":
                 # server_connected: 게임 시작
-                if self.other_chk.count(0) == 5: # 나 말고 없으면
+                if self.other_chk.count(0) == 5:  # 나 말고 없으면
                     pass
                 else:
                     pygame.event.post(pygame.event.Event(EVENT_START_MULTI))

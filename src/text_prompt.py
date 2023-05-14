@@ -3,6 +3,7 @@ import setting
 from constant import *
 from menu import Menu
 
+
 # rename에서 뽑아낸 텍스트 입력 창입니다.
 class Text_Prompt(Menu):
     # 가능한 메뉴 목록
@@ -19,7 +20,7 @@ class Text_Prompt(Menu):
         if "prompt" in kwargs:
             self.prompt = kwargs["prompt"]
         else:
-            self.prompt = "Enter New Name"
+            self.prompt = "새 이름 입력"
         if "max_char" in kwargs:
             self.max_char = kwargs["max_char"]
         else:
@@ -37,7 +38,9 @@ class Text_Prompt(Menu):
 
     def init_draw(self):
         super().init_draw()
-        self.prompt_text = setting.get_font(50).render(f"{self.prompt} (max {self.max_char} chars):", True, "White")
+        self.prompt_text = setting.get_font(50).render(
+            f"{self.prompt} (최대 {self.max_char} 글자):", True, "White"
+        )
         self.prompt_text_rect = self.prompt_text.get_rect(
             center=(self.size[0] / 2, self.size[1] * 0.15)
         )
@@ -76,10 +79,12 @@ class Text_Prompt(Menu):
         pygame.event.post(se_event)
 
         if self.avail_menu[index] == "완료":
-            pygame.event.post(pygame.event.Event(self.done_event, {"input": self.input}))
+            pygame.event.post(
+                pygame.event.Event(self.done_event, {"input": self.input})
+            )
         elif self.avail_menu[index] == "취소":
             # 싱글플레이 로비로 복귀
-            pygame.event.post(pygame.event.Event(self.cancel_event))  
+            pygame.event.post(pygame.event.Event(self.cancel_event))
 
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
@@ -102,11 +107,11 @@ class Text_Prompt(Menu):
                         # 키보드로 선택한 것이 있다면 그 메뉴를 선택
                         if self.selected != -1:
                             self.select_menu(self.selected)
-                    elif (event.key == setting.options["up"]):
+                    elif event.key == setting.options["up"]:
                         # 선택을 하나 위로 이동
                         self.selected = self.selected - 1 if 0 < self.selected else 0
                         self.highlight = self.selected
-                    elif (event.key == setting.options["down"]):
+                    elif event.key == setting.options["down"]:
                         # 선택을 하나 아래로 이동
                         self.selected = (
                             self.selected + 1
@@ -117,13 +122,15 @@ class Text_Prompt(Menu):
                     elif event.key == pygame.K_BACKSPACE:
                         if len(self.input) > 0:
                             self.input = self.input[:-1]
-                            self.resize(self.size) # 입력 중인 이름 중앙으로 다시 가져오기
+                            self.resize(self.size)  # 입력 중인 이름 중앙으로 다시 가져오기
                     else:
                         if len(self.input) < self.max_char:
-                            if event.unicode != 0: # 글자가 없는(예: F1) 키 제외
+                            if event.unicode != 0:  # 글자가 없는(예: F1) 키 제외
                                 self.input += event.unicode
-                            self.resize(self.size) # 입력 중인 이름 중앙으로 다시 가져오기
-                    self.text_name = setting.get_font(50).render(self.input, True, "BLACK")
+                            self.resize(self.size)  # 입력 중인 이름 중앙으로 다시 가져오기
+                    self.text_name = setting.get_font(50).render(
+                        self.input, True, "BLACK"
+                    )
                     self.text_name_rect.size = self.text_name.get_size()
 
             # 버튼이 누르고 있어도 계속 동작하지 않게 뗄 때까지는 작동 방지
