@@ -1,3 +1,8 @@
+import sys, os
+
+# src directory에서 import 가능하게 추가
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+
 import random
 import unittest
 import GameManager as GM
@@ -339,9 +344,10 @@ class Test(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    test_method = ['test_card_distribution','test_card_distribution_real','test_game_start','test_story_a','test_story_b','test_story_c','test_story_d']
+    unittest.main()
+    #test_method = ['test_card_distribution','test_card_distribution_real','test_game_start','test_story_a','test_story_b','test_story_c','test_story_d']
     #a = int(input("테스트할 함수 : "))
-    for a in range(len(test_method)):
-        suite = unittest.TestLoader().loadTestsFromName(test_method[a], Test)
-        unittest.TextTestRunner().run(suite)
+    #for a in range(len(test_method)):
+    #    suite = unittest.TestLoader().loadTestsFromName(test_method[a], Test)
+    #    unittest.TextTestRunner().run(suite)
 

@@ -19,5 +19,5 @@ dist
 main.spec
 
 # 로컬 테스트 관련 파일
-src/.coverage
-src/htmlcov
+.coverage
+htmlcov
