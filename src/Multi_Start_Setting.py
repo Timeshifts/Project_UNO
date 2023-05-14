@@ -102,52 +102,53 @@ class Multi_Start_Setting:
 
         self.input_ip = ip
         Client = Multi_Client.Multi_Client(self.input_ip)
-        Client.client_start()
+        connect = Client.client_start()
 
-        # Client는 서버로부터 메세지 받기까지 while문으로 대기한다.
-        while True:
-            # msg = input()
-            # Client.send(msg)
+        if connect:
+            # Client는 서버로부터 메세지 받기까지 while문으로 대기한다.
+            while True:
+                # msg = input()
+                # Client.send(msg)
 
-            # Client의 msg_queue가 비어있으면 계속 대기한다.
-            if Client.msg_queue.empty() == True:
-                time.sleep(0.2)
+                # Client의 msg_queue가 비어있으면 계속 대기한다.
+                if Client.msg_queue.empty() == True:
+                    time.sleep(0.2)
 
-            # Client의 msg_queue가 채워져있으면 else 문으로 간다. 이는 서버로부터 메세지를 받았음을 의미
-            else:
-                # msg_queue로부터 메세지를 pop해온다.
-                M = Client.msg_queue.get()
+                # Client의 msg_queue가 채워져있으면 else 문으로 간다. 이는 서버로부터 메세지를 받았음을 의미
+                else:
+                    # msg_queue로부터 메세지를 pop해온다.
+                    M = Client.msg_queue.get()
 
-                # "password" 메세지를 받은경우, 패스워드를 입력한다.
-                # 제대로된 패스워드를 입력하면 서버로부터 "authenticated" 를 받는다.
-                if M == "password":
-                    print("\n패스워드를 입력하세요")
-                    Client.send(input())
+                    # "password" 메세지를 받은경우, 패스워드를 입력한다.
+                    # 제대로된 패스워드를 입력하면 서버로부터 "authenticated" 를 받는다.
+                    if M == "password":
+                        print("\n패스워드를 입력하세요")
+                        Client.send(input())
 
-                # "wrong" 메세지는 잘못된 패스워드를 입력한 경우
-                if M == "wrong":
-                    print("잘못된 패스워드를 입력함")
-                    Client.client_end()
-                    break
+                    # "wrong" 메세지는 잘못된 패스워드를 입력한 경우
+                    if M == "wrong":
+                        print("잘못된 패스워드를 입력함")
+                        Client.client_end()
+                        break
 
-                # "kicked"는 서버에 제대로 접속 했지만, 강퇴 당한 경우
-                if M == "kicked":
-                    print("강퇴 당함")
-                    Client.client_end()
-                    break
+                    # "kicked"는 서버에 제대로 접속 했지만, 강퇴 당한 경우
+                    if M == "kicked":
+                        print("강퇴 당함")
+                        Client.client_end()
+                        break
 
-                # "start"는 방장이 게임을 시작함
-                if M == "start":
-                    print("게임 시작")
-                    MGM = Multi_GameManager.GameManager()
-                    MGM.game_dic = dic
-                    print(MGM.game_dic["players"])
-                    print(MGM.game_dic["turn"])
-                    MGM.initial_sync()
+                    # "start"는 방장이 게임을 시작함
+                    if M == "start":
+                        print("게임 시작")
+                        MGM = Multi_GameManager.GameManager()
+                        MGM.game_dic = dic
+                        print(MGM.game_dic["players"])
+                        print(MGM.game_dic["turn"])
+                        MGM.initial_sync()
 
-                    MGM.game_start()
-                    MGM.turn_start()
-                    MGM.turn_end()
+                        MGM.game_start()
+                        MGM.turn_start()
+                        MGM.turn_end()
         # -----------------------------------------------
 
     # # 게임 시작

@@ -311,12 +311,12 @@ class MultiLobby(Menu):
                     print("비밀번호가 틀렸습니다.")
             elif self.avail_menu[index] == "게임 시작":
                 # server_connected: 게임 시작
-                if self.other_chk.count(0) == 5:
+                if self.other_chk.count(0) == 5: # 나 말고 없으면
                     pass
                 else:
-                    # pygame.event.post(pygame.event.Event(EVENT_START_SINGLE))
+                    pygame.event.post(pygame.event.Event(EVENT_START_MULTI))
                     # TODO: 멀티플레이 게임 시작
-                    pass
+                    # pass
             elif self.avail_menu[index] == "돌아가기":
                 if self.state == "client_or_server":
                     pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 메인 메뉴

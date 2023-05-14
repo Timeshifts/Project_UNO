@@ -3,6 +3,7 @@ from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN
 from single_lobby import SingleLobby
 from multi_lobby import MultiLobby
 from single import Single
+from multi import Multi
 from text_prompt import Text_Prompt
 from constant import *
 
@@ -45,6 +46,11 @@ def get_background(state, size):
     elif state == "single_lobby":
         return pygame.transform.scale(
             pygame.image.load(RESOURCE_PATH / "single" / "single_robby_background.png"),
+            size,
+        )
+    elif state == "multi":
+        return pygame.transform.scale(
+            pygame.image.load(RESOURCE_PATH / "single" / "multi_background.png"),
             size,
         )
     elif state == "multi_lobby":
@@ -202,16 +208,21 @@ def main():
             if event.type == EVENT_MAIN:
                 if state == "single_lobby":  # 싱글 플레이 제거
                     game_objects.remove(single_lobby)
-                elif state == "story_map":
-                    game_objects.remove(story_object)  # 스토리 모드 제거
-                elif state == "achievement":
-                    game_objects.remove(achi_object)  # 업적 메뉴 제거
-                elif state == "multi_lobby":
+                elif state == "multi_lobby":  # 멑티 플레이 제거
                     game_objects.remove(multi_lobby)
-                elif state in ("single", "end_game"):
-                    game_objects.remove(single)
-                    del single  # single 객체 삭제
-                    single_turn = 0  # single 진행 X
+                elif state == "story_map":  # 스토리 모드 제거
+                    game_objects.remove(story_object)
+                elif state == "achievement":  # 업적 메뉴 제거
+                    game_objects.remove(achi_object)
+                elif state in ("single", "multi", "end_game"): # single 혹은 multi 제거
+                    if "single" in str(game_objects[0]):
+                        game_objects.remove(single)
+                        del single  # single 객체 삭제
+                        single_turn = 0  # single 진행 X
+                    elif "multi" in str(game_objects[0]):
+                        game_objects.remove(multi)
+                        del multi  # multi 객체 삭제
+
                 # 메인 메뉴로 복귀
                 game_objects.append(main_menu)
                 main_menu.resize(size)
@@ -323,6 +334,25 @@ def main():
                 # single.name = name
                 # single.computer_count = computer_count
                 single_turn = 1
+            elif event.type == EVENT_START_MULTI: # 멀티플레이 시작
+                # 컴퓨터 개수
+                computer_count = multi_lobby.other_chk.count(1)
+                story_A_computer_count = multi_lobby.other_chk.count(2)
+                player_count = multi_lobby.other_chk.count(3)
+                name = multi_lobby.name
+                # 게임 로비 제거
+                game_objects.remove(multi_lobby)
+                state = "multi"
+                background = get_background(state, size)
+                multi = Multi(
+                    (width, height),
+                    size,
+                    computer_count,
+                    story_A_computer_count,
+                    player_count,
+                    name,
+                )
+                game_objects.append(multi)
 
             # 접속 IP 입력 (클라이언트 측)
             if event.type == EVENT_OPEN_ENTER_IP:
