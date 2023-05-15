@@ -4,11 +4,12 @@ import time
 import Multi_GameManager
 import pickle
 
+
 print("\n숫자를 입력하세요")
 print("1 : 서버생성") 
 print("2 : 아이피 입력")
 
-
+MGM = 0
 a = int(input())
 
 # -----------------------------------------------
@@ -74,6 +75,7 @@ if a == 1:
         
     # 1번 입력시 여기 코드에 도달하게 되며, 서버로 "start" 를 보낸다.
     Client.send("start")
+    Client.sedn([5, 1, 0])
     # -----------------------------------------------
     
     
@@ -89,7 +91,14 @@ if a == 1:
             
             if M == "start":
                 print("게임 시작")
-                MGM = Multi_GameManager.GameManager()
+                MGM = Multi_GameManager.Gm
+                MGM.client = Client
+            
+            if isinstance(M ,dict):
+                MGM.deck = M['ref_deck']
+                MGM.deck = M['deck']
+                MGM.deck = M['players']
+                MGM.deck = M['turn']
     # -----------------------------------------------
 
 
@@ -143,13 +152,19 @@ elif a == 2:
             # "start"는 방장이 게임을 시작함
             if M == "start":
                 print("게임 시작")
-                MGM = Multi_GameManager.GameManager()
-                MGM.game_dic = dic
-                print(MGM.game_dic['players'])
-                print(MGM.game_dic['turn'])
-                MGM.initial_sync()
+                MGM = Multi_GameManager.Gm
+                MGM.client = Client
+            
+            if isinstance(M ,dict):
+                MGM.deck = M['ref_deck']
+                MGM.deck = M['deck']
+                MGM.deck = M['players']
+                MGM.deck = M['turn']
 
     # -----------------------------------------------
+    
+
+
 
 
    

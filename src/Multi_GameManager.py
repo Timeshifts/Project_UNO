@@ -99,6 +99,10 @@ class GameManager:
 
         # 덱에서 카드 한장 빼서 세팅해놓음
         self.setting_card(self.deck)
+        
+        thread = threading.Thread(target=self.uno_thread)
+        thread.daemon = True
+        thread.start()
 
     def game_end(self):
         self.game_timer_end = True
@@ -507,7 +511,7 @@ class GameManager:
         card_color = ["blue", "green", "red", "yellow"]
 
         if self.players[self.turn].is_computer == True:
-            self.grave_top_color = random.choice(card_color)
+            self.grave_top_color = card_color[3]
         else:
             self.wild = True
 
@@ -565,7 +569,8 @@ class GameManager:
             time.sleep(0.1)    
 
     def initial_sync(self):
-        self.deck = self.game_dic.pop('shuffle_deck') # 덱
+        self.ref_deck = self.game_dic.pop('ref_deck')
+        self.deck = self.game_dic.pop('deck') # 덱
         self.turn = self.game_dic['turn']  # 지금 누구 턴인지 나타내는 정수 변수
         self.players = self.game_dic['players']   # 플레이어 객체들을 담을 배열
     
@@ -597,9 +602,13 @@ class Player:
             if Gm.set_uno == False:
                 self.is_uno = True
                 print("우노 성공")
+                M = f"uno_{Gm.turn}_{True}"
+                Gm.client.send(M)
         if self.is_authority == False and len(self.hand) == 2:  # 남의 턴에 우노 버튼 클릭
             Gm.set_uno = True
             print("우노 방해")
+            M = f"uno_{Gm.turn}_{False}"
+            Gm.client.send(M)
 
     def use_card(self, index):
         self.current_card = self.hand[index]
@@ -666,14 +675,37 @@ class MultiUser(Player):
     def __init__(self, is_computer,ip):
         super().__init__(is_computer)
         self.ip = ip
+        self.return_value = 0
 
     def play(self):
         self.possible_cards.clear()
         self.possible_cards_num.clear()
         self.judge_possible_cards()
-
-        return self.possible_cards_num
-
+        
+        if self.ip == Gm.Client.client_socket.getsockname():
+            return self.possible_cards_num
+        else:
+            thread = threading.Thread(target=self.threading_receive)
+            thread.daemon = True
+            thread.start()
+    
+    def threading_receive(self):
+        while True:
+            if  Gm.Client.msg_queue.empty() == False:
+                M = Gm.Client.msg_queue.get()
+                
+                if M == "get_card":
+                    self.get_card()
+                    self.return_value = "get"
+                    break
+                
+                if M[0:8] == "use_card":
+                    index = int(M[10:])
+                    self.use_card(index)
+                    self.return_value = f"{self.current_card.color}_{self.current_card.name}"
+                    self.current_card = 0
+                    break
+            
 
 # -------------------------------------------------------------------------------------------------
 
@@ -794,4 +826,4 @@ class Card:
             self.score = 20
 
 
-# Gm = GameManager()
+Gm = GameManager()

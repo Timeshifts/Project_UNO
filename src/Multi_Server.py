@@ -3,6 +3,8 @@ import threading
 import time
 import queue
 import pickle
+import initialization
+
 
 class Multi_Server:
     def __init__(self):
@@ -38,8 +40,10 @@ class Multi_Server:
         while True:
             msg = pickle.loads(client_socket.recv(4096))
             
-            if isinstance(msg,dict):
+            if isinstance(msg, dict):
                 self.msg_queue.put(msg)
+            elif isinstance(msg, list):
+                self.msg_queue.put( self.multi_game_initialization(msg[0], msg[1], msg[2]) )
             else:
                 if msg == "deleted":
                     break
@@ -48,6 +52,8 @@ class Multi_Server:
                         self.random_request = True
                         
                         num = int(msg[15:])
+                elif msg == "start":
+                    self.msg_queue.put(msg)
                 else:
                     self.msg_queue.put(msg)
     
@@ -88,3 +94,9 @@ class Multi_Server:
         thread_send = threading.Thread(target=self.multi_send)
         thread_send.daemon = True
         thread_send.start()
+     
+        
+    def multi_game_initialization(self, a, b, c):
+        return initialization.init_game(self.socket_array, a, b, c)
+        
+    
