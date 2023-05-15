@@ -11,6 +11,7 @@ class Multi_Client:
         self.ip = ip
         self.name = 'MY NAME'
         self.msg_queue = queue.Queue()
+        self.uno_queue = queue.Queue()
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.thread_for_receive = 0
     
@@ -22,8 +23,14 @@ class Multi_Client:
     def receive(self):
         while True:
             msg = pickle.loads(self.client_socket.recv(4096))
-            self.msg_queue.put(msg)
-            print(f"서버가 뿌린 메세지 : {msg}")
+            
+            if isinstance(msg,dict):
+                self.msg_queue.put(msg)
+            else:
+                if msg[0:3] == "uno":
+                    self.uno_queue.put(msg)
+                else:
+                    self.msg_queue.put(msg)
             
             # "wrong" 받으면 와일문 탈출, 잘못된 패스워드를 입력한 경우이다.
             if msg == "wrong":
@@ -33,6 +40,7 @@ class Multi_Client:
             # "kicked" 받으면 와일문 탈출, 강퇴당한 경우이다.
             if msg == "kicked":
                 self.send("deleted")
+                
             # -----------------------------------------------
     
             

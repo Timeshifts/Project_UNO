@@ -2,6 +2,7 @@ import GameManager as GM
 import pygame, setting
 import threading, time
 import random
+import Multi_Client
 from button import Button
 from constant import *
 
@@ -760,6 +761,8 @@ class Single:
                     self.game.attack(4, target)
                     self.game.wild = False
                     self.game.turn_end(option=1)
+                    
+                    self.game.Client.send("wild_four_" + str(index))
                 # elif self.game.wild_card == "wild_target":
                 #     self.game.attack(2, random.randint(0, self.game.player_num - 1))
                 #     self.game.wild = False
@@ -767,7 +770,11 @@ class Single:
                 else:
                     self.game.wild = False
                     self.game.turn_end(option=1)
+                    
+                    self.game.Client.send("wild_color_" + str(index))
         else:
+            
+            
             if index in self.possible_cards_num:
                 self.effect = self.hand_card[0][index]
                 self.effect_index = index
@@ -777,11 +784,18 @@ class Single:
                     self.highlight = 0
                     self.game.turn_timer_end = True
                 else:
+                    self.game.Client.send("use_card_" + str(index))
                     self.game.turn_end(option=1)
+                
+                
+                
             if index == self.max_card:  # 덱
                 self.game.players[0].get_card()
                 self.effect = "get_my"
                 self.game.turn_end()
+                
+                self.game.Client.send("get_card")
+                
             if index == self.max_card + 1:  # 우노버튼
                 self.game.players[0].press_uno()
 
