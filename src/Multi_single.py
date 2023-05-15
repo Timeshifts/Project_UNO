@@ -1,4 +1,4 @@
-import GameManager as GM
+import Multi_GameManager as GM
 import pygame, setting
 import threading, time
 import random
