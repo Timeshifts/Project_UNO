@@ -4,6 +4,7 @@ import time
 import Multi_GameManager
 import pickle
 
+
 class Multi_Start_Setting:
     def __init__(self):
         self.host_ip = 0
@@ -18,8 +19,8 @@ class Multi_Start_Setting:
         print(f"당신의 아이피는 {self.host_ip} 입니다")
         # 서버 만든 사람을 클라이언트로 등록시킴,
         # 따로 호스트 처리 안하고 싹다 클라이언트로 간편하게 처리하기 위함
-        Client = Multi_Client.Multi_Client(self.host_ip)
-        Client.client_start()
+        self.Client = Multi_Client.Multi_Client(self.host_ip)
+        self.Client.client_start()
 
     def password(self, pw):
         # 서버 패스워드 설정
@@ -30,8 +31,8 @@ class Multi_Start_Setting:
     def start(self):
         # 게임 시작
         print("게임 시작")
-        Client.send("start")
-        Client.send([5, 1, 0])
+        self.Client.send("start")
+        self.Client.send([5, 1, 0])
 
     def drop(self):
         # 게임 강퇴
@@ -49,13 +50,12 @@ class Multi_Start_Setting:
     #    print("게임 시작")
     #    MGM = Multi_GameManager.Gm
     #    MGM.client = Client
-            
+
     # if isinstance(M ,dict):
     #    MGM.deck = M['ref_deck']
     #    MGM.deck = M['deck']
     #    MGM.deck = M['players']
     #    MGM.deck = M['turn']
-
 
         #         c = int(input())
         #         print(f" {c}번 인덱스 소켓 강퇴됨 ")

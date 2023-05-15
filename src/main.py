@@ -1,9 +1,15 @@
-import sys, setting, pause, story_map, setting_menu, achievement, endgame
+import sys
+import setting
+import pause
+import story_map
+import setting_menu
+import achievement
+import endgame
 from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN_OPTION
 from single_lobby import SingleLobby
 from multi_lobby import MultiLobby
 from single import Single
-from multi import Multi
+from multi_single import Multi_Single
 from text_prompt import Text_Prompt
 from constant import *
 
@@ -20,7 +26,8 @@ setting_UI = None
 def get_background(state, size):
     if state == "main_menu":
         return pygame.transform.scale(
-            pygame.image.load(RESOURCE_PATH / "main" / "main_background.png"), size
+            pygame.image.load(RESOURCE_PATH / "main" /
+                              "main_background.png"), size
         )
     elif state == "story_map":
         try:
@@ -41,21 +48,25 @@ def get_background(state, size):
         return background
     elif state == "single":
         return pygame.transform.scale(
-            pygame.image.load(RESOURCE_PATH / "single" / "single_background.png"), size
+            pygame.image.load(RESOURCE_PATH / "single" /
+                              "single_background.png"), size
         )
     elif state == "single_lobby":
         return pygame.transform.scale(
-            pygame.image.load(RESOURCE_PATH / "single" / "single_robby_background.png"),
+            pygame.image.load(RESOURCE_PATH / "single" /
+                              "single_robby_background.png"),
             size,
         )
     elif state == "multi":
         return pygame.transform.scale(
-            pygame.image.load(RESOURCE_PATH / "single" / "multi_background.png"),
+            pygame.image.load(RESOURCE_PATH / "single" /
+                              "multi_background.png"),
             size,
         )
     elif state == "multi_lobby":
         return pygame.transform.scale(
-            pygame.image.load(RESOURCE_PATH / "single" / "multi_robby_background.png"),
+            pygame.image.load(RESOURCE_PATH / "single" /
+                              "multi_robby_background.png"),
             size,
         )
 
@@ -102,7 +113,8 @@ def main():
 
     # 메인 배경과 음악
     background = get_background(state, size)
-    load_bgm(RESOURCE_PATH / "sound" / "bg_main.mp3", setting.get_volume("bgm"))
+    load_bgm(RESOURCE_PATH / "sound" / "bg_main.mp3",
+             setting.get_volume("bgm"))
 
     # 직접적으로 game_objects에 들어가는 objects는 여기서 미리 선언되어야
     # 넣고 뺄 때 문제가 생기지 않습니다.
@@ -166,13 +178,15 @@ def main():
                 elif event.player_win:
                     # 업적 0: 싱글 플레이어 승리
                     pygame.event.post(
-                        pygame.event.Event(EVENT_ACQUIRE_ACHIEVEMENT, {"id": 0})
+                        pygame.event.Event(
+                            EVENT_ACQUIRE_ACHIEVEMENT, {"id": 0})
                     )
                 if event.player_win:
                     # 나머지 업적 flag를 읽어 업적 획득
                     for achi in single.game.achi_flag:
                         pygame.event.post(
-                            pygame.event.Event(EVENT_ACQUIRE_ACHIEVEMENT, {"id": achi})
+                            pygame.event.Event(
+                                EVENT_ACQUIRE_ACHIEVEMENT, {"id": achi})
                         )
                 state = "end_game"
 
@@ -229,7 +243,8 @@ def main():
                 state = "main_menu"
                 background = get_background(state, size)
                 load_bgm(
-                    RESOURCE_PATH / "sound" / "bg_main.mp3", setting.get_volume("bgm")
+                    RESOURCE_PATH / "sound" /
+                    "bg_main.mp3", setting.get_volume("bgm")
                 )
 
             # 게임 로비
@@ -245,7 +260,8 @@ def main():
                 state = "single_lobby"
                 background = get_background(state, size)
                 load_bgm(
-                    RESOURCE_PATH / "sound" / "bg_game.mp3", setting.get_volume("bgm")
+                    RESOURCE_PATH / "sound" /
+                    "bg_game.mp3", setting.get_volume("bgm")
                 )
                 game_objects.append(single_lobby)
                 single_lobby.resize(size)  # 임시
@@ -263,7 +279,8 @@ def main():
                     # 변경 창에서 바꾼 비밀번호를 멀티에 반영
                     if "input" in event.dict.keys():
                         multi_lobby.password = event.input
-                        multi_lobby.mss.password(multi_lobby.password)  # 비밀번호를 서버에 적용
+                        multi_lobby.mss.password(
+                            multi_lobby.password)  # 비밀번호를 서버에 적용
                     game_objects.remove(text_prompt)
                 elif state == "passwd_change_client":
                     # 변경 창에서 바꾼 비밀번호를 확인
@@ -278,7 +295,8 @@ def main():
                 state = "multi_lobby"
                 background = get_background(state, size)
                 load_bgm(
-                    RESOURCE_PATH / "sound" / "bg_game.mp3", setting.get_volume("bgm")
+                    RESOURCE_PATH / "sound" /
+                    "bg_game.mp3", setting.get_volume("bgm")
                 )
                 game_objects.append(multi_lobby)
                 multi_lobby.resize(size)  # 임시
@@ -348,7 +366,7 @@ def main():
                 game_objects.remove(multi_lobby)
                 state = "multi"
                 background = get_background(state, size)
-                multi = Multi(
+                multi = Multi_Single(
                     (width, height),
                     size,
                     computer_count,
@@ -461,7 +479,8 @@ def main():
                 if event.id not in achi_object.acquired:
                     achi_object.acquire(event.id)
                     game_objects.append(
-                        achievement.AchievementIndicator(event.id, game_objects)
+                        achievement.AchievementIndicator(
+                            event.id, game_objects)
                     )
 
             # 업적 열기
@@ -533,7 +552,8 @@ def main():
                 else:  # 플레이어 패배한 경우
                     player_win = False
                 pygame.event.post(
-                    pygame.event.Event(EVENT_END_GAME, {"player_win": player_win})
+                    pygame.event.Event(
+                        EVENT_END_GAME, {"player_win": player_win})
                 )
 
 

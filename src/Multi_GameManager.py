@@ -6,6 +6,7 @@ import Multi_Server
 import Multi_Client
 from constant import EVENT_END_GAME, EVENT_TURN_END
 
+
 class GameManager:
     # 모든 업적이 승리와 관련되어 있으므로,
     # 이번에 달성할 수 있는 업적인지를 한번에 나타낼 수 있습니다.
@@ -72,8 +73,7 @@ class GameManager:
 
         self.game_timer_end = False
         self.game_count_down()
-        
-                
+
         if self.story == 0:
             print("스토리 A 특성 적용")
             # self.story_A_computer_count = 1
@@ -99,7 +99,7 @@ class GameManager:
 
         # 덱에서 카드 한장 빼서 세팅해놓음
         self.setting_card(self.deck)
-        
+
         thread = threading.Thread(target=self.uno_thread)
         thread.daemon = True
         thread.start()
@@ -140,7 +140,8 @@ class GameManager:
     def turn_start(self):
         self.turn_count += 1
         # 10턴 초과: 6번 업적(압도) 달성 불가능
-        if self.turn_count > 10: self.toggle_achi(6, False)
+        if self.turn_count > 10:
+            self.toggle_achi(6, False)
 
         if self.is_top_card_change == True:
             self.top_card_change()
@@ -201,7 +202,8 @@ class GameManager:
 
     def computer_wait(self, option=0):
         time.sleep(0.25)
-        pygame.event.post(pygame.event.Event(EVENT_TURN_END, {"option": option}))
+        pygame.event.post(pygame.event.Event(
+            EVENT_TURN_END, {"option": option}))
 
     def turn_end_act(self):
         # print("비동기 동작")
@@ -260,18 +262,21 @@ class GameManager:
 
         if card.name.isdigit() == False:
             # 기술 카드 사용: 7번 업적(수학자) 달성 불가능
-            if self.turn == 0: self.toggle_achi(7, False)
-                
+            if self.turn == 0:
+                self.toggle_achi(7, False)
+
             if card.name == "color":
                 # 와일드 카드 사용: 10번 업적(순수) 달성 불가능
-                if self.turn == 0: self.toggle_achi(10, False)
+                if self.turn == 0:
+                    self.toggle_achi(10, False)
                 self.wild_color()
                 if self.turn == 0:
                     self.turn_jump(-1)
 
             elif card.name == "four":
                 # 와일드 카드 사용: 10번 업적(순수) 달성 불가능
-                if self.turn == 0: self.toggle_achi(10, False)
+                if self.turn == 0:
+                    self.toggle_achi(10, False)
                 print("다음 턴 유저에게, 카드 4장 공격")
                 self.wild_four()
                 if self.turn == 0:
@@ -440,11 +445,13 @@ class GameManager:
             time.sleep(0.2)
 
     def game_count_down(self):  # 전체 시간
-        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(100,))
+        self.game_timer_thread = threading.Thread(
+            target=self.game_timer, args=(100,))
         self.game_timer_thread.start()
 
     def turn_count_down(self):  # 턴 시간
-        self.turn_timer_thread = threading.Thread(target=self.turn_timer, args=(15,))
+        self.turn_timer_thread = threading.Thread(
+            target=self.turn_timer, args=(15,))
         self.turn_timer_thread.start()
 
     def top_card_change(self):
@@ -554,26 +561,24 @@ class GameManager:
 
     def defence(self):
         self.players[self.turn].defence_int += 1
-        
-    
+
     def uno_thread(self):
         while True:
             if self.Clinet.uno_queue.empty() == False:
                 M = self.Client.uno_queue.get()
                 index = int(M[4])
                 boolean = bool(M[6:])
-                
+
                 self.players[index].is_uno = boolean
-                 
-            
-            time.sleep(0.1)    
+
+            time.sleep(0.1)
 
     def initial_sync(self):
         self.ref_deck = self.game_dic.pop('ref_deck')
-        self.deck = self.game_dic.pop('deck') # 덱
+        self.deck = self.game_dic.pop('deck')  # 덱
         self.turn = self.game_dic['turn']  # 지금 누구 턴인지 나타내는 정수 변수
         self.players = self.game_dic['players']   # 플레이어 객체들을 담을 배열
-    
+
     # def sync(self):
     #     self.turn = self.game_dic['turn']
     #     self.players = self.game_dic['players']   # 플레이어 객체들을 담을 배열
@@ -585,7 +590,7 @@ class GameManager:
 
 class Player:
     def __init__(self, is_computer):
-        self.is_computer = is_computer # players
+        self.is_computer = is_computer  # players
         self.hand = []
         self.possible_cards = []
         self.is_authority = False
@@ -604,7 +609,8 @@ class Player:
                 print("우노 성공")
                 M = f"uno_{Gm.turn}_{True}"
                 Gm.client.send(M)
-        if self.is_authority == False and len(self.hand) == 2:  # 남의 턴에 우노 버튼 클릭
+        # 남의 턴에 우노 버튼 클릭
+        if self.is_authority == False and len(self.hand) == 2:
             Gm.set_uno = True
             print("우노 방해")
             M = f"uno_{Gm.turn}_{False}"
@@ -633,8 +639,6 @@ class Player:
                 self.possible_cards_num.append(i)
 
 
-
-
 # -------------------------------------------------------------------------------------------------
 
 class User(Player):
@@ -645,26 +649,26 @@ class User(Player):
         self.possible_cards.clear()
         self.possible_cards_num.clear()
         self.judge_possible_cards()
-        
+
         # if self.is_computer == False:
         #     return self.possible_cards_num
         # else:
         #     while True:
         #         if self.client.msg_queue.empty() == False:
         #             M = self.client.msg_queue.get()
-                    
+
         #             if M == "get_card":
         #                 self.get_card()
         #                 return_value = "get"
         #                 break
-                    
+
         #             if M[0:8] == "use_card":
         #                 index = int(M[10:])
         #                 self.use_card(index)
         #                 return_value = f"{self.current_card.color}_{self.current_card.name}"
         #                 self.current_card = 0
         #                 break
-                    
+
         #     return return_value
         return self.possible_cards_num
 
@@ -672,7 +676,7 @@ class User(Player):
 # -------------------------------------------------------------------------------------------------
 
 class MultiUser(Player):
-    def __init__(self, is_computer,ip):
+    def __init__(self, is_computer, ip):
         super().__init__(is_computer)
         self.ip = ip
         self.return_value = 0
@@ -681,31 +685,31 @@ class MultiUser(Player):
         self.possible_cards.clear()
         self.possible_cards_num.clear()
         self.judge_possible_cards()
-        
+
         if self.ip == Gm.Client.client_socket.getsockname():
             return self.possible_cards_num
         else:
             thread = threading.Thread(target=self.threading_receive)
             thread.daemon = True
             thread.start()
-    
+
     def threading_receive(self):
         while True:
-            if  Gm.Client.msg_queue.empty() == False:
+            if Gm.Client.msg_queue.empty() == False:
                 M = Gm.Client.msg_queue.get()
-                
+
                 if M == "get_card":
                     self.get_card()
                     self.return_value = "get"
                     break
-                
+
                 if M[0:8] == "use_card":
                     index = int(M[9:])
                     self.use_card(index)
                     self.return_value = f"{self.current_card.color}_{self.current_card.name}"
                     self.current_card = 0
                     break
-            
+
 
 # -------------------------------------------------------------------------------------------------
 
@@ -747,7 +751,7 @@ class MultiComputer(Player):
         self.judge_possible_cards()
 
         if len(self.possible_cards_num) != 0:
-            ran = self.possible_cards_num -1        # 가능한 카드중 무조건 맨 뒤의 카드 선택
+            ran = self.possible_cards_num - 1        # 가능한 카드중 무조건 맨 뒤의 카드 선택
             # ran = random.randrange(len(self.possible_cards))
             self.use_card(ran)
             return_value = f"{self.current_card.color}_{self.current_card.name}"
@@ -762,7 +766,6 @@ class MultiComputer(Player):
             self.press_uno()
 
         return return_value
-
 
 
 # -------------------------------------------------------------------------------------------------
@@ -781,9 +784,10 @@ class StoryA_User(Player):
 
         if Gm.set_uno == False and len(self.hand) == 2:
             self.press_uno()
-        
+
         for i in range(len(self.possible_cards_num)):
-            print(f"{self.possible_cards_num[i]} : {self.possible_cards[i].color}_{self.possible_cards[i].name}")
+            print(
+                f"{self.possible_cards_num[i]} : {self.possible_cards[i].color}_{self.possible_cards[i].name}")
 
         if len(self.possible_cards_num) != 0:
             for i in range(len(self.possible_cards_num)):
@@ -826,4 +830,4 @@ class Card:
             self.score = 20
 
 
-Gm = GameManager()
+MGm = GameManager("1")
