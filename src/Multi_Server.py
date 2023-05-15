@@ -3,8 +3,8 @@ import threading
 import time
 import queue
 import pickle
-import Multi_GameManager
-import random
+import initialization
+
 
 
 class Multi_Server:
@@ -19,11 +19,10 @@ class Multi_Server:
         )  # 방금 사용하고 close한 port를 즉시 다시 사용할 수 있다.
         self.server_socket.bind((self.host_ip, self.port))
         self.server_socket.listen(6)
-        self.MGM = Multi_GameManager.GameManager()
-        self.game_dic = {}
         self.is_password = False
         self.password = ""
-
+        self.random_request = False
+    
     def single_send(self, index, msg):
         self.socket_array[index].send(pickle.dumps(msg))
 
@@ -35,6 +34,9 @@ class Multi_Server:
                 M = self.msg_queue.get()
 
                 for i in range(len(self.socket_array)):
+                    if isinstance(M, dict):
+                        M['index'] = i
+                    
                     self.socket_array[i].send(pickle.dumps(M))
 
     def receive(self, client_socket):
@@ -42,10 +44,22 @@ class Multi_Server:
             while True:
                 msg = pickle.loads(client_socket.recv(4096))
 
-                if msg == "deleted":
-                    break
-                else:
+                if isinstance(msg, dict):
                     self.msg_queue.put(msg)
+                elif isinstance(msg, list):
+                    self.msg_queue.put( self.multi_game_initialization(msg[0], msg[1], msg[2]) )
+                else:
+                    if msg == "deleted":
+                        break
+                    elif msg[0:6] == "random":
+                        if self.random_request == False:
+                            self.random_request = True
+
+                            num = int(msg[15:])
+                    elif msg == "start":
+                        self.msg_queue.put(msg)
+                    else:
+                        self.msg_queue.put(msg)
         except:
             print("서버: 원격 호스트에 의해 강제로 끊김")
 
@@ -96,36 +110,5 @@ class Multi_Server:
         thread_send.daemon = True
         thread_send.start()
 
-    def init_game(self):
-        self.MGM.set_deck()
-        self.MGM.card_shuffle()
-        for i in range(len(self.socket_array)):
-            self.MGM.players.append(Multi_GameManager.User(False))
-
-        # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
-        for i in range(self.MGM.computer_count):
-            self.MGM.players.append(Multi_GameManager.Computer(True))
-
-        for i in range(self.MGM.story_A_computer_count):
-            self.MGM.players.append(Multi_GameManager.StoryA_User(True))
-
-        # 총 플레이어의 수
-        self.MGM.player_num = len(self.MGM.players)
-
-        # 턴 선택
-        self.MGM.turn = random.randint(0, self.MGM.player_num - 1)
-
-        # 플레이어들에게 카드 나눠줌
-        for i in range(len(self.MGM.players)):
-            self.MGM.players[i].hand = self.MGM.roulette_wheel_selection(
-                self.MGM.players[i].skill_card_weight
-            )
-
-        self.game_dic["game_state"] = True
-        self.game_dic["shuffle_deck"] = self.MGM.deck
-        self.game_dic["players"] = self.MGM.players
-        self.game_dic["players_num"] = self.MGM.player_num
-        self.game_dic["computer_count"] = self.MGM.computer_count
-        self.game_dic["story_A_computer_count"] = self.MGM.story_A_computer_count
-        self.game_dic["turn"] = self.MGM.turn
-        return self.game_dic
+    def multi_game_initialization(self, a, b, c):
+        return initialization.init_game(self.socket_array, a, b, c)

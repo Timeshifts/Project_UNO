@@ -17,3 +17,7 @@ dist
 
 # 빌드 설정 파일
 main.spec
+
+# 로컬 테스트 관련 파일
+.coverage
+htmlcov

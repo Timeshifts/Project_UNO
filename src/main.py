@@ -160,12 +160,9 @@ def main():
                     if progress < event.story_map and event.player_win:
                         story_map.StoryMenu.story_progress = event.story_map
                         story_object.STORY_MENU.save_progress()
-                    # 과 함께 업적 1~4 달성
-                    pygame.event.post(
-                        pygame.event.Event(
-                            EVENT_ACQUIRE_ACHIEVEMENT, {"id": event.story_map}
-                        )
-                    )
+                        # 과 함께 업적 1~4 달성
+                        pygame.event.post(pygame.event.Event(
+                            EVENT_ACQUIRE_ACHIEVEMENT, {"id": event.story_map}))
                 elif event.player_win:
                     # 업적 0: 싱글 플레이어 승리
                     pygame.event.post(
@@ -195,7 +192,7 @@ def main():
                     "single_play" or "story_play"
                 ):
                     single.game.paused = True
-                    pause.init_pause(setting_UI, screen)
+                    pause.init_pause(setting_UI, screen, achi_object)
                     pause.pause()  # pause 상태에서의 루프
 
             # 효과음
