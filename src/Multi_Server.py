@@ -3,8 +3,6 @@ import threading
 import time
 import queue
 import pickle
-import Multi_GameManager
-import random
 
 class Multi_Server:
     def __init__(self):
@@ -16,8 +14,6 @@ class Multi_Server:
         self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)       # 방금 사용하고 close한 port를 즉시 다시 사용할 수 있다.
         self.server_socket.bind((self.host_ip, self.port))
         self.server_socket.listen(6)
-        self.MGM = Multi_GameManager.GameManager()
-        self.game_dic = {}
         self.is_password = False
         self.password = ""
         self.random_request = False
@@ -42,15 +38,18 @@ class Multi_Server:
         while True:
             msg = pickle.loads(client_socket.recv(4096))
             
-            if msg == "deleted":
-                break
-            elif msg[0:6] == "random":
-                if self.random_request == False:
-                    self.random_request = True
-                    
-                    num = int(msg[15:])
-            else:
+            if isinstance(msg,dict):
                 self.msg_queue.put(msg)
+            else:
+                if msg == "deleted":
+                    break
+                elif msg[0:6] == "random":
+                    if self.random_request == False:
+                        self.random_request = True
+                        
+                        num = int(msg[15:])
+                else:
+                    self.msg_queue.put(msg)
     
     def handle_client(self):
         while True:
@@ -89,38 +88,3 @@ class Multi_Server:
         thread_send = threading.Thread(target=self.multi_send)
         thread_send.daemon = True
         thread_send.start()
-
-
-    def init_game(self):
-        self.MGM.set_deck()
-        self.MGM.card_shuffle()
-        for i in range(len(self.socket_array)):
-            self.MGM.players.append(Multi_GameManager.User(False))
-
-        # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
-        for i in range(self.MGM.computer_count):
-            self.MGM.players.append(Multi_GameManager.Computer(True))
-
-        for i in range(self.MGM.story_A_computer_count):
-            self.MGM.players.append(Multi_GameManager.StoryA_User(True))
-
-        # 총 플레이어의 수
-        self.MGM.player_num = len(self.MGM.players)
-
-        # 턴 선택
-        self.MGM.turn = random.randint(0, self.MGM.player_num - 1)
-
-        # 플레이어들에게 카드 나눠줌
-        for i in range(len(self.MGM.players)):
-            self.MGM.players[i].hand = self.MGM.roulette_wheel_selection(
-                self.MGM.players[i].skill_card_weight
-            )
-
-        # self.game_dic['game_state'] = True
-        self.game_dic['shuffle_deck'] = self.MGM.deck
-        self.game_dic['players'] = self.MGM.players
-        # self.game_dic['players_num'] = self.MGM.player_num
-        # self.game_dic['computer_count'] = self.MGM.computer_count
-        # self.game_dic['story_A_computer_count'] = self.MGM.story_A_computer_count
-        self.game_dic['turn'] = self.MGM.turn
-        return self.game_dic

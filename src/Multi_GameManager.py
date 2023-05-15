@@ -53,6 +53,7 @@ class GameManager:
         self.set_uno = False
         self.achi_flag = [5, 6, 9]
         self.client = client
+        self.game_dic = {}
 
     # 특정 업적 달성을 위한 제약 조건 달성 시 True,
     # 특정 업적 달성을 위한 제약 조건을 위반했을 때 False
@@ -72,29 +73,7 @@ class GameManager:
         self.game_timer_end = False
         self.game_count_down()
         
-        a = 0
-        while True:
-            if self.client.msg_queue.empty() == False:
-                a += 1
                 
-                if a == 1:
-                    self.ref_deck = self.client.msg_queue.get()
-                    self.deck = self.ref_deck
-                
-                if a == 2:
-                    self.players = self.client.msg_queue.get()
-                
-                if a == 3:
-                    self.computer_count = self.client.msg_queue.get()
-                
-                if a == 4:
-                    self.story_A_computer_count = self.client.msg_queue.get()
-                
-                if a == 5:
-                    self.turn = self.client.msg_queue.get()
-                    break
-                
-
         if self.story == 0:
             print("스토리 A 특성 적용")
             # self.story_A_computer_count = 1
@@ -585,6 +564,16 @@ class GameManager:
             
             time.sleep(0.1)    
 
+    def initial_sync(self):
+        self.deck = self.game_dic.pop('shuffle_deck') # 덱
+        self.turn = self.game_dic['turn']  # 지금 누구 턴인지 나타내는 정수 변수
+        self.players = self.game_dic['players']   # 플레이어 객체들을 담을 배열
+    
+    # def sync(self):
+    #     self.turn = self.game_dic['turn']
+    #     self.players = self.game_dic['players']   # 플레이어 객체들을 담을 배열
+    #     self.player_num =self.game_dic['players_num']  # 전체 플레이어 수
+
 
 # -------------------------------------------------------------------------------------------------
 
@@ -635,6 +624,8 @@ class Player:
                 self.possible_cards_num.append(i)
 
 
+
+
 # -------------------------------------------------------------------------------------------------
 
 class User(Player):
@@ -646,26 +637,42 @@ class User(Player):
         self.possible_cards_num.clear()
         self.judge_possible_cards()
         
-        if self.is_computer == False:
-            return self.possible_cards_num
-        else:
-            while True:
-                if self.client.msg_queue.empty() == False:
-                    M = self.client.msg_queue.get()
+        # if self.is_computer == False:
+        #     return self.possible_cards_num
+        # else:
+        #     while True:
+        #         if self.client.msg_queue.empty() == False:
+        #             M = self.client.msg_queue.get()
                     
-                    if M == "get_card":
-                        self.get_card()
-                        return_value = "get"
-                        break
+        #             if M == "get_card":
+        #                 self.get_card()
+        #                 return_value = "get"
+        #                 break
                     
-                    if M[0:8] == "use_card":
-                        index = int(M[10:])
-                        self.use_card(index)
-                        return_value = f"{self.current_card.color}_{self.current_card.name}"
-                        self.current_card = 0
-                        break
+        #             if M[0:8] == "use_card":
+        #                 index = int(M[10:])
+        #                 self.use_card(index)
+        #                 return_value = f"{self.current_card.color}_{self.current_card.name}"
+        #                 self.current_card = 0
+        #                 break
                     
-            return return_value
+        #     return return_value
+        return self.possible_cards_num
+
+
+# -------------------------------------------------------------------------------------------------
+
+class MultiUser(Player):
+    def __init__(self, is_computer,ip):
+        super().__init__(is_computer)
+        self.ip = ip
+
+    def play(self):
+        self.possible_cards.clear()
+        self.possible_cards_num.clear()
+        self.judge_possible_cards()
+
+        return self.possible_cards_num
 
 
 # -------------------------------------------------------------------------------------------------
@@ -695,6 +702,35 @@ class Computer(Player):
             return_value = "get"
 
         return return_value
+
+
+# -------------------------------------------------------------------------------------------------
+class MultiComputer(Player):
+    def __init__(self, is_computer):
+        super().__init__(is_computer)
+
+    def computer_play(self):
+        self.possible_cards.clear()
+        self.possible_cards_num.clear()
+        self.judge_possible_cards()
+
+        if len(self.possible_cards_num) != 0:
+            ran = self.possible_cards_num -1        # 가능한 카드중 무조건 맨 뒤의 카드 선택
+            # ran = random.randrange(len(self.possible_cards))
+            self.use_card(ran)
+            return_value = f"{self.current_card.color}_{self.current_card.name}"
+            self.current_card = 0
+        else:
+            self.get_card()
+            return_value = "get"
+
+        # if len(self.hand) == 1 or len(self.hand) == 2:
+        #     self.press_uno()
+        if len(self.hand) == 2:
+            self.press_uno()
+
+        return return_value
+
 
 
 # -------------------------------------------------------------------------------------------------
@@ -758,4 +794,4 @@ class Card:
             self.score = 20
 
 
-Gm = GameManager()
+# Gm = GameManager()

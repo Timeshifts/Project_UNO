@@ -24,10 +24,13 @@ class Multi_Client:
         while True:
             msg = pickle.loads(self.client_socket.recv(4096))
             
-            if msg[0:3] == "uno":
-                self.uno_queue.put(msg)
-            else:
+            if isinstance(msg,dict):
                 self.msg_queue.put(msg)
+            else:
+                if msg[0:3] == "uno":
+                    self.uno_queue.put(msg)
+                else:
+                    self.msg_queue.put(msg)
             
             # "wrong" 받으면 와일문 탈출, 잘못된 패스워드를 입력한 경우이다.
             if msg == "wrong":
