@@ -700,7 +700,7 @@ class MultiUser(Player):
                     break
                 
                 if M[0:8] == "use_card":
-                    index = int(M[10:])
+                    index = int(M[9:])
                     self.use_card(index)
                     self.return_value = f"{self.current_card.color}_{self.current_card.name}"
                     self.current_card = 0

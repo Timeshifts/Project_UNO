@@ -33,7 +33,11 @@ class Multi_Server:
                 M = self.msg_queue.get()
                 
                 for i in range(len(self.socket_array)):
+                    if isinstance(M, dict):
+                        M['index'] = i
+                    
                     self.socket_array[i].send(pickle.dumps(M))
+                    
     
     
     def receive(self, client_socket):
