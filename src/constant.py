@@ -26,6 +26,7 @@ EVENT_OPEN_ACHIEVEMENT = pygame.event.custom_type()
 EVENT_ACQUIRE_ACHIEVEMENT = pygame.event.custom_type()
 
 EVENT_START_LOBBY_MULTI = pygame.event.custom_type()
+EVENT_START_MULTI = pygame.event.custom_type()
 EVENT_OPEN_HOST_PASSWORD = pygame.event.custom_type()
 EVENT_CLOSE_HOST_PASSWORD = pygame.event.custom_type()
 EVENT_OPEN_CLIENT_PASSWORD = pygame.event.custom_type()

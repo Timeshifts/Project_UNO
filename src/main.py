@@ -3,6 +3,7 @@ from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN
 from single_lobby import SingleLobby
 from multi_lobby import MultiLobby
 from single import Single
+from multi import Multi
 from text_prompt import Text_Prompt
 from constant import *
 
@@ -42,9 +43,14 @@ def get_background(state, size):
         return pygame.transform.scale(
             pygame.image.load(RESOURCE_PATH / "single" / "single_background.png"), size
         )
-    elif state =="single_lobby":
+    elif state == "single_lobby":
         return pygame.transform.scale(
             pygame.image.load(RESOURCE_PATH / "single" / "single_robby_background.png"),
+            size,
+        )
+    elif state == "multi":
+        return pygame.transform.scale(
+            pygame.image.load(RESOURCE_PATH / "single" / "multi_background.png"),
             size,
         )
     elif state == "multi_lobby":
@@ -52,6 +58,7 @@ def get_background(state, size):
             pygame.image.load(RESOURCE_PATH / "single" / "multi_robby_background.png"),
             size,
         )
+
 
 # 배경 음악 재생
 def load_bgm(path, volume=1.0):
@@ -140,9 +147,11 @@ def main():
                             {"path": RESOURCE_PATH / "sound" / "wild.mp3"},
                         )
                     )
-                
+
                 if endgame_prompt == None:
-                    endgame_prompt = endgame.EndGamePrompt(size, size, name, single, event.player_win, computer_count)
+                    endgame_prompt = endgame.EndGamePrompt(
+                        size, size, name, single, event.player_win, computer_count
+                    )
                     game_objects.append(endgame_prompt)
 
                 # 스토리 모드였다면 다음 지역 해금
@@ -156,13 +165,15 @@ def main():
                             EVENT_ACQUIRE_ACHIEVEMENT, {"id": event.story_map}))
                 elif event.player_win:
                     # 업적 0: 싱글 플레이어 승리
-                    pygame.event.post(pygame.event.Event(
-                        EVENT_ACQUIRE_ACHIEVEMENT, {"id": 0}))
+                    pygame.event.post(
+                        pygame.event.Event(EVENT_ACQUIRE_ACHIEVEMENT, {"id": 0})
+                    )
                 if event.player_win:
                     # 나머지 업적 flag를 읽어 업적 획득
                     for achi in single.game.achi_flag:
-                        pygame.event.post(pygame.event.Event(
-                        EVENT_ACQUIRE_ACHIEVEMENT, {"id": achi}))
+                        pygame.event.post(
+                            pygame.event.Event(EVENT_ACQUIRE_ACHIEVEMENT, {"id": achi})
+                        )
                 state = "end_game"
 
             # 게임 종료 상황에
@@ -194,16 +205,23 @@ def main():
             if event.type == EVENT_MAIN:
                 if state == "single_lobby":  # 싱글 플레이 제거
                     game_objects.remove(single_lobby)
-                elif state == "story_map":
-                    game_objects.remove(story_object)  # 스토리 모드 제거
-                elif state == "achievement":
-                    game_objects.remove(achi_object) # 업적 메뉴 제거
-                elif state == "multi_lobby":
+                elif state == "multi_lobby":  # 멑티 플레이 제거
                     game_objects.remove(multi_lobby)
-                elif state in ("single", "end_game"):
-                    game_objects.remove(single)
-                    del single  # single 객체 삭제
-                    single_turn = 0  # single 진행 X
+                    del multi_lobby
+                    multi_lobby = MultiLobby(size, size)
+                elif state == "story_map":  # 스토리 모드 제거
+                    game_objects.remove(story_object)
+                elif state == "achievement":  # 업적 메뉴 제거
+                    game_objects.remove(achi_object)
+                elif state in ("single", "multi", "end_game"):  # single 혹은 multi 제거
+                    if "single" in str(game_objects[0]):
+                        game_objects.remove(single)
+                        del single  # single 객체 삭제
+                        single_turn = 0  # single 진행 X
+                    elif "multi" in str(game_objects[0]):
+                        game_objects.remove(multi)
+                        del multi  # multi 객체 삭제
+
                 # 메인 메뉴로 복귀
                 game_objects.append(main_menu)
                 main_menu.resize(size)
@@ -245,11 +263,17 @@ def main():
                     # 변경 창에서 바꾼 비밀번호를 멀티에 반영
                     if "input" in event.dict.keys():
                         multi_lobby.password = event.input
+                        multi_lobby.mss.password(multi_lobby.password)  # 비밀번호를 서버에 적용
+                    game_objects.remove(text_prompt)
+                elif state == "passwd_change_client":
+                    # 변경 창에서 바꾼 비밀번호를 확인
+                    if "input" in event.dict.keys():
+                        multi_lobby.password = event.input
                     game_objects.remove(text_prompt)
                 elif state == "ip_change":
                     # 변경 창에서 바꾼 ip를 멀티에 반영
                     if "input" in event.dict.keys():
-                        multi_lobby.host_ip = event.input
+                        multi_lobby.input_ip = event.input
                     game_objects.remove(text_prompt)
                 state = "multi_lobby"
                 background = get_background(state, size)
@@ -285,7 +309,12 @@ def main():
                         setting.get_volume("bgm"),
                     )
                     single = Single(
-                        (width, height), size, computer_count, story_A_computer_count, name, event.index
+                        (width, height),
+                        size,
+                        computer_count,
+                        story_A_computer_count,
+                        name,
+                        event.index,
                     )
                 # 그게 없으면 일반 게임
                 else:
@@ -297,24 +326,51 @@ def main():
                     game_objects.remove(single_lobby)
                     state = "single"
                     background = get_background(state, size)
-                    single = Single((width, height), size, computer_count, story_A_computer_count, name)
+                    single = Single(
+                        (width, height),
+                        size,
+                        computer_count,
+                        story_A_computer_count,
+                        name,
+                    )
 
                 game_objects.append(single)
                 # single.name = name
                 # single.computer_count = computer_count
                 single_turn = 1
+            elif event.type == EVENT_START_MULTI:  # 멀티플레이 시작
+                # 컴퓨터 개수
+                computer_count = multi_lobby.other_chk.count(1)
+                story_A_computer_count = multi_lobby.other_chk.count(2)
+                player_count = multi_lobby.other_chk.count(3)
+                name = multi_lobby.name
+                # 게임 로비 제거
+                game_objects.remove(multi_lobby)
+                state = "multi"
+                background = get_background(state, size)
+                multi = Multi(
+                    (width, height),
+                    size,
+                    computer_count,
+                    story_A_computer_count,
+                    player_count,
+                    name,
+                )
+                game_objects.append(multi)
 
             # 접속 IP 입력 (클라이언트 측)
             if event.type == EVENT_OPEN_ENTER_IP:
                 game_objects.remove(multi_lobby)
-                text_prompt = Text_Prompt((width, height), 
-                                        size, 
-                                        prompt="Enter IP",
-                                        max_char=15,
-                                        done_event=EVENT_START_LOBBY_MULTI,
-                                        init_input=multi_lobby.host_ip)
+                text_prompt = Text_Prompt(
+                    (width, height),
+                    size,
+                    prompt="IP 입력",
+                    max_char=15,
+                    done_event=EVENT_START_LOBBY_MULTI,
+                    init_input=multi_lobby.input_ip,
+                )
                 state = "ip_change"
-                
+
                 text_prompt.resize(size)
                 game_objects.append(text_prompt)
             elif event.type == EVENT_CLOSE_ENTER_IP:
@@ -324,14 +380,16 @@ def main():
             # 비밀번호 입력 (클라이언트 측)
             if event.type == EVENT_OPEN_CLIENT_PASSWORD:
                 game_objects.remove(multi_lobby)
-                text_prompt = Text_Prompt((width, height), 
-                                        size, 
-                                        prompt="Enter password",
-                                        max_char=6,
-                                        done_event=EVENT_START_LOBBY_MULTI,
-                                        init_input=multi_lobby.password)
-                state = "passwd_change"
-                
+                text_prompt = Text_Prompt(
+                    (width, height),
+                    size,
+                    prompt="비밀번호 입력",
+                    max_char=6,
+                    done_event=EVENT_START_LOBBY_MULTI,
+                    init_input=multi_lobby.password,
+                )
+                state = "passwd_change_client"
+
                 text_prompt.resize(size)
                 game_objects.append(text_prompt)
             elif event.type == EVENT_CLOSE_CLIENT_PASSWORD:
@@ -341,14 +399,16 @@ def main():
             # 비밀번호 변경 (서버 측)
             if event.type == EVENT_OPEN_HOST_PASSWORD:
                 game_objects.remove(multi_lobby)
-                text_prompt = Text_Prompt((width, height), 
-                                        size, 
-                                        prompt="Enter password",
-                                        max_char=6,
-                                        done_event=EVENT_START_LOBBY_MULTI,
-                                        init_input=multi_lobby.password)
+                text_prompt = Text_Prompt(
+                    (width, height),
+                    size,
+                    prompt="비밀번호 입력",
+                    max_char=6,
+                    done_event=EVENT_START_LOBBY_MULTI,
+                    init_input=multi_lobby.password,
+                )
                 state = "passwd_change"
-                
+
                 text_prompt.resize(size)
                 game_objects.append(text_prompt)
             elif event.type == EVENT_CLOSE_HOST_PASSWORD:
@@ -359,18 +419,22 @@ def main():
             if event.type == EVENT_OPEN_RENAME:
                 if state == "single_lobby":
                     game_objects.remove(single_lobby)
-                    text_prompt = Text_Prompt((width, height), 
-                                         size, 
-                                         done_event=EVENT_START_LOBBY,
-                                         init_input=single_lobby.name)
+                    text_prompt = Text_Prompt(
+                        (width, height),
+                        size,
+                        done_event=EVENT_START_LOBBY,
+                        init_input=single_lobby.name,
+                    )
                 else:
                     game_objects.remove(multi_lobby)
-                    text_prompt = Text_Prompt((width, height), 
-                                         size, 
-                                         done_event=EVENT_START_LOBBY_MULTI,
-                                         init_input=multi_lobby.name)
+                    text_prompt = Text_Prompt(
+                        (width, height),
+                        size,
+                        done_event=EVENT_START_LOBBY_MULTI,
+                        init_input=multi_lobby.name,
+                    )
                 state = "rename"
-                
+
                 text_prompt.resize(size)
                 game_objects.append(text_prompt)
             elif event.type == EVENT_CLOSE_RENAME:
@@ -396,7 +460,9 @@ def main():
                 # 이미 달성한 업적이면 무시
                 if event.id not in achi_object.acquired:
                     achi_object.acquire(event.id)
-                    game_objects.append(achievement.AchievementIndicator(event.id, game_objects))
+                    game_objects.append(
+                        achievement.AchievementIndicator(event.id, game_objects)
+                    )
 
             # 업적 열기
             if event.type == EVENT_OPEN_ACHIEVEMENT:
