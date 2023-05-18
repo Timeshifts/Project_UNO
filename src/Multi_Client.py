@@ -30,12 +30,14 @@ class Multi_Client:
                 else:
                     if msg[0:3] == "uno":
                         self.uno_queue.put(msg)
+                    if "type" in msg:
+                        self.handle_sync_message(msg)  # 동기화 메시지 처리
                     else:
                         self.msg_queue.put(msg)
 
                 # "wrong" 받으면 와일문 탈출, 잘못된 패스워드를 입력한 경우이다.
-                if msg == "wrong":
-                    break
+                # if msg == "wrong":
+                #     break
                 # -----------------------------------------------
 
                 # "kicked" 받으면 와일문 탈출, 강퇴당한 경우이다.
@@ -49,7 +51,9 @@ class Multi_Client:
 
     def client_start(self):
         try:  # 해당하는 ip가 없는 경우 에러 예외 처리
+            self.client_socket.settimeout(3)  # 타임아웃을 5초로 설정
             self.client_socket.connect((self.ip, 12000))  # int 넣으면 에러 발생
+            self.client_socket.settimeout(None) # 연결이 완료되면 timeout 없앰
             self.thread_for_receive = threading.Thread(target=self.receive)
             self.thread_for_receive.start()
             return True
@@ -62,5 +66,10 @@ class Multi_Client:
         print(f"연결 끊김")
         self.thread_for_receive.join()
         self.client_socket.close()
+
+    def handle_sync_message(self, msg):
+        if msg["type"] == "player_index":
+            self.other_chk = msg["chk"]
+            print(f"동기화 완료: other_chk = {self.other_chk}")
 
     # -----------------------------------------------

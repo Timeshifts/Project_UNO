@@ -6,7 +6,6 @@ import pickle
 import initialization
 
 
-
 class Multi_Server:
     def __init__(self):
         self.host_ip = socket.gethostbyname(socket.gethostname())
@@ -22,9 +21,12 @@ class Multi_Server:
         self.is_password = False
         self.password = ""
         self.random_request = False
-    
+
     def single_send(self, index, msg):
-        self.socket_array[index].send(pickle.dumps(msg))
+        try:
+            self.socket_array[index].send(pickle.dumps(msg))
+        except:
+            print("현재 연결은 원격 호스트에 의해 강제로 끊겼습니다")
 
     def multi_send(self):
         while True:
@@ -35,9 +37,13 @@ class Multi_Server:
 
                 for i in range(len(self.socket_array)):
                     if isinstance(M, dict):
-                        M['index'] = i
-                            
+                        M["index"] = i
                     self.socket_array[i].send(pickle.dumps(M))
+
+    def multi_sendto(self, msg):
+        for i in range(len(self.socket_array)):
+            self.single_send(i, msg)
+        print("각 클라이언트에게 전송")
 
     def receive(self, client_socket):
         try:
@@ -47,6 +53,7 @@ class Multi_Server:
                 if isinstance(msg, dict):
                     self.msg_queue.put(msg)
                 elif isinstance(msg, list):
+
                     dic = initialization.init_game(self.socket_array, msg[0], msg[1], msg[2])             
                     self.msg_queue.put( dic )
                 else:
@@ -62,7 +69,7 @@ class Multi_Server:
                     else:
                         self.msg_queue.put(msg)
         except:
-            print("서버: 원격 호스트에 의해 강제로 끊김")
+            print("서버: 원격 호스트에 의해 강제로 끊김!")
 
     def handle_client(self):
         while True:
@@ -82,15 +89,16 @@ class Multi_Server:
                 self.authenticated_client(connect_socket, addr)
 
     def password_receive(self, connect_socket, addr):
-        try:
-            msg = pickle.loads(connect_socket.recv(1024))
+        while True:
+            try:
+                msg = pickle.loads(connect_socket.recv(1024))
 
-            if msg == self.password:
-                self.authenticated_client(connect_socket, addr)
-            else:
-                connect_socket.send(pickle.dumps("wrong"))
-        except:
-            print("원격 호스트에 의해 강제로 끊김")
+                if msg == self.password:
+                    self.authenticated_client(connect_socket, addr)
+                else:
+                    connect_socket.send(pickle.dumps("wrong"))
+            except:
+                print("원격 호스트에 의해 강제로 끊김")
 
     def authenticated_client(self, connect_socket, addr):
         print(f"{addr} 연결됨")

@@ -53,12 +53,13 @@ class MultiLobby(Menu):
     def update(self):
         # TODO: 서버와 통신하여 타 플레이어 정보 받아오기
         self.other = ["1", "2", "3", "4", "5"]
-        # self.other_chk = []
+        self.other_chk = self.mss.chk
         self.max_other = 5
         self.avail_menu = ["이름 변경", "돌아가기"]
         self.menu = self.avail_menu
         self.max_menu = 2
         self.init_draw()
+        print("화면 업데이트")
 
     def init_draw(self):
         self.button = []
@@ -120,7 +121,9 @@ class MultiLobby(Menu):
             self.rect.append(self.button[i + self.max_other].rect)
 
             # 본인 이름 표시
-            self.text_name = setting.get_font(50).render(self.name, True, "White")
+            self.text_name = setting.get_font(50).render(
+                f"방장: {self.name}", True, "White"
+            )
             self.text_name_rect = self.text_name.get_rect(
                 center=(self.size[0] / 2, self.size[1] * 0.3)
             )
@@ -238,6 +241,10 @@ class MultiLobby(Menu):
                         f"{self.other[index]} (A)", "White", "White"
                     )
                     self.other_chk[index] = 2
+                    # for i in range(self.max_other):
+                    print(self.other_chk)
+                    self.mss.player_index(self.other_chk)  # 클라이언트에게 other_chk 리스트 보내기
+
                 elif self.other_chk[index] == 2:  # A지역 컴퓨터 → 없음
                     self.button[index].ChangeImage(
                         pygame.transform.scale(
@@ -249,6 +256,8 @@ class MultiLobby(Menu):
                     )
                     self.button[index].ChangeText("+", "Black", "Black")
                     self.other_chk[index] = 0
+                    print(self.other_chk)
+                    self.mss.player_index(self.other_chk)
                 elif self.other_chk[index] == 3:  # 멀티 플레이어 → 없음
                     self.button[index].ChangeImage(
                         pygame.transform.scale(
@@ -260,6 +269,8 @@ class MultiLobby(Menu):
                     )
                     self.button[index].ChangeText("+", "Black", "Black")
                     self.other_chk[index] = 0
+                    print(self.other_chk)
+                    self.mss.player_index(self.other_chk)
                     # 플레이어 추방 코드 추가
                     #
                     #
@@ -272,6 +283,8 @@ class MultiLobby(Menu):
                     )
                     self.button[index].ChangeText(self.other[index], "White", "White")
                     self.other_chk[index] = 1
+                    print(self.other_chk)
+                    self.mss.player_index(self.other_chk)
         else:
             index -= self.max_other
             if self.avail_menu[index] == "이름 변경":
@@ -329,6 +342,7 @@ class MultiLobby(Menu):
                         self.host_ip = socket.gethostbyname(socket.gethostname())
                         self.state = "client_connected"
                         self.update()
+                        self.mss.connect()
             elif self.avail_menu[index] == "접속하기":
                 if self.password == "":  # 비밀번호를 입력하지 않으면
                     pass
@@ -343,6 +357,7 @@ class MultiLobby(Menu):
                         self.host_ip = socket.gethostbyname(socket.gethostname())
                         self.state = "client_connected"
                         self.update()
+                        self.mss.connect()
             elif self.avail_menu[index] == "게임 시작":
                 # server_connected: 게임 시작
                 if self.other_chk.count(0) == 5:  # 나 말고 없으면

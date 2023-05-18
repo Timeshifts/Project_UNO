@@ -1,5 +1,7 @@
 import sys, os
 
+import pygame
+
 # src directory에서 import 가능하게 추가
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
@@ -7,7 +9,7 @@ import random
 import unittest
 import GameManager as GM
 from setting_menu import Setting_UI
-from card import Card
+from card import Card, roulette_wheel_selection
 
 
 class Test(unittest.TestCase):
@@ -300,9 +302,6 @@ class Test(unittest.TestCase):
             if self.gm.turn_count % self.gm.top_card_change_num == (self.gm.top_card_change_num-1):
                 self.grave_top_four = self.gm.grave_top_color
 
-
-
-
     def test_story_d(self):
         self.gm = GM.Gm
         self.gm.start_cards_integer = 10
@@ -336,6 +335,27 @@ class Test(unittest.TestCase):
                 for a in range(len(self.gm.players)):
                     before_hand.append(len(self.gm.players[a].hand))
 
+    def test_other_func(self):
+        pygame.init()
+        self.gm = GM.Gm
+        self.gm.start_cards_integer = 10
+        self.gm.computer_count = 3
+        self.gm.hand_change_num = 20
+        self.gm.game_start()
+
+        self.gm.turn_count = 1
+        self.assertEqual(self.gm.wild_four(), None)
+        self.assertEqual(GM.StoryA_User(True).computer_play(), 'get')
+
+        self.assertIn(self.gm.player_score_calculate(), range(6))
+        self.assertEqual(self.gm.turn_end_act(), None)
+
+        self.gm.turn_count = 10
+        self.gm.hand_change_num = 10
+        self.assertEqual(self.gm.hand_change(), None)
+
+        self.assertEqual(self.gm.game_end(), None)
+        pygame.quit()
 
 
 

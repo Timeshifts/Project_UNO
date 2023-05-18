@@ -7,7 +7,7 @@ import Multi_Client
 from constant import EVENT_END_GAME, EVENT_TURN_END
 
 
-class GameManager:
+class Multi_GameManager:
     # 모든 업적이 승리와 관련되어 있으므로,
     # 이번에 달성할 수 있는 업적인지를 한번에 나타낼 수 있습니다.
     # 단, 단순 승리 업적은 원래 위치에서 처리하도록 하겠습니다.
@@ -62,15 +62,14 @@ class GameManager:
     @staticmethod
     def toggle_achi(num, state):
         if state:
-            if num-1 not in GameManager.achi_flag:
-                GameManager.achi_flag.append(num-1)
+            if num - 1 not in Multi_GameManager.achi_flag:
+                Multi_GameManager.achi_flag.append(num - 1)
         else:
-            if num-1 in GameManager.achi_flag:
-                GameManager.achi_flag.remove(num-1)
+            if num - 1 in Multi_GameManager.achi_flag:
+                Multi_GameManager.achi_flag.remove(num - 1)
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
-
         self.game_timer_end = False
         self.game_count_down()
 
@@ -202,8 +201,7 @@ class GameManager:
 
     def computer_wait(self, option=0):
         time.sleep(0.25)
-        pygame.event.post(pygame.event.Event(
-            EVENT_TURN_END, {"option": option}))
+        pygame.event.post(pygame.event.Event(EVENT_TURN_END, {"option": option}))
 
     def turn_end_act(self):
         # print("비동기 동작")
@@ -445,13 +443,11 @@ class GameManager:
             time.sleep(0.2)
 
     def game_count_down(self):  # 전체 시간
-        self.game_timer_thread = threading.Thread(
-            target=self.game_timer, args=(100,))
+        self.game_timer_thread = threading.Thread(target=self.game_timer, args=(100,))
         self.game_timer_thread.start()
 
     def turn_count_down(self):  # 턴 시간
-        self.turn_timer_thread = threading.Thread(
-            target=self.turn_timer, args=(15,))
+        self.turn_timer_thread = threading.Thread(target=self.turn_timer, args=(15,))
         self.turn_timer_thread.start()
 
     def top_card_change(self):
@@ -645,6 +641,7 @@ class Player:
 
 # -------------------------------------------------------------------------------------------------
 
+
 class User(Player):
     def __init__(self, is_computer):
         super().__init__(is_computer)
@@ -679,6 +676,7 @@ class User(Player):
 
 # -------------------------------------------------------------------------------------------------
 
+
 class MultiUser(Player):
     def __init__(self, is_computer, ip):
         super().__init__(is_computer)
@@ -710,7 +708,9 @@ class MultiUser(Player):
                 if M[0:8] == "use_card":
                     index = int(M[9:])
                     self.use_card(index)
-                    self.return_value = f"{self.current_card.color}_{self.current_card.name}"
+                    self.return_value = (
+                        f"{self.current_card.color}_{self.current_card.name}"
+                    )
                     self.current_card = 0
                     break
 
@@ -729,7 +729,7 @@ class Computer(Player):
 
         if Gm.set_uno == False and len(self.hand) == 2:
             # 컴퓨터의 우노 사용 - 8번 업적(사냥꾼) 획득 가능
-            GameManager.toggle_achi(8, True)
+            Multi_GameManager.toggle_achi(8, True)
             self.press_uno()
 
         if len(self.possible_cards_num) != 0:
@@ -755,7 +755,7 @@ class MultiComputer(Player):
         self.judge_possible_cards()
 
         if len(self.possible_cards_num) != 0:
-            ran = self.possible_cards_num - 1        # 가능한 카드중 무조건 맨 뒤의 카드 선택
+            ran = self.possible_cards_num - 1  # 가능한 카드중 무조건 맨 뒤의 카드 선택
             # ran = random.randrange(len(self.possible_cards))
             self.use_card(ran)
             return_value = f"{self.current_card.color}_{self.current_card.name}"
@@ -791,7 +791,8 @@ class StoryA_User(Player):
 
         for i in range(len(self.possible_cards_num)):
             print(
-                f"{self.possible_cards_num[i]} : {self.possible_cards[i].color}_{self.possible_cards[i].name}")
+                f"{self.possible_cards_num[i]} : {self.possible_cards[i].color}_{self.possible_cards[i].name}"
+            )
 
         if len(self.possible_cards_num) != 0:
             for i in range(len(self.possible_cards_num)):
@@ -815,6 +816,7 @@ class StoryA_User(Player):
             return_value = "get"
 
         return return_value
+
 
 # -------------------------------------------------------------------------------------------------
 
