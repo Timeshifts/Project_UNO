@@ -69,7 +69,7 @@ class Multi_Server:
                     else:
                         self.msg_queue.put(msg)
         except:
-            print("서버: 원격 호스트에 의해 강제로 끊김")
+            print("서버: 원격 호스트에 의해 강제로 끊김!")
 
     def handle_client(self):
         while True:
@@ -89,15 +89,16 @@ class Multi_Server:
                 self.authenticated_client(connect_socket, addr)
 
     def password_receive(self, connect_socket, addr):
-        try:
-            msg = pickle.loads(connect_socket.recv(1024))
+        while True:
+            try:
+                msg = pickle.loads(connect_socket.recv(1024))
 
-            if msg == self.password:
-                self.authenticated_client(connect_socket, addr)
-            else:
-                connect_socket.send(pickle.dumps("wrong"))
-        except:
-            print("원격 호스트에 의해 강제로 끊김")
+                if msg == self.password:
+                    self.authenticated_client(connect_socket, addr)
+                else:
+                    connect_socket.send(pickle.dumps("wrong"))
+            except:
+                print("원격 호스트에 의해 강제로 끊김")
 
     def authenticated_client(self, connect_socket, addr):
         print(f"{addr} 연결됨")
