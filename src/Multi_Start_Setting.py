@@ -12,6 +12,8 @@ class Multi_Start_Setting:
     def __init__(self):
         self.host_ip = 0
         self.input_ip = 0
+        self.Server = 0
+        self.Client = 0
         self.chk = [0, 0, 0, 0, 0]
 
     def server(self):

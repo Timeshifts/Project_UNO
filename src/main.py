@@ -5,6 +5,7 @@ import story_map
 import setting_menu
 import achievement
 import endgame
+import threading
 from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN_OPTION
 from single_lobby import SingleLobby
 from multi_lobby import MultiLobby
@@ -21,6 +22,8 @@ except ImportError:
     sys.exit(1)
 
 setting_UI = None
+
+thread_stop = False
 
 
 def get_background(state, size):
@@ -71,7 +74,7 @@ def load_bgm(path, volume=1.0):
     pygame.mixer.music.load(path)
     pygame.mixer.music.set_volume(volume)
     pygame.mixer.music.play(-1)  # -1 = 무한 반복 재생
-
+    
 
 def main():
     pygame.init()
@@ -352,11 +355,27 @@ def main():
                 computer_count = multi_lobby.other_chk.count(1)
                 story_A_computer_count = multi_lobby.other_chk.count(2)
                 player_count = multi_lobby.other_chk.count(3)
+                card_count = 5
                 name = multi_lobby.name
+                
+                multi_lobby.mss.Client.send([card_count, computer_count, story_A_computer_count])
+                
+                # --------------------------------------------------------
+                dic = {}
+                
+                while True:
+                    if multi_lobby.mss.Client.msg_queue.empty() == False:
+                        M = multi_lobby.mss.Client.msg_queue.get()
+                        
+                        if isinstance(M, dict):
+                            dic = M
+                            break
+
                 # 게임 로비 제거
                 game_objects.remove(multi_lobby)
                 state = "multi"
                 background = get_background(state, size)
+                
                 multi = Multi_Single(
                     (width, height),
                     size,
@@ -364,8 +383,13 @@ def main():
                     story_A_computer_count,
                     player_count,
                     name,
+                    -1,
+                    multi_lobby.mss.Client,
+                    dic
                 )
                 game_objects.append(multi)
+                # ----------------------------------------------------------
+
 
             # 접속 IP 입력 (클라이언트 측)
             if event.type == EVENT_OPEN_ENTER_IP:

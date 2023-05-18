@@ -5,6 +5,7 @@ import threading
 import time
 import random
 import Multi_Client
+import Multi_Start_Setting
 from button import Button
 from constant import *
 
@@ -13,14 +14,7 @@ clock = pygame.time.Clock()
 
 class Multi_Single:
     def __init__(
-        self,
-        pos=(0, 0),
-        size=(150, 50),
-        computer_count=1,
-        story_A_computer_count=0,
-        player_count=0,
-        name="ME",
-        story=-1,
+        self, pos=(0, 0), size=(150, 50), computer_count=1, story_A_computer_count=0, player_count=0, name="ME", story=-1, client = 0, dict={}
     ):
         # self.menu = self.avail_menu
         # self.max_menu = len(self.menu)
@@ -47,6 +41,8 @@ class Multi_Single:
         self.count = 0  # 애니메이션 횟수
         self.effect_index = 0  # 내는 카드 번호
         self.story = story  # 스토리 모드 (-1이면 스토리 아님)
+        self.client = client
+        self.dic = dict
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -82,11 +78,13 @@ class Multi_Single:
 
     def game_start(self):
         # Gm 역시 single처럼 게임 재시작시 변경되도록 처리
-        MGM.Gm = MGM.Multi_GameManager("1")
-        self.game = MGM.Gm
-        self.game.story = self.story
-        self.game.computer_count = self.computer_count
-        self.game.start_cards_integer = 5
+        GM.Gm = GM.GameManager(self.client, self.dic)
+
+        self.game = GM.Gm
+        #self.game.story = self.story
+        #self.game.computer_count = self.computer_count
+        #self.game.start_cards_integer = 5
+        self.game.initial_sync()
         self.game.game_start()
         self.update_card()
 

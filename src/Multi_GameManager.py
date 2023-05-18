@@ -13,7 +13,7 @@ class Multi_GameManager:
     # 단, 단순 승리 업적은 원래 위치에서 처리하도록 하겠습니다.
     achi_flag = [5, 6, 9]
 
-    def __init__(self, client):
+    def __init__(self, client, dic = {}):
         self.turn = 0  # 지금 누구 턴인지 나타내는 정수 변수
         self.turn_count = 0  # 총 몇번의 턴이 진행되었는지
         self.players = []  # 플레이어 객체들을 담을 배열
@@ -54,7 +54,7 @@ class Multi_GameManager:
         self.set_uno = False
         self.achi_flag = [5, 6, 9]
         self.client = client
-        self.game_dic = {}
+        self.game_dic = dic
 
     # 특정 업적 달성을 위한 제약 조건 달성 시 True,
     # 특정 업적 달성을 위한 제약 조건을 위반했을 때 False
@@ -560,20 +560,24 @@ class Multi_GameManager:
 
     def uno_thread(self):
         while True:
-            if self.Clinet.uno_queue.empty() == False:
-                M = self.Client.uno_queue.get()
+            if self.client.uno_queue.empty() == False:
+                M = self.client.uno_queue.get()
                 index = int(M[4])
                 boolean = bool(M[6:])
+                
+                print("통신으로 우노 벨류 바뀜")
 
                 self.players[index].is_uno = boolean
 
             time.sleep(0.1)
 
     def initial_sync(self):
-        self.ref_deck = self.game_dic.pop("ref_deck")
-        self.deck = self.game_dic.pop("deck")  # 덱
-        self.turn = self.game_dic["turn"]  # 지금 누구 턴인지 나타내는 정수 변수
-        self.players = self.game_dic["players"]  # 플레이어 객체들을 담을 배열
+        self.ref_deck = self.game_dic['ref_deck']
+        self.deck = self.game_dic['deck']  # 덱
+        self.turn = self.game_dic['turn']  # 지금 누구 턴인지 나타내는 정수 변수
+        self.players = self.game_dic['players']   # 플레이어 객체들을 담을 배열
+        self.computer_count = self.game_dic['computer_count']
+        self.story_A_computer_count = self.game_dic['story_A_computer_count']
 
     # def sync(self):
     #     self.turn = self.game_dic['turn']
@@ -684,7 +688,7 @@ class MultiUser(Player):
         self.possible_cards_num.clear()
         self.judge_possible_cards()
 
-        if self.ip == Gm.Client.client_socket.getsockname():
+        if self.ip == Gm.client.client_socket.getsockname():
             return self.possible_cards_num
         else:
             thread = threading.Thread(target=self.threading_receive)
@@ -693,8 +697,8 @@ class MultiUser(Player):
 
     def threading_receive(self):
         while True:
-            if Gm.Client.msg_queue.empty() == False:
-                M = Gm.Client.msg_queue.get()
+            if Gm.client.msg_queue.empty() == False:
+                M = Gm.client.msg_queue.get()
 
                 if M == "get_card":
                     self.get_card()
@@ -832,4 +836,4 @@ class Card:
             self.score = 20
 
 
-MGm = Multi_GameManager("1")
+Gm = GameManager("1", {})
