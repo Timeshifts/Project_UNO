@@ -26,7 +26,7 @@ class Multi_Client:
             while True:
                 msg = pickle.loads(self.client_socket.recv(4096))
 
-                if isinstance(msg,dict):
+                if isinstance(msg, dict):
                     self.msg_queue.put(msg)
                 else:
                     if msg[0:3] == "uno":
@@ -63,5 +63,9 @@ class Multi_Client:
         print(f"연결 끊김")
         self.thread_for_receive.join()
         self.client_socket.close()
+
+    def handle_sync_message(self, msg):
+        if msg["type"] == "player_index":
+            self.other_chk = msg["chk"]
 
     # -----------------------------------------------

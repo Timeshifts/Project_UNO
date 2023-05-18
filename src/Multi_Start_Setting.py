@@ -25,8 +25,10 @@ class Multi_Start_Setting:
     def player_index(self, chk):
         # 다른 클라이언트에게 전달할 동기화 메시지 생성
         sync_msg = {"type": "player_index", "chk": chk}
+        print("리스트 받기")
         # 동기화 메시지를 모든 클라이언트에 전송
-        self.Server.multi_send(sync_msg)
+        self.Server.multi_sendto(sync_msg)
+        print("리스트 전송")
 
     def password(self, pw):
         # 서버 패스워드 설정
