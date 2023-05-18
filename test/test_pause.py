@@ -56,6 +56,13 @@ class PauseMainTest(unittest.TestCase):
         self.assertEqual(pause.pause(), None)
 
         pygame.quit()
+
+    def test_pause_select(self):
+        setting.options["resolution"] = 3
+        pygame.init()
+        for i in range(len(pause.Paused_Menu.avail_menu)):
+            self.assertEqual(pause.Paused_Menu().select_menu(i), None)
+        pygame.quit()
     
 if __name__ == "__main__":
     unittest.main()
