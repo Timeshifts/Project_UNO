@@ -2,16 +2,16 @@ import Multi_GameManager
 import random
 
 client = None
-MGM = Multi_GameManager.GameManager(client)
+MGM = Multi_GameManager.Multi_GameManager(client)
 game_dic = {}
 
 
-def init_game(clients, card_count ,computer_count, storyA_count):
+def init_game(clients, card_count, computer_count, storyA_count):
     MGM.start_cards_integer = card_count
     MGM.set_deck()
     MGM.card_shuffle()
     for client in clients:
-        MGM.players.append(Multi_GameManager.MultiUser(False,client.getpeername()))
+        MGM.players.append(Multi_GameManager.MultiUser(False, client.getpeername()))
 
     # 컴퓨터 수 만큼 players에 컴퓨터 객체 집어넣음
     for i in range(computer_count):
@@ -31,9 +31,9 @@ def init_game(clients, card_count ,computer_count, storyA_count):
         MGM.players[i].hand = MGM.roulette_wheel_selection(
             MGM.players[i].skill_card_weight
         )
-        
-    game_dic['ref_deck'] = MGM.ref_deck
-    game_dic['deck'] = MGM.deck
-    game_dic['players'] = MGM.players
-    game_dic['turn'] = MGM.turn
+
+    game_dic["ref_deck"] = MGM.ref_deck
+    game_dic["deck"] = MGM.deck
+    game_dic["players"] = MGM.players
+    game_dic["turn"] = MGM.turn
     return game_dic
