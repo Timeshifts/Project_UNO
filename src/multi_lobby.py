@@ -339,6 +339,7 @@ class MultiLobby(Menu):
                         self.host_ip = socket.gethostbyname(socket.gethostname())
                         self.state = "client_connected"
                         self.update()
+                        self.mss.connect()
             elif self.avail_menu[index] == "접속하기":
                 if self.password == "":  # 비밀번호를 입력하지 않으면
                     pass
@@ -353,6 +354,7 @@ class MultiLobby(Menu):
                         self.host_ip = socket.gethostbyname(socket.gethostname())
                         self.state = "client_connected"
                         self.update()
+                        self.mss.connect()
             elif self.avail_menu[index] == "게임 시작":
                 # server_connected: 게임 시작
                 if self.other_chk.count(0) == 5:  # 나 말고 없으면

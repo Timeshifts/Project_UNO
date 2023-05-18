@@ -110,6 +110,16 @@ class Multi_Start_Setting:
                 M = self.Client.msg_queue.get()
                 return M
 
+    def connect(self):
+        while True:
+            # Client의 msg_queue가 비어있으면 계속 대기한다.
+            if self.Client.msg_queue.empty() == True:
+                time.sleep(0.2)
+            # Client의 msg_queue가 채워져있으면 else 문으로 간다. 이는 서버로부터 메세지를 받았음을 의미
+            else:
+                # msg_queue로부터 메세지를 pop해온다.
+                print(self.Client.msg_queue.get())
+
     def kicked(self):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
         print("강퇴")
         self.Client.client_end()
