@@ -35,12 +35,12 @@ class Multi_Server:
                 for i in range(len(self.socket_array)):
                     if isinstance(M, dict):
                         M["index"] = i
-
                     self.socket_array[i].send(pickle.dumps(M))
 
     def multi_sendto(self, msg):
         for i in range(len(self.socket_array)):
             self.single_send(i, msg)
+        print("각 클라이언트에게 전송")
 
     def receive(self, client_socket):
         try:

@@ -31,6 +31,8 @@ class Multi_Client:
                 else:
                     if msg[0:3] == "uno":
                         self.uno_queue.put(msg)
+                    if "type" in msg:
+                        self.handle_sync_message(msg)  # 동기화 메시지 처리
                     else:
                         self.msg_queue.put(msg)
 
