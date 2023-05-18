@@ -12,6 +12,7 @@ class Multi_Start_Setting:
     def __init__(self):
         self.host_ip = 0
         self.input_ip = 0
+        self.chk = [0, 0, 0, 0, 0]
 
     def server(self):
         # 서버 생성후 구동시키고, 서버 생성자의 ip 출력
@@ -127,7 +128,8 @@ class Multi_Start_Setting:
             else:
                 # msg_queue로부터 메세지를 pop해온다.
                 print(self.Client.msg_queue.get())
-                pygame.event.post(pygame.event.Event(EVENT_UPDATE))
+                self.chk = self.Client.msg_queue.get()["chk"]
+                pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
 
     def kicked(self):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
         print("강퇴")

@@ -53,7 +53,7 @@ class MultiLobby(Menu):
     def update(self):
         # TODO: 서버와 통신하여 타 플레이어 정보 받아오기
         self.other = ["1", "2", "3", "4", "5"]
-        # self.other_chk = []
+        self.other_chk = self.mss.chk
         self.max_other = 5
         self.avail_menu = ["이름 변경", "돌아가기"]
         self.menu = self.avail_menu
@@ -121,7 +121,9 @@ class MultiLobby(Menu):
             self.rect.append(self.button[i + self.max_other].rect)
 
             # 본인 이름 표시
-            self.text_name = setting.get_font(50).render(self.name, True, "White")
+            self.text_name = setting.get_font(50).render(
+                f"방장: {self.host_ip}", True, "White"
+            )
             self.text_name_rect = self.text_name.get_rect(
                 center=(self.size[0] / 2, self.size[1] * 0.3)
             )
