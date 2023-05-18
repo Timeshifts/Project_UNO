@@ -6,7 +6,6 @@ import pickle
 import initialization
 
 
-
 class Multi_Server:
     def __init__(self):
         self.host_ip = socket.gethostbyname(socket.gethostname())
@@ -22,7 +21,7 @@ class Multi_Server:
         self.is_password = False
         self.password = ""
         self.random_request = False
-    
+
     def single_send(self, index, msg):
         self.socket_array[index].send(pickle.dumps(msg))
 
@@ -35,9 +34,13 @@ class Multi_Server:
 
                 for i in range(len(self.socket_array)):
                     if isinstance(M, dict):
-                        M['index'] = i
-                    
+                        M["index"] = i
+
                     self.socket_array[i].send(pickle.dumps(M))
+
+    def multi_sendto(self, msg):
+        for i in range(len(self.socket_array)):
+            self.single_send(i, msg)
 
     def receive(self, client_socket):
         try:
@@ -47,7 +50,9 @@ class Multi_Server:
                 if isinstance(msg, dict):
                     self.msg_queue.put(msg)
                 elif isinstance(msg, list):
-                    self.msg_queue.put( self.multi_game_initialization(msg[0], msg[1], msg[2]) )
+                    self.msg_queue.put(
+                        self.multi_game_initialization(msg[0], msg[1], msg[2])
+                    )
                 else:
                     if msg == "deleted":
                         break

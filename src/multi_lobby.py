@@ -238,6 +238,8 @@ class MultiLobby(Menu):
                         f"{self.other[index]} (A)", "White", "White"
                     )
                     self.other_chk[index] = 2
+                    # for i in range(self.max_other):
+                    print(self.other_chk)
                 elif self.other_chk[index] == 2:  # A지역 컴퓨터 → 없음
                     self.button[index].ChangeImage(
                         pygame.transform.scale(
@@ -249,6 +251,7 @@ class MultiLobby(Menu):
                     )
                     self.button[index].ChangeText("+", "Black", "Black")
                     self.other_chk[index] = 0
+                    print(self.other_chk)
                 elif self.other_chk[index] == 3:  # 멀티 플레이어 → 없음
                     self.button[index].ChangeImage(
                         pygame.transform.scale(
@@ -260,6 +263,7 @@ class MultiLobby(Menu):
                     )
                     self.button[index].ChangeText("+", "Black", "Black")
                     self.other_chk[index] = 0
+                    print(self.other_chk)
                     # 플레이어 추방 코드 추가
                     #
                     #
@@ -272,6 +276,7 @@ class MultiLobby(Menu):
                     )
                     self.button[index].ChangeText(self.other[index], "White", "White")
                     self.other_chk[index] = 1
+                    print(self.other_chk)
         else:
             index -= self.max_other
             if self.avail_menu[index] == "이름 변경":

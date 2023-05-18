@@ -22,6 +22,12 @@ class Multi_Start_Setting:
         self.Client = Multi_Client.Multi_Client(self.host_ip)
         self.Client.client_start()
 
+    def player_index(self, chk):
+        # 다른 클라이언트에게 전달할 동기화 메시지 생성
+        sync_msg = {"type": "player_index", "chk": chk}
+        # 동기화 메시지를 모든 클라이언트에 전송
+        self.Server.multi_send(sync_msg)
+
     def password(self, pw):
         # 서버 패스워드 설정
         self.Server.is_password = True
@@ -57,10 +63,10 @@ class Multi_Start_Setting:
     #    MGM.deck = M['players']
     #    MGM.deck = M['turn']
 
-        #         c = int(input())
-        #         print(f" {c}번 인덱스 소켓 강퇴됨 ")
-        #         Server.single_send(c, "kicked")
-        #         Server.socket_array.pop(c)
+    #         c = int(input())
+    #         print(f" {c}번 인덱스 소켓 강퇴됨 ")
+    #         Server.single_send(c, "kicked")
+    #         Server.socket_array.pop(c)
 
     def client(self, ip):
         # 아이피 입력하면, 해당 아이피의 서버로 접속
