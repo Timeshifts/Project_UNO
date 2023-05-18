@@ -59,6 +59,7 @@ class MultiLobby(Menu):
         self.menu = self.avail_menu
         self.max_menu = 2
         self.init_draw()
+        print("화면 업데이트")
 
     def init_draw(self):
         self.button = []

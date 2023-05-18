@@ -33,3 +33,5 @@ EVENT_OPEN_CLIENT_PASSWORD = pygame.event.custom_type()
 EVENT_CLOSE_CLIENT_PASSWORD = pygame.event.custom_type()
 EVENT_OPEN_ENTER_IP = pygame.event.custom_type()
 EVENT_CLOSE_ENTER_IP = pygame.event.custom_type()
+
+EVENT_UPDATE = pygame.event.custom_type()

@@ -4,6 +4,8 @@ import time
 import Multi_GameManager
 import pickle
 import threading
+import pygame
+from constant import *
 
 
 class Multi_Start_Setting:
@@ -125,6 +127,7 @@ class Multi_Start_Setting:
             else:
                 # msg_queue로부터 메세지를 pop해온다.
                 print(self.Client.msg_queue.get())
+                pygame.event.post(pygame.event.Event(EVENT_UPDATE))
 
     def kicked(self):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
         print("강퇴")

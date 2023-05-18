@@ -424,6 +424,10 @@ def main():
                 # 비밀번호 변경 제거
                 game_objects.remove(text_prompt)
 
+            # 멀티플레이 클라이언트 화면 업데이트
+            if event.type == EVENT_UPDATE:
+                multi_lobby.update()
+
             # 이름 변경 열기
             if event.type == EVENT_OPEN_RENAME:
                 if state == "single_lobby":
