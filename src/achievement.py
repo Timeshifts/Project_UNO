@@ -47,7 +47,7 @@ achievements = {
     8: {
     "icon": RESOURCE_PATH / "achievement" / "9.png",
     "name": "전문가",
-    "lore": "멀티 플레이어 모드에서 승리하세요."
+    "lore": "5명의 컴퓨터와 대전해 싱글 플레이어 모드에서 승리하세요."
     },
     9: {
     "icon": RESOURCE_PATH / "achievement" / "10.png",
