@@ -9,6 +9,8 @@ class Multi_Start_Setting:
     def __init__(self):
         self.host_ip = 0
         self.input_ip = 0
+        self.Server = 0
+        self.Client = 0
 
     def server(self):
         # 서버 생성후 구동시키고, 서버 생성자의 ip 출력

@@ -25,8 +25,7 @@ class Multi_Client:
         try:
             while True:
                 msg = pickle.loads(self.client_socket.recv(4096))
-
-                if isinstance(msg,dict):
+                if isinstance(msg, dict):
                     self.msg_queue.put(msg)
                 else:
                     if msg[0:3] == "uno":

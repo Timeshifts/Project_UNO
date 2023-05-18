@@ -36,7 +36,7 @@ class Multi_Server:
                 for i in range(len(self.socket_array)):
                     if isinstance(M, dict):
                         M['index'] = i
-                    
+                            
                     self.socket_array[i].send(pickle.dumps(M))
 
     def receive(self, client_socket):
@@ -47,7 +47,8 @@ class Multi_Server:
                 if isinstance(msg, dict):
                     self.msg_queue.put(msg)
                 elif isinstance(msg, list):
-                    self.msg_queue.put( self.multi_game_initialization(msg[0], msg[1], msg[2]) )
+                    dic = initialization.init_game(self.socket_array, msg[0], msg[1], msg[2])             
+                    self.msg_queue.put( dic )
                 else:
                     if msg == "deleted":
                         break
@@ -110,5 +111,5 @@ class Multi_Server:
         thread_send.daemon = True
         thread_send.start()
 
-    def multi_game_initialization(self, a, b, c):
-        return initialization.init_game(self.socket_array, a, b, c)
+    #def multi_game_initialization(self, a, b, c):
+        #return initialization.init_game(self.socket_array, a, b, c)

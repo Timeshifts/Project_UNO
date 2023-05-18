@@ -2,8 +2,8 @@ import Multi_GameManager
 import random
 
 client = None
-MGM = Multi_GameManager.GameManager(client)
 game_dic = {}
+MGM = Multi_GameManager.GameManager(client, game_dic)
 
 
 def init_game(clients, card_count ,computer_count, storyA_count):
@@ -36,4 +36,6 @@ def init_game(clients, card_count ,computer_count, storyA_count):
     game_dic['deck'] = MGM.deck
     game_dic['players'] = MGM.players
     game_dic['turn'] = MGM.turn
+    game_dic['computer_count'] = computer_count
+    game_dic['story_A_computer_count'] = storyA_count
     return game_dic
