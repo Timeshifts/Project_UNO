@@ -80,37 +80,6 @@ def load_bgm(path, volume=1.0):
     pygame.mixer.music.set_volume(volume)
     pygame.mixer.music.play(-1)  # -1 = 무한 반복 재생
     
-# 통신용 스레드
-def network(multi_lobby, game_objects, size, width, height, computer_count, story_A_computer_count, player_count, name):
-    dic = {}
-                
-    while True and thread_stop == False:
-        if multi_lobby.mss.Client.msg_queue.empty() == False:
-            M = multi_lobby.mss.Client.msg_queue.get()
-            
-            if isinstance(M, dict):
-                dic = M
-                break
-    
-    if thread_stop == False:
-        # 게임 로비 제거
-        game_objects.remove(multi_lobby)
-        state = "multi"
-        background = get_background(state, size)
-        
-        multi = Multi_Single(
-            (width, height),
-            size,
-            computer_count,
-            story_A_computer_count,
-            player_count,
-            name,
-            -1,
-            multi_lobby.mss.Client,
-            dic
-        )
-        game_objects.append(multi)
-
 
 def main():
     pygame.init()
@@ -400,10 +369,35 @@ def main():
                 
                 multi_lobby.mss.Client.send([card_count, computer_count, story_A_computer_count])
                 
-                thread_handle_client = threading.Thread(target=network(multi_lobby, game_objects, size, width, height, 
-                                                                       computer_count, story_A_computer_count, player_count, name))
-                thread_handle_client.daemon = True
-                thread_handle_client.start()
+                # --------------------------------------------------------
+                dic = {}
+                
+                while True:
+                    if multi_lobby.mss.Client.msg_queue.empty() == False:
+                        M = multi_lobby.mss.Client.msg_queue.get()
+                        
+                        if isinstance(M, dict):
+                            dic = M
+                            break
+
+                # 게임 로비 제거
+                game_objects.remove(multi_lobby)
+                state = "multi"
+                background = get_background(state, size)
+                
+                multi = Multi_Single(
+                    (width, height),
+                    size,
+                    computer_count,
+                    story_A_computer_count,
+                    player_count,
+                    name,
+                    -1,
+                    multi_lobby.mss.Client,
+                    dic
+                )
+                game_objects.append(multi)
+                # ----------------------------------------------------------
 
 
             # 접속 IP 입력 (클라이언트 측)

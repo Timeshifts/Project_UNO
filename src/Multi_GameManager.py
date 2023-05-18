@@ -690,7 +690,7 @@ class MultiUser(Player):
         self.possible_cards_num.clear()
         self.judge_possible_cards()
 
-        if self.ip == Gm.Client.client_socket.getsockname():
+        if self.ip == Gm.client.client_socket.getsockname():
             return self.possible_cards_num
         else:
             thread = threading.Thread(target=self.threading_receive)
@@ -699,8 +699,8 @@ class MultiUser(Player):
 
     def threading_receive(self):
         while True:
-            if Gm.Client.msg_queue.empty() == False:
-                M = Gm.Client.msg_queue.get()
+            if Gm.client.msg_queue.empty() == False:
+                M = Gm.client.msg_queue.get()
 
                 if M == "get_card":
                     self.get_card()
