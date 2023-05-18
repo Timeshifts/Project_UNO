@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 's
 
 import pygame, time
 import unittest, threading
-import setting, pause
+import setting, main_menu
 from constant import *
 import main
 
@@ -15,24 +15,18 @@ EVENTS = (
     pygame.event.Event(EVENT_START_LOBBY, name="Test"),
     pygame.event.Event(EVENT_START_SINGLE),
     pygame.event.Event(EVENT_MAIN),
-#    "PAUSE",
-#    pygame.event.Event(EVENT_OPEN_ACHIEVEMENT),
-#    pygame.event.Event(EVENT_MAIN),
-#    pygame.event.Event(EVENT_OPEN_OPTION),
-#    pygame.event.Event(EVENT_CLOSE_OPTION),
-#    pygame.event.Event(pause.EVENT_QUIT_MENU),
-#    pygame.event.Event(pause.EVENT_PAUSE_MENU),
-#    pygame.event.Event(pause.EVENT_RESUME),
-    pygame.event.Event(EVENT_MAIN),
     pygame.event.Event(EVENT_OPEN_STORYMAP),
-    pygame.event.Event(EVENT_MAIN),
+    pygame.event.Event(EVENT_START_SINGLE, index=1),
     pygame.event.Event(EVENT_START_LOBBY_MULTI),
     # 추후 멀티플레이 동작 추가
     pygame.event.Event(EVENT_MAIN),
     pygame.event.Event(EVENT_OPEN_ACHIEVEMENT),
     pygame.event.Event(EVENT_MAIN),
     pygame.event.Event(EVENT_OPEN_OPTION),
+    0,
+    pygame.event.Event(EVENT_OPTION_CHANGED),
     pygame.event.Event(EVENT_CLOSE_OPTION),
+    3,
     pygame.event.Event(EVENT_QUIT_GAME)
 )
 
@@ -46,10 +40,14 @@ class MainTest(unittest.TestCase):
     def event_runner(self):
         time.sleep(0.2)
         for event in EVENTS:
-            pygame.event.post(event)
+            if isinstance(event, pygame.event.Event):
+                pygame.event.post(event)
+                time.sleep(0.05)
 
     # 메인 화면 동작 검증
     def test_main(self):
+        setting.options["resolution"] = 3
+
         self.event_thread = threading.Thread(
                                 target=self.event_runner
                             )
@@ -74,7 +72,15 @@ class MainTest(unittest.TestCase):
     def test_bgm(self):
         pygame.init()
         main.load_bgm(RESOURCE_PATH / "sound" / "bg_game.mp3")
+        pygame.quit()
 
+    def test_main_menu(self):
+        pygame.init()
+        menu = main_menu.Main_menu()
+        for event in range(len(menu.avail_menu)):
+            self.assertEqual(menu.select_menu(event), None)
+        pygame.quit()
+    
 if __name__ == "__main__":
     unittest.main()
 

@@ -9,7 +9,7 @@ from main_menu import Main_menu, EVENT_QUIT_GAME, EVENT_START_SINGLE, EVENT_OPEN
 from single_lobby import SingleLobby
 from multi_lobby import MultiLobby
 from single import Single
-from multi_single import Multi_Single
+from Multi_single import Multi_Single
 from text_prompt import Text_Prompt
 from constant import *
 
