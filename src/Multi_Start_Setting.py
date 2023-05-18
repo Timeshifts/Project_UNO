@@ -3,6 +3,7 @@ import Multi_Client
 import time
 import Multi_GameManager
 import pickle
+import threading
 
 
 class Multi_Start_Setting:
@@ -111,6 +112,11 @@ class Multi_Start_Setting:
                 return M
 
     def connect(self):
+        # 메시지 수신을 위한 스레드 생성
+        receiver_thread = threading.Thread(target=self.receive_messages)
+        receiver_thread.start()
+
+    def receive_messages(self):
         while True:
             # Client의 msg_queue가 비어있으면 계속 대기한다.
             if self.Client.msg_queue.empty() == True:
