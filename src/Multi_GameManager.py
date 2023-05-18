@@ -7,13 +7,13 @@ import Multi_Client
 from constant import EVENT_END_GAME, EVENT_TURN_END
 
 
-class Multi_GameManager:
+class GameManager:
     # 모든 업적이 승리와 관련되어 있으므로,
     # 이번에 달성할 수 있는 업적인지를 한번에 나타낼 수 있습니다.
     # 단, 단순 승리 업적은 원래 위치에서 처리하도록 하겠습니다.
     achi_flag = [5, 6, 9]
 
-    def __init__(self, client, dic = {}):
+    def __init__(self, client, dic={}):
         self.turn = 0  # 지금 누구 턴인지 나타내는 정수 변수
         self.turn_count = 0  # 총 몇번의 턴이 진행되었는지
         self.players = []  # 플레이어 객체들을 담을 배열
@@ -564,7 +564,7 @@ class Multi_GameManager:
                 M = self.client.uno_queue.get()
                 index = int(M[4])
                 boolean = bool(M[6:])
-                
+
                 print("통신으로 우노 벨류 바뀜")
 
                 self.players[index].is_uno = boolean
@@ -572,12 +572,12 @@ class Multi_GameManager:
             time.sleep(0.1)
 
     def initial_sync(self):
-        self.ref_deck = self.game_dic['ref_deck']
-        self.deck = self.game_dic['deck']  # 덱
-        self.turn = self.game_dic['turn']  # 지금 누구 턴인지 나타내는 정수 변수
-        self.players = self.game_dic['players']   # 플레이어 객체들을 담을 배열
-        self.computer_count = self.game_dic['computer_count']
-        self.story_A_computer_count = self.game_dic['story_A_computer_count']
+        self.ref_deck = self.game_dic["ref_deck"]
+        self.deck = self.game_dic["deck"]  # 덱
+        self.turn = self.game_dic["turn"]  # 지금 누구 턴인지 나타내는 정수 변수
+        self.players = self.game_dic["players"]  # 플레이어 객체들을 담을 배열
+        self.computer_count = self.game_dic["computer_count"]
+        self.story_A_computer_count = self.game_dic["story_A_computer_count"]
 
     # def sync(self):
     #     self.turn = self.game_dic['turn']
