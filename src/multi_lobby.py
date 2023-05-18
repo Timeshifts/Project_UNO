@@ -122,7 +122,7 @@ class MultiLobby(Menu):
 
             # 본인 이름 표시
             self.text_name = setting.get_font(50).render(
-                f"방장: {self.host_ip}", True, "White"
+                f"방장: {self.name}", True, "White"
             )
             self.text_name_rect = self.text_name.get_rect(
                 center=(self.size[0] / 2, self.size[1] * 0.3)
