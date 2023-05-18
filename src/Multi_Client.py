@@ -69,5 +69,6 @@ class Multi_Client:
     def handle_sync_message(self, msg):
         if msg["type"] == "player_index":
             self.other_chk = msg["chk"]
+            print(f"동기화 완료: other_chk = {self.other_chk}")
 
     # -----------------------------------------------

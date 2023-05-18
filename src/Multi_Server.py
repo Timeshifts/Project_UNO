@@ -23,7 +23,10 @@ class Multi_Server:
         self.random_request = False
 
     def single_send(self, index, msg):
-        self.socket_array[index].send(pickle.dumps(msg))
+        try:
+            self.socket_array[index].send(pickle.dumps(msg))
+        except:
+            print("현재 연결은 원격 호스트에 의해 강제로 끊겼습니다")
 
     def multi_send(self):
         while True:
