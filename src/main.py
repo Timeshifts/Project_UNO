@@ -143,14 +143,14 @@ def main():
                     pygame.event.post(
                         pygame.event.Event(
                             EVENT_PLAY_SE,
-                            {"path": RESOURCE_PATH / "sound" / "victory.mp3"},
+                            path=RESOURCE_PATH / "sound" / "victory.mp3",
                         )
                     )
                 else:
                     pygame.event.post(
                         pygame.event.Event(
                             EVENT_PLAY_SE,
-                            {"path": RESOURCE_PATH / "sound" / "wild.mp3"},
+                            path=RESOURCE_PATH / "sound" / "wild.mp3",
                         )
                     )
 
@@ -169,7 +169,7 @@ def main():
                         # 과 함께 업적 1~4 달성
                         pygame.event.post(
                             pygame.event.Event(
-                                EVENT_ACQUIRE_ACHIEVEMENT, {"id": event.story_map}
+                                EVENT_ACQUIRE_ACHIEVEMENT, id=event.story_map
                             )
                         )
                 elif event.player_win:
@@ -546,7 +546,7 @@ def main():
                 else:  # 플레이어 패배한 경우
                     player_win = False
                 pygame.event.post(
-                    pygame.event.Event(EVENT_END_GAME, {"player_win": player_win})
+                    pygame.event.Event(EVENT_END_GAME, player_win=player_win)
                 )
 
 
