@@ -3,12 +3,16 @@ import Multi_Client
 import time
 import Multi_GameManager
 import pickle
+import threading
+import pygame
+from constant import *
 
 
 class Multi_Start_Setting:
     def __init__(self):
         self.host_ip = 0
         self.input_ip = 0
+        self.chk = [0, 0, 0, 0, 0]
 
     def server(self):
         # 서버 생성후 구동시키고, 서버 생성자의 ip 출력
@@ -21,6 +25,14 @@ class Multi_Start_Setting:
         # 따로 호스트 처리 안하고 싹다 클라이언트로 간편하게 처리하기 위함
         self.Client = Multi_Client.Multi_Client(self.host_ip)
         self.Client.client_start()
+
+    def player_index(self, chk):
+        # 다른 클라이언트에게 전달할 동기화 메시지 생성
+        print("리스트 받기")
+        sync_msg = {"type": "player_index", "chk": chk}
+        # 동기화 메시지를 모든 클라이언트에 전송
+        print("서버로 리스트 전송")
+        self.Server.multi_sendto(sync_msg)
 
     def password(self, pw):
         # 서버 패스워드 설정
@@ -57,10 +69,10 @@ class Multi_Start_Setting:
     #    MGM.deck = M['players']
     #    MGM.deck = M['turn']
 
-        #         c = int(input())
-        #         print(f" {c}번 인덱스 소켓 강퇴됨 ")
-        #         Server.single_send(c, "kicked")
-        #         Server.socket_array.pop(c)
+    #         c = int(input())
+    #         print(f" {c}번 인덱스 소켓 강퇴됨 ")
+    #         Server.single_send(c, "kicked")
+    #         Server.socket_array.pop(c)
 
     def client(self, ip):
         # 아이피 입력하면, 해당 아이피의 서버로 접속
@@ -101,6 +113,22 @@ class Multi_Start_Setting:
                 # msg_queue로부터 메세지를 pop해온다.
                 M = self.Client.msg_queue.get()
                 return M
+
+    def connect(self):
+        # 메시지 수신을 위한 스레드 생성
+        receiver_thread = threading.Thread(target=self.receive_messages)
+        receiver_thread.start()
+
+    def receive_messages(self):
+        while True:
+            # Client의 msg_queue가 비어있으면 계속 대기한다.
+            if self.Client.msg_queue.empty() == True:
+                time.sleep(0.2)
+            # Client의 msg_queue가 채워져있으면 else 문으로 간다. 이는 서버로부터 메세지를 받았음을 의미
+            else:
+                # msg_queue로부터 메세지를 pop해온다.
+                self.chk = self.Client.msg_queue.get()["chk"]
+                pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
 
     def kicked(self):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
         print("강퇴")
