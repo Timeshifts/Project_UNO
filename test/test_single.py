@@ -26,6 +26,7 @@ class Test(unittest.TestCase):
         single_object = single.Single(computer_count=3, story=-1)
         test_screen = pygame.surface.Surface((1920, 1080))
         single_object.game.players[0].defence_int = 1
+        single_object.game.players[2].defence_int = 1
         self.assertEqual(single_object.draw(test_screen), None)
         self.assertEqual(single_object.resize((1920, 1080)), None)
         # 플레이어의 턴으로 만들기
