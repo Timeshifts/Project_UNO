@@ -74,7 +74,7 @@ def load_bgm(path, volume=1.0):
     pygame.mixer.music.load(path)
     pygame.mixer.music.set_volume(volume)
     pygame.mixer.music.play(-1)  # -1 = 무한 반복 재생
-    
+
 
 def main():
     pygame.init()
@@ -269,7 +269,17 @@ def main():
                     # 변경 창에서 바꾼 이름을 멀티 로비에 반영
                     if "input" in event.dict.keys():
                         multi_lobby.name = event.input
-                        # TODO: 다른 플레이어에게 이름 변경 알리기
+                        # 다른 플레이어에게 이름 변경 알리기
+                        if multi_lobby.server == True:
+                            multi_lobby.mss.player_index(
+                                multi_lobby.other_chk,
+                                multi_lobby.my_ip,
+                                multi_lobby.name,
+                            )
+                        else:
+                            multi_lobby.mss.Client.send(
+                                (multi_lobby.my_ip, multi_lobby.name)
+                            )
                     game_objects.remove(text_prompt)
                 elif state == "passwd_change":
                     # 변경 창에서 바꾼 비밀번호를 멀티에 반영
@@ -357,16 +367,18 @@ def main():
                 player_count = multi_lobby.other_chk.count(3)
                 card_count = 5
                 name = multi_lobby.name
-                
-                multi_lobby.mss.Client.send([card_count, computer_count, story_A_computer_count])
-                
+
+                multi_lobby.mss.Client.send(
+                    [card_count, computer_count, story_A_computer_count]
+                )
+
                 # --------------------------------------------------------
                 dic = {}
-                
+
                 while True:
                     if multi_lobby.mss.Client.msg_queue.empty() == False:
                         M = multi_lobby.mss.Client.msg_queue.get()
-                        
+
                         if isinstance(M, dict):
                             dic = M
                             break
@@ -375,7 +387,7 @@ def main():
                 game_objects.remove(multi_lobby)
                 state = "multi"
                 background = get_background(state, size)
-                
+
                 multi = Multi_Single(
                     (width, height),
                     size,
@@ -385,11 +397,10 @@ def main():
                     name,
                     -1,
                     multi_lobby.mss.Client,
-                    dic
+                    dic,
                 )
                 game_objects.append(multi)
                 # ----------------------------------------------------------
-
 
             # 접속 IP 입력 (클라이언트 측)
             if event.type == EVENT_OPEN_ENTER_IP:
@@ -451,6 +462,19 @@ def main():
             # 멀티플레이 클라이언트 화면 업데이트
             if event.type == EVENT_UPDATE:
                 multi_lobby.update()
+
+            # 멀티플레이 클라이언트 화면 업데이트
+            if event.type == EVENT_UPDATE_CHK:
+                multi_lobby.update_chk()
+
+            # 멀티플레이 클라이언트 화면 업데이트
+            if event.type == EVENT_UPDATE_CHK_SERVER:
+                multi_lobby.mss.player_index(
+                    multi_lobby.other_chk,
+                    multi_lobby.mss.Server.ip,
+                    multi_lobby.mss.Server.name,
+                )
+                multi_lobby.init_draw()
 
             # 이름 변경 열기
             if event.type == EVENT_OPEN_RENAME:

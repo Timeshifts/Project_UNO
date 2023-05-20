@@ -14,7 +14,9 @@ class Multi_Start_Setting:
         self.input_ip = 0
         self.Server = 0
         self.Client = 0
+        # self.server_name = 0
         self.chk = [0, 0, 0, 0, 0]
+        self.ip_name = {}
 
     def server(self):
         # 서버 생성후 구동시키고, 서버 생성자의 ip 출력
@@ -28,12 +30,16 @@ class Multi_Start_Setting:
         self.Client = Multi_Client.Multi_Client(self.host_ip)
         self.Client.client_start()
 
-    def player_index(self, chk):
+    def player_index(self, chk, ip, name):
         # 다른 클라이언트에게 전달할 동기화 메시지 생성
         print("리스트 받기")
-        sync_msg = {"type": "player_index", "chk": chk}
+        if ip in self.ip_name:
+            del self.ip_name[ip]
+        self.ip_name[ip] = name
+        sync_msg = {"type": "player_index", "chk": chk, "name": self.ip_name}
         # 동기화 메시지를 모든 클라이언트에 전송
         print("서버로 리스트 전송")
+        print(f"메시지 : {sync_msg}")
         self.Server.multi_sendto(sync_msg)
 
     def password(self, pw):
@@ -116,7 +122,7 @@ class Multi_Start_Setting:
                 M = self.Client.msg_queue.get()
                 return M
 
-    def connect(self):
+    def connect(self):  # 클라이언트 연결시
         # 메시지 수신을 위한 스레드 생성
         receiver_thread = threading.Thread(target=self.receive_messages)
         receiver_thread.start()
@@ -129,12 +135,16 @@ class Multi_Start_Setting:
             # Client의 msg_queue가 채워져있으면 else 문으로 간다. 이는 서버로부터 메세지를 받았음을 의미
             else:
                 # msg_queue로부터 메세지를 pop해온다.
-                self.chk = self.Client.msg_queue.get()["chk"]
+                msg = self.Client.msg_queue.get()
+                self.chk = msg["chk"]
+                self.ip_name = msg["name"]
+                print(self.ip_name)
                 pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
 
-    def kicked(self):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
-        print("강퇴")
-        self.Client.client_end()
+    def kicked(self, ip):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
+        print("나가기")
+        self.Client.send((ip, "out"))
+        # self.Client.client_end()
 
     # # 게임 시작
     # dic = Server.init_game()
