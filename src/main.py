@@ -270,7 +270,8 @@ def main():
                     if "input" in event.dict.keys():
                         multi_lobby.name = event.input
                         # 다른 플레이어에게 이름 변경 알리기
-                        if multi_lobby.server:
+                        print(multi_lobby.server)
+                        if multi_lobby.server == True:
                             multi_lobby.mss.player_index(
                                 multi_lobby.other_chk,
                                 multi_lobby.my_ip,

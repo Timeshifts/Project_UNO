@@ -138,10 +138,13 @@ class Multi_Start_Setting:
             else:
                 # msg_queue로부터 메세지를 pop해온다.
                 msg = self.Client.msg_queue.get()
-                self.chk = msg["chk"]
-                self.ip_name = msg["name"]
-                print(self.ip_name)
-                pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
+                if type(msg) == tuple:
+                    self.player_index(self.chk, msg[0], msg[1])
+                else:
+                    self.chk = msg["chk"]
+                    self.ip_name = msg["name"]
+                    print(self.ip_name)
+                    pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
 
     def kicked(self):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
         print("강퇴")

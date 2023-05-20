@@ -52,7 +52,6 @@ class Multi_Server:
         try:
             while True:
                 msg = pickle.loads(client_socket.recv(4096))
-                print(msg)
                 if isinstance(msg, dict):
                     self.msg_queue.put(msg)
                 elif isinstance(msg, list):

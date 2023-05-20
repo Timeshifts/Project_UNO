@@ -60,12 +60,6 @@ class MultiLobby(Menu):
         self.mss.player_index(
             self.other_chk, self.mss.Server.addr[0], self.name
         )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
-        # self.host_ip = self.mss.host_ip  # host_ip
-        # self.other = ["1", "2", "3", "4", "5"]
-        # self.max_other = 5
-        # self.avail_menu = ["이름 변경", "비밀번호", "게임 시작", "돌아가기"]
-        # self.menu = self.avail_menu
-        # self.max_menu = 4
         self.init_draw()
 
     def update(self):
@@ -327,6 +321,7 @@ class MultiLobby(Menu):
                 # client_connecting: IP 변경
                 pygame.event.post(pygame.event.Event(EVENT_OPEN_ENTER_IP))
             elif self.avail_menu[index] == "방 만들기":  # 서버 열기
+                self.server = True
                 # client_or_server: 서버 선택
                 self.mss.server()
                 # self.mss.server_name = self.name
@@ -421,6 +416,7 @@ class MultiLobby(Menu):
                     self.init_draw()
                 elif self.state == "server_connected":
                     # TODO: 방에 들어온 인원 전원 강퇴
+                    self.server = False
                     self.state = "client_or_server"
                     self.other = []
                     self.max_other = 0
