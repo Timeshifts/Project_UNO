@@ -22,7 +22,7 @@ class MultiLobby(Menu):
     # host_ip = socket.gethostbyname(socket.gethostname()) # 서버, 클라이언트 모두 Multi_Start_Setting에서 가져옴
     host_ip = ""
     input_ip = ""
-    # my_ip = socket.gethostbyname(socket.gethostname())
+    my_ip = socket.gethostbyname(socket.gethostname())
 
     state = "client_or_server"
     # 버튼이 있어야 할 위치 반환
@@ -80,7 +80,6 @@ class MultiLobby(Menu):
         print("화면 업데이트")
 
     def init_draw(self):
-        # ip_name = self.mss.ip_name
         self.button = []
         self.rect = []
 
@@ -105,7 +104,7 @@ class MultiLobby(Menu):
                 color = "White"
             else:  # 멀티 플레이어
                 image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
-                text = self.other_chk[i]
+                text = self.mss.ip_name[self.other_chk[i]]
                 color = "White"
 
             self.button.append(
@@ -142,7 +141,7 @@ class MultiLobby(Menu):
 
             # 본인 이름 표시
             self.text_name = setting.get_font(50).render(
-                f"방장: {self.name}", True, "White"
+                f"이름: {self.name}", True, "White"
             )
             self.text_name_rect = self.text_name.get_rect(
                 center=(self.size[0] / 2, self.size[1] * 0.3)
@@ -256,7 +255,20 @@ class MultiLobby(Menu):
 
         if index < self.max_other:
             if self.state != "client_connected":  # client일 경우 클릭 방지
-                if self.other_chk[index] == 1:  # 기본 컴퓨터 → A지역 컴퓨터
+                if self.other_chk[index] == 0:  # 없음 → 기본 컴퓨터
+                    self.button[index].ChangeImage(
+                        pygame.transform.scale(
+                            pygame.image.load(RESOURCE_PATH / "single" / "list.png"),
+                            (list_x, list_y),
+                        )
+                    )
+                    self.button[index].ChangeText(self.other[index], "White", "White")
+                    self.other_chk[index] = 1
+                    print(self.other_chk)
+                    self.mss.player_index(
+                        self.other_chk, self.mss.Server.addr[0], self.name
+                    )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
+                elif self.other_chk[index] == 1:  # 기본 컴퓨터 → A지역 컴퓨터
                     self.button[index].ChangeText(
                         f"{self.other[index]} (A)", "White", "White"
                     )
@@ -282,7 +294,7 @@ class MultiLobby(Menu):
                     self.mss.player_index(
                         self.other_chk, self.mss.Server.addr[0], self.name
                     )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
-                elif self.other_chk[index] == 3:  # 멀티 플레이어 → 없음
+                else:  # 멀티 플레이어 → 없음
                     self.button[index].ChangeImage(
                         pygame.transform.scale(
                             pygame.image.load(
@@ -300,23 +312,13 @@ class MultiLobby(Menu):
                     # 플레이어 추방 코드 추가
                     #
                     #
-                elif self.other_chk[index] == 0:  # 없음 → 기본 컴퓨터
-                    self.button[index].ChangeImage(
-                        pygame.transform.scale(
-                            pygame.image.load(RESOURCE_PATH / "single" / "list.png"),
-                            (list_x, list_y),
-                        )
-                    )
-                    self.button[index].ChangeText(self.other[index], "White", "White")
-                    self.other_chk[index] = 1
-                    print(self.other_chk)
-                    self.mss.player_index(
-                        self.other_chk, self.mss.Server.addr[0], self.name
-                    )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
         else:
             index -= self.max_other
             if self.avail_menu[index] == "이름 변경":
                 pygame.event.post(pygame.event.Event(EVENT_OPEN_RENAME))  # 이름 변경
+                # self.mss.player_index(
+                #     self.other_chk, self.my_ip, self.name
+                # )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
             elif self.avail_menu[index] == "비밀번호":
                 if self.state == "server_connected":
                     # server_connected: 비밀번호 변경
