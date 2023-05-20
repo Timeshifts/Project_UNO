@@ -130,5 +130,14 @@ class Multi_Server:
         thread_send.daemon = True
         thread_send.start()
 
+    def disconnect_client(self, ip):
+        for i, client_socket in enumerate(self.socket_array):
+            client_addr = client_socket.getpeername()
+            if client_addr[0] == ip:
+                client_socket.close()
+                self.socket_array.pop(i)
+                print(f"클라이언트 {client_addr}의 연결이 끊어졌습니다.")
+                break
+
     # def multi_game_initialization(self, a, b, c):
     # return initialization.init_game(self.socket_array, a, b, c)

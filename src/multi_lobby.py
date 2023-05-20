@@ -84,10 +84,10 @@ class MultiLobby(Menu):
                     RESOURCE_PATH / "single" / "list_unpicked.png"
                 )
                 color = "Black"
-                if self.state == "client_connected":
-                    text = " "
-                else:
-                    text = "+"
+                # if self.state == "client_connected":
+                #     text = " "
+                # else:
+                text = " "
             elif self.other_chk[i] == 1:  # 기본 컴퓨터
                 image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
                 text = self.other[i]
@@ -190,9 +190,21 @@ class MultiLobby(Menu):
                     self.button[i].changeHighlight(False, screen)
 
         # 플레이어 대기열 텍스트
-        if self.state in ("client_connected", "server_connected"):
+        if self.state in ("server_connected"):
             font = setting.get_font(50)
-            text_player = font.render("플레이어 대기열", True, "White")
+            text_player = font.render("방장", True, "White")
+            text_player_rect = text_player.get_rect(
+                center=(self.size[0] * 7 / 8, self.size[1] / 12)
+            )
+            screen.blit(
+                text_player,
+                text_player_rect,
+            )
+
+        # 플레이어 대기열 텍스트
+        if self.state in ("client_connected"):
+            font = setting.get_font(50)
+            text_player = font.render("플레이어", True, "White")
             text_player_rect = text_player.get_rect(
                 center=(self.size[0] * 7 / 8, self.size[1] / 12)
             )
@@ -289,6 +301,10 @@ class MultiLobby(Menu):
                         self.other_chk, self.my_ip, self.name
                     )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
                 else:  # 멀티 플레이어 → 없음
+                    self.mss.Server.disconnect_client(
+                        self.other_chk[index]
+                    )  # 플레이어 추방 코드 추가
+
                     self.button[index].ChangeImage(
                         pygame.transform.scale(
                             pygame.image.load(
@@ -297,15 +313,13 @@ class MultiLobby(Menu):
                             (list_x, list_y),
                         )
                     )
-                    self.button[index].ChangeText("+", "Black", "Black")
+                    self.button[index].ChangeText(" ", "Black", "Black")
+
                     self.other_chk[index] = 0
                     print(self.other_chk)
                     self.mss.player_index(
                         self.other_chk, self.my_ip, self.name
                     )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
-                    # 플레이어 추방 코드 추가
-                    #
-                    #
         else:
             index -= self.max_other
             if self.avail_menu[index] == "이름 변경":
