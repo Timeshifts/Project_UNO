@@ -52,7 +52,7 @@ class Multi_Server:
         try:
             while True:
                 msg = pickle.loads(client_socket.recv(4096))
-
+                print(msg)
                 if isinstance(msg, dict):
                     self.msg_queue.put(msg)
                 elif isinstance(msg, list):
@@ -70,7 +70,7 @@ class Multi_Server:
                             num = int(msg[15:])
                     elif msg == "start":
                         self.msg_queue.put(msg)
-                    else:
+                    else:  # 새로운 이름인 경우
                         self.msg_queue.put(msg)
         except:
             print("서버: 원격 호스트에 의해 강제로 끊김!")

@@ -273,11 +273,13 @@ def main():
                         if multi_lobby.server:
                             multi_lobby.mss.player_index(
                                 multi_lobby.other_chk,
-                                str(multi_lobby.my_ip),
+                                multi_lobby.my_ip,
                                 multi_lobby.name,
                             )
                         else:
-                            multi_lobby.mss.Client.send(multi_lobby.name)
+                            multi_lobby.mss.Client.send(
+                                (multi_lobby.my_ip, multi_lobby.name)
+                            )
                     game_objects.remove(text_prompt)
                 elif state == "passwd_change":
                     # 변경 창에서 바꾼 비밀번호를 멀티에 반영

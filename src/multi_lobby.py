@@ -78,7 +78,6 @@ class MultiLobby(Menu):
         self.max_menu = 2
         self.init_draw()
         print("화면 업데이트")
-        print(f"배열 : {self.mss.Server.socket_array}")
 
     def init_draw(self):
         self.button = []
