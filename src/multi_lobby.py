@@ -363,8 +363,40 @@ class MultiLobby(Menu):
                 if self.other_chk.count(0) == 5:  # 나 말고 없으면
                     pass
                 else:
-                    pygame.event.post(pygame.event.Event(EVENT_START_MULTI))
                     # TODO: 멀티플레이 게임 시작
+                    computer_count = self.other_chk.count(1)
+                    story_A_computer_count = self.other_chk.count(2)
+                    player_count = (
+                        5
+                        - self.other_chk.count(0)
+                        - computer_count
+                        - story_A_computer_count
+                    )
+                    card_count = 5
+                    name = self.name
+                    self.mss.Client.send(
+                        [
+                            card_count,
+                            computer_count,
+                            story_A_computer_count,
+                            player_count,
+                            name,
+                        ]
+                    )
+                    while True:
+                        if self.mss.Client.msg_queue.empty() == False:
+                            msg = self.mss.Client.msg_queue.get()
+                            dic = msg[1]
+                            break
+                    self.mss.start(
+                        card_count,
+                        computer_count,
+                        story_A_computer_count,
+                        player_count,
+                        name,
+                        dic,
+                    )
+
             elif self.avail_menu[index] == "돌아가기":
                 if self.state == "client_or_server":
                     pygame.event.post(pygame.event.Event(EVENT_MAIN))  # 메인 메뉴
