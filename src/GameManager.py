@@ -53,6 +53,8 @@ class GameManager:
         self.wild_card = 0
         self.set_uno = False
         self.achi_flag = [5, 6, 9]
+        if self.computer_count + self.story_A_computer_count == 5:
+            self.achi_flag.append(8)
 
     # 특정 업적 달성을 위한 제약 조건 달성 시 True,
     # 특정 업적 달성을 위한 제약 조건을 위반했을 때 False

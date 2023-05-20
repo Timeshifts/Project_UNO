@@ -48,7 +48,7 @@ class Quit_Menu(Menu):
     # 메뉴 선택 시 처리
     def select_menu(self, index):
         se_event = pygame.event.Event(
-            EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
+            EVENT_PLAY_SE, path=RESOURCE_PATH / "sound" / "button.mp3"
         )
         pygame.event.post(se_event)
         if self.avail_menu[index] == "게임 종료":
@@ -86,7 +86,7 @@ class Paused_Menu(Menu):
     # 메뉴 선택 시 처리
     def select_menu(self, index):
         se_event = pygame.event.Event(
-            EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "button.mp3"}
+            EVENT_PLAY_SE, path=RESOURCE_PATH / "sound" / "button.mp3"
         )
         pygame.event.post(se_event)
         if self.avail_menu[index] == "나가기":
