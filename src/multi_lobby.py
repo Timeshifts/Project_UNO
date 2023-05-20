@@ -22,7 +22,7 @@ class MultiLobby(Menu):
     # host_ip = socket.gethostbyname(socket.gethostname()) # 서버, 클라이언트 모두 Multi_Start_Setting에서 가져옴
     host_ip = ""
     input_ip = ""
-    my_ip = socket.gethostbyname(socket.gethostname())
+    # my_ip = socket.gethostbyname(socket.gethostname())
 
     state = "client_or_server"
     # 버튼이 있어야 할 위치 반환
@@ -55,17 +55,17 @@ class MultiLobby(Menu):
     def update_chk(self):  # 클라이언트 접속시
         for i in range(self.max_other):
             if self.other_chk[i] == 0:
-                self.other_chk[i] = self.my_ip
+                self.other_chk[i] = self.mss.Server.addr[0]
                 break
         self.mss.player_index(
-            self.other_chk, self.my_ip, self.name
+            self.other_chk, self.mss.Server.addr[0], self.name
         )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
-        self.host_ip = self.mss.host_ip  # host_ip
-        self.other = ["1", "2", "3", "4", "5"]
-        self.max_other = 5
-        self.avail_menu = ["이름 변경", "비밀번호", "게임 시작", "돌아가기"]
-        self.menu = self.avail_menu
-        self.max_menu = 4
+        # self.host_ip = self.mss.host_ip  # host_ip
+        # self.other = ["1", "2", "3", "4", "5"]
+        # self.max_other = 5
+        # self.avail_menu = ["이름 변경", "비밀번호", "게임 시작", "돌아가기"]
+        # self.menu = self.avail_menu
+        # self.max_menu = 4
         self.init_draw()
 
     def update(self):
@@ -86,19 +86,7 @@ class MultiLobby(Menu):
 
         for i in range(self.max_other):
             # 버튼 삽입
-            if self.other_chk[i] == 1:  # 기본 컴퓨터
-                image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
-                text = self.other[i]
-                color = "White"
-            elif self.other_chk[i] == 2:  # A지역 컴퓨터
-                image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
-                text = f"{self.other[i]} (A)"
-                color = "White"
-            elif self.other_chk[i] == 3:  # 멀티 플레이어
-                image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
-                text = "name"
-                color = "White"
-            else:  # 없음
+            if self.other_chk[i] == 0:  # 없음
                 image = pygame.image.load(
                     RESOURCE_PATH / "single" / "list_unpicked.png"
                 )
@@ -107,6 +95,19 @@ class MultiLobby(Menu):
                     text = " "
                 else:
                     text = "+"
+            elif self.other_chk[i] == 1:  # 기본 컴퓨터
+                image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+                text = self.other[i]
+                color = "White"
+            elif self.other_chk[i] == 2:  # A지역 컴퓨터
+                image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+                text = f"{self.other[i]} (A)"
+                color = "White"
+            else:  # 멀티 플레이어
+                image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+                text = self.other_chk[i]
+                color = "White"
+
             self.button.append(
                 Button(
                     image,
@@ -263,7 +264,7 @@ class MultiLobby(Menu):
                     # for i in range(self.max_other):
                     print(self.other_chk)
                     self.mss.player_index(
-                        self.other_chk, self.my_ip, self.name
+                        self.other_chk, self.mss.Server.addr[0], self.name
                     )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
 
                 elif self.other_chk[index] == 2:  # A지역 컴퓨터 → 없음
@@ -279,7 +280,7 @@ class MultiLobby(Menu):
                     self.other_chk[index] = 0
                     print(self.other_chk)
                     self.mss.player_index(
-                        self.other_chk, self.my_ip, self.name
+                        self.other_chk, self.mss.Server.addr[0], self.name
                     )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
                 elif self.other_chk[index] == 3:  # 멀티 플레이어 → 없음
                     self.button[index].ChangeImage(
@@ -294,7 +295,7 @@ class MultiLobby(Menu):
                     self.other_chk[index] = 0
                     print(self.other_chk)
                     self.mss.player_index(
-                        self.other_chk, self.my_ip, self.name
+                        self.other_chk, self.mss.Server.addr[0], self.name
                     )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
                     # 플레이어 추방 코드 추가
                     #
@@ -310,7 +311,7 @@ class MultiLobby(Menu):
                     self.other_chk[index] = 1
                     print(self.other_chk)
                     self.mss.player_index(
-                        self.other_chk, self.my_ip, self.name
+                        self.other_chk, self.mss.Server.addr[0], self.name
                     )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
         else:
             index -= self.max_other

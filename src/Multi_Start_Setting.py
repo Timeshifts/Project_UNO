@@ -122,7 +122,7 @@ class Multi_Start_Setting:
                 M = self.Client.msg_queue.get()
                 return M
 
-    def connect(self):
+    def connect(self):  # 클라이언트 연결시
         # 메시지 수신을 위한 스레드 생성
         receiver_thread = threading.Thread(target=self.receive_messages)
         receiver_thread.start()
@@ -138,6 +138,7 @@ class Multi_Start_Setting:
                 msg = self.Client.msg_queue.get()
                 self.chk = msg["chk"]
                 self.ip_name = msg["name"]
+                print(self.ip_name)
                 pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
 
     def kicked(self):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때

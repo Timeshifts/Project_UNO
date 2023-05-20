@@ -23,6 +23,7 @@ class Multi_Server:
         self.is_password = False
         self.password = ""
         self.random_request = False
+        self.addr = 0
 
     def single_send(self, index, msg):
         try:
@@ -77,6 +78,7 @@ class Multi_Server:
     def handle_client(self):
         while True:
             connect_socket, addr = self.server_socket.accept()
+            self.addr = addr
             if self.is_password == True:
                 connect_socket.send(pickle.dumps("password"))
                 thread = threading.Thread(
