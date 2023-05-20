@@ -43,6 +43,7 @@ class Multi_Single:
         self.story = story  # 스토리 모드 (-1이면 스토리 아님)
         self.client = client
         self.dic = dict
+        self.my_index = 0
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -69,7 +70,7 @@ class Multi_Single:
                 self.hand_card[i].append(
                     f"{self.game.players[i].hand[j].color}_{self.game.players[i].hand[j].name}"
                 )
-        self.my_card = self.hand_card[0]  # 내가 소유한 카드
+        self.my_card = self.hand_card[self.my_index]  # 내가 소유한 카드
         self.max_card = len(self.my_card)  # 내가 소유한 카드 개수
         self.game_timer = self.game.game_timer_integer  # 게임 타이머 갱신
         self.turn_timer = self.game.turn_timer_integer  # 턴 타이머 갱신
@@ -78,6 +79,7 @@ class Multi_Single:
 
     def game_start(self):
         # Gm 역시 single처럼 게임 재시작시 변경되도록 처리
+        self.my_index = self.dic['index']
         GM.Gm = GM.GameManager(self.client, self.dic)
 
         self.game = GM.Gm
@@ -93,8 +95,8 @@ class Multi_Single:
             return 0
         else:
             self.update_card()
-            if self.game.turn == 0:  # 플레이어인 경우
-                self.possible_cards_num = self.game.players[0].play()
+            if self.game.turn == self.my_index:  # 플레이어인 경우
+                self.possible_cards_num = self.game.players[self.my_index].play()
                 if self.game.timer_zero == True:  # 턴 타이머 종료된 경우
                     if self.game.no_act == False:
                         if self.game.wild == True:
@@ -103,7 +105,7 @@ class Multi_Single:
                             self.grave_top_color = random.choice(self.game.random_color)
                         else:
                             # 일반적인 시간 초과
-                            self.game.players[0].get_card()
+                            self.game.players[self.my_index].get_card()
                     self.game.turn_end(option=2)
                 if self.set_first == 0:
                     self.game.turn_start()
@@ -188,7 +190,7 @@ class Multi_Single:
         card_y = 182
         for i in range(self.max_card):
             # 버튼 삽입
-            if self.game.turn == 0:
+            if self.game.turn == self.my_index:
                 if i in self.possible_cards_num:
                     self.button.append(
                         Button(
@@ -551,7 +553,7 @@ class Multi_Single:
             ),
         )
         # 내 쉴드
-        if self.game.players[0].defence_int > 0:
+        if self.game.players[self.my_index].defence_int > 0:
             shield_x = 49 * setting.get_screen_scale()
             shield_y = 53 * setting.get_screen_scale()
             shield = pygame.image.load(RESOURCE_PATH / "single" / "shield.png")
@@ -667,7 +669,7 @@ class Multi_Single:
                         self.size[1] / 2 - four_y / 2,
                     ),
                 )
-            if self.game.turn == 0:  # 플레이어가 카드 낼때
+            if self.game.turn == self.my_index:  # 플레이어가 카드 낼때
                 give_card_x = 130 * setting.get_screen_scale()
                 give_card_y = 182 * setting.get_screen_scale()
                 give_x = (
@@ -697,7 +699,7 @@ class Multi_Single:
                     self.effect = 0
                     self.count = 0
                 # 우노 성공할 경우
-                if self.game.players[0].is_uno == True:
+                if self.game.players[self.my_index].is_uno == True:
                     uno_x = 400 * setting.get_screen_scale()
                     uno_y = 300 * setting.get_screen_scale()
                     uno = pygame.transform.scale(
@@ -783,9 +785,9 @@ class Multi_Single:
                     self.game.Client.send("wild_color_" + str(index))
         else:
             if index in self.possible_cards_num:
-                self.effect = self.hand_card[0][index]
+                self.effect = self.hand_card[self.my_index][index]
                 self.effect_index = index
-                if self.game.players[0].use_card(index) == "wild":
+                if self.game.players[self.my_index].use_card(index) == "wild":
                     self.update_card()
                     self.init_draw()
                     self.highlight = 0
@@ -795,14 +797,14 @@ class Multi_Single:
                     self.game.turn_end(option=1)
 
             if index == self.max_card:  # 덱
-                self.game.players[0].get_card()
+                self.game.players[self.my_index].get_card()
                 self.effect = "get_my"
                 self.game.turn_end()
 
                 self.game.Client.send("get_card")
 
             if index == self.max_card + 1:  # 우노버튼
-                self.game.players[0].press_uno()
+                self.game.players[self.my_index].press_uno()
 
     # 이벤트 처리
     def handle_event(self, event: pygame.event.Event):
@@ -819,7 +821,7 @@ class Multi_Single:
                 self.update_card()
                 self.init_draw()
                 self.highlight = 0
-            if self.game.turn != 0 and self.set_first != 0:
+            if self.game.turn != self.my_index and self.set_first != 0:
                 self.update_card()
                 se_event = pygame.event.Event(
                     EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"}
@@ -836,7 +838,7 @@ class Multi_Single:
         # 컴퓨터 비동기 대기 완료
         if event.type == EVENT_COMPUTER_THINK:
             self.computer_act()
-        if self.game.turn == 0:
+        if self.game.turn == self.my_index:
             # 겹친 구간에서 위에 있는 카드가 선택되게 하기 위한 조정
             for i in range(self.max_card + 1, -1, -1):
                 if event.type == pygame.MOUSEBUTTONDOWN:
