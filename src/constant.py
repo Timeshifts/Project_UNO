@@ -35,3 +35,4 @@ EVENT_OPEN_ENTER_IP = pygame.event.custom_type()
 EVENT_CLOSE_ENTER_IP = pygame.event.custom_type()
 
 EVENT_UPDATE = pygame.event.custom_type()
+EVENT_UPDATE_CHK = pygame.event.custom_type()
