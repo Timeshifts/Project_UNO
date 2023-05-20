@@ -22,6 +22,7 @@ class MultiLobby(Menu):
     # host_ip = socket.gethostbyname(socket.gethostname()) # 서버, 클라이언트 모두 Multi_Start_Setting에서 가져옴
     host_ip = ""
     input_ip = ""
+    my_ip = socket.gethostbyname(socket.gethostname())
 
     state = "client_or_server"
     # 버튼이 있어야 할 위치 반환
@@ -41,7 +42,7 @@ class MultiLobby(Menu):
         self.pos = pos
         self.size = size
         self.pressed = False
-        self.other_chk = [1, 0, 0, 0, 0]  # 0: 없음, 1: 기본 컴퓨터, 2: A지역 컴퓨터, 3: 멀티 플레이어
+        self.other_chk = [0, 0, 0, 0, 0]  # 0: 없음, 1: 기본 컴퓨터, 2: A지역 컴퓨터, 3: 멀티 플레이어
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -49,6 +50,17 @@ class MultiLobby(Menu):
         self.selected = -1
         self.init_draw()
         self.mss = MSS.Multi_Start_Setting()
+        self.server = False
+
+    def update_chk(self):  # 클라이언트 접속시
+        for i in range(self.max_other):
+            if self.other_chk[i] == 0:
+                self.other_chk[i] = self.mss.Server.addr[0]
+                break
+        self.mss.player_index(
+            self.other_chk, self.mss.Server.addr[0], self.name
+        )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
+        self.init_draw()
 
     def update(self):
         # TODO: 서버와 통신하여 타 플레이어 정보 받아오기
@@ -67,7 +79,16 @@ class MultiLobby(Menu):
 
         for i in range(self.max_other):
             # 버튼 삽입
-            if self.other_chk[i] == 1:  # 기본 컴퓨터
+            if self.other_chk[i] == 0:  # 없음
+                image = pygame.image.load(
+                    RESOURCE_PATH / "single" / "list_unpicked.png"
+                )
+                color = "Black"
+                # if self.state == "client_connected":
+                #     text = " "
+                # else:
+                text = " "
+            elif self.other_chk[i] == 1:  # 기본 컴퓨터
                 image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
                 text = self.other[i]
                 color = "White"
@@ -75,19 +96,11 @@ class MultiLobby(Menu):
                 image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
                 text = f"{self.other[i]} (A)"
                 color = "White"
-            elif self.other_chk[i] == 3:  # 멀티 플레이어
+            else:  # 멀티 플레이어
                 image = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
-                text = "name"
+                text = self.mss.ip_name[self.other_chk[i]]
                 color = "White"
-            else:  # 없음
-                image = pygame.image.load(
-                    RESOURCE_PATH / "single" / "list_unpicked.png"
-                )
-                color = "Black"
-                if self.state == "client_connected":
-                    text = " "
-                else:
-                    text = "+"
+
             self.button.append(
                 Button(
                     image,
@@ -122,7 +135,7 @@ class MultiLobby(Menu):
 
             # 본인 이름 표시
             self.text_name = setting.get_font(50).render(
-                f"방장: {self.name}", True, "White"
+                f"이름: {self.name}", True, "White"
             )
             self.text_name_rect = self.text_name.get_rect(
                 center=(self.size[0] / 2, self.size[1] * 0.3)
@@ -177,9 +190,21 @@ class MultiLobby(Menu):
                     self.button[i].changeHighlight(False, screen)
 
         # 플레이어 대기열 텍스트
-        if self.state in ("client_connected", "server_connected"):
+        if self.state in ("server_connected"):
             font = setting.get_font(50)
-            text_player = font.render("플레이어 대기열", True, "White")
+            text_player = font.render("방장", True, "White")
+            text_player_rect = text_player.get_rect(
+                center=(self.size[0] * 7 / 8, self.size[1] / 12)
+            )
+            screen.blit(
+                text_player,
+                text_player_rect,
+            )
+
+        # 플레이어 대기열 텍스트
+        if self.state in ("client_connected"):
+            font = setting.get_font(50)
+            text_player = font.render("플레이어", True, "White")
             text_player_rect = text_player.get_rect(
                 center=(self.size[0] * 7 / 8, self.size[1] / 12)
             )
@@ -236,14 +261,29 @@ class MultiLobby(Menu):
 
         if index < self.max_other:
             if self.state != "client_connected":  # client일 경우 클릭 방지
-                if self.other_chk[index] == 1:  # 기본 컴퓨터 → A지역 컴퓨터
+                if self.other_chk[index] == 0:  # 없음 → 기본 컴퓨터
+                    self.button[index].ChangeImage(
+                        pygame.transform.scale(
+                            pygame.image.load(RESOURCE_PATH / "single" / "list.png"),
+                            (list_x, list_y),
+                        )
+                    )
+                    self.button[index].ChangeText(self.other[index], "White", "White")
+                    self.other_chk[index] = 1
+                    print(self.other_chk)
+                    self.mss.player_index(
+                        self.other_chk, self.my_ip, self.name
+                    )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
+                elif self.other_chk[index] == 1:  # 기본 컴퓨터 → A지역 컴퓨터
                     self.button[index].ChangeText(
                         f"{self.other[index]} (A)", "White", "White"
                     )
                     self.other_chk[index] = 2
                     # for i in range(self.max_other):
                     print(self.other_chk)
-                    self.mss.player_index(self.other_chk)  # 클라이언트에게 other_chk 리스트 보내기
+                    self.mss.player_index(
+                        self.other_chk, self.my_ip, self.name
+                    )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
 
                 elif self.other_chk[index] == 2:  # A지역 컴퓨터 → 없음
                     self.button[index].ChangeImage(
@@ -254,11 +294,17 @@ class MultiLobby(Menu):
                             (list_x, list_y),
                         )
                     )
-                    self.button[index].ChangeText("+", "Black", "Black")
+                    self.button[index].ChangeText(" ", "Black", "Black")
                     self.other_chk[index] = 0
                     print(self.other_chk)
-                    self.mss.player_index(self.other_chk)
-                elif self.other_chk[index] == 3:  # 멀티 플레이어 → 없음
+                    self.mss.player_index(
+                        self.other_chk, self.my_ip, self.name
+                    )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
+                else:  # 멀티 플레이어 → 없음
+                    self.mss.Server.disconnect_client(
+                        self.other_chk[index]
+                    )  # 플레이어 추방 코드 추가
+
                     self.button[index].ChangeImage(
                         pygame.transform.scale(
                             pygame.image.load(
@@ -267,24 +313,13 @@ class MultiLobby(Menu):
                             (list_x, list_y),
                         )
                     )
-                    self.button[index].ChangeText("+", "Black", "Black")
+                    self.button[index].ChangeText(" ", "Black", "Black")
+
                     self.other_chk[index] = 0
                     print(self.other_chk)
-                    self.mss.player_index(self.other_chk)
-                    # 플레이어 추방 코드 추가
-                    #
-                    #
-                else:  # 없음 → 기본 컴퓨터
-                    self.button[index].ChangeImage(
-                        pygame.transform.scale(
-                            pygame.image.load(RESOURCE_PATH / "single" / "list.png"),
-                            (list_x, list_y),
-                        )
-                    )
-                    self.button[index].ChangeText(self.other[index], "White", "White")
-                    self.other_chk[index] = 1
-                    print(self.other_chk)
-                    self.mss.player_index(self.other_chk)
+                    self.mss.player_index(
+                        self.other_chk, self.my_ip, self.name
+                    )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
         else:
             index -= self.max_other
             if self.avail_menu[index] == "이름 변경":
@@ -300,8 +335,10 @@ class MultiLobby(Menu):
                 # client_connecting: IP 변경
                 pygame.event.post(pygame.event.Event(EVENT_OPEN_ENTER_IP))
             elif self.avail_menu[index] == "방 만들기":  # 서버 열기
+                self.server = True
                 # client_or_server: 서버 선택
                 self.mss.server()
+                # self.mss.server_name = self.name
                 self.host_ip = self.mss.host_ip  # host_ip
                 self.state = "server_connected"
                 self.other = ["1", "2", "3", "4", "5"]
@@ -339,10 +376,14 @@ class MultiLobby(Menu):
                     # 연결 성공
                     elif connect == "authenticated":  # 비밀번호 필요없다면
                         # TODO: 정원 초과를 확인해서 오류 메시지 표시
-                        self.host_ip = socket.gethostbyname(socket.gethostname())
-                        self.state = "client_connected"
-                        self.update()
-                        self.mss.connect()
+                        if self.other_chk.count(0) > 0:
+                            self.host_ip = socket.gethostbyname(socket.gethostname())
+                            self.state = "client_connected"
+                            self.update()
+                            self.mss.connect()
+                        else:
+                            print("정원 초과")
+                            self.mss.kicked()
             elif self.avail_menu[index] == "접속하기":
                 if self.password == "":  # 비밀번호를 입력하지 않으면
                     pass
@@ -363,6 +404,18 @@ class MultiLobby(Menu):
                 if self.other_chk.count(0) == 5:  # 나 말고 없으면
                     pass
                 else:
+                    self.computer_count = self.other_chk.count(1)
+                    self.story_A_computer_count = self.other_chk.count(2)
+                    self.player_count = self.other_chk.count(3)
+                    self.card_count = 5
+                    self.mss.Server.multi_sendto(
+                        [
+                            self.card_count,
+                            self.computer_count,
+                            self.story_A_computer_count,
+                        ]
+                    )
+                    pygame.event.post(pygame.event.Event(EVENT_START_MULTI))
                     # TODO: 멀티플레이 게임 시작
                     computer_count = self.other_chk.count(1)
                     story_A_computer_count = self.other_chk.count(2)
@@ -414,6 +467,7 @@ class MultiLobby(Menu):
                     self.init_draw()
                 elif self.state == "server_connected":
                     # TODO: 방에 들어온 인원 전원 강퇴
+                    self.server = False
                     self.state = "client_or_server"
                     self.other = []
                     self.max_other = 0
@@ -423,7 +477,7 @@ class MultiLobby(Menu):
                     self.init_draw()
                 elif self.state == "client_connected":
                     # TODO: 방장에게 방 떠남을 알리기
-                    self.mss.kicked()
+                    self.mss.kicked(self.my_ip)
                     self.state = "client_or_server"
                     self.other = []
                     self.max_other = 0

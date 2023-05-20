@@ -146,14 +146,14 @@ def main():
                     pygame.event.post(
                         pygame.event.Event(
                             EVENT_PLAY_SE,
-                            {"path": RESOURCE_PATH / "sound" / "victory.mp3"},
+                            path=RESOURCE_PATH / "sound" / "victory.mp3",
                         )
                     )
                 else:
                     pygame.event.post(
                         pygame.event.Event(
                             EVENT_PLAY_SE,
-                            {"path": RESOURCE_PATH / "sound" / "wild.mp3"},
+                            path=RESOURCE_PATH / "sound" / "wild.mp3",
                         )
                     )
 
@@ -172,7 +172,7 @@ def main():
                         # 과 함께 업적 1~4 달성
                         pygame.event.post(
                             pygame.event.Event(
-                                EVENT_ACQUIRE_ACHIEVEMENT, {"id": event.story_map}
+                                EVENT_ACQUIRE_ACHIEVEMENT, id=event.story_map
                             )
                         )
                 elif event.player_win:
@@ -269,7 +269,17 @@ def main():
                     # 변경 창에서 바꾼 이름을 멀티 로비에 반영
                     if "input" in event.dict.keys():
                         multi_lobby.name = event.input
-                        # TODO: 다른 플레이어에게 이름 변경 알리기
+                        # 다른 플레이어에게 이름 변경 알리기
+                        if multi_lobby.server == True:
+                            multi_lobby.mss.player_index(
+                                multi_lobby.other_chk,
+                                multi_lobby.my_ip,
+                                multi_lobby.name,
+                            )
+                        else:
+                            multi_lobby.mss.Client.send(
+                                (multi_lobby.my_ip, multi_lobby.name)
+                            )
                     game_objects.remove(text_prompt)
                 elif state == "passwd_change":
                     # 변경 창에서 바꾼 비밀번호를 멀티에 반영
@@ -439,6 +449,19 @@ def main():
             if event.type == EVENT_UPDATE:
                 multi_lobby.update()
 
+            # 멀티플레이 클라이언트 화면 업데이트
+            if event.type == EVENT_UPDATE_CHK:
+                multi_lobby.update_chk()
+
+            # 멀티플레이 클라이언트 화면 업데이트
+            if event.type == EVENT_UPDATE_CHK_SERVER:
+                multi_lobby.mss.player_index(
+                    multi_lobby.other_chk,
+                    multi_lobby.mss.Server.ip,
+                    multi_lobby.mss.Server.name,
+                )
+                multi_lobby.init_draw()
+
             # 이름 변경 열기
             if event.type == EVENT_OPEN_RENAME:
                 if state == "single_lobby":
@@ -557,7 +580,7 @@ def main():
                 else:  # 플레이어 패배한 경우
                     player_win = False
                 pygame.event.post(
-                    pygame.event.Event(EVENT_END_GAME, {"player_win": player_win})
+                    pygame.event.Event(EVENT_END_GAME, player_win=player_win)
                 )
 
 

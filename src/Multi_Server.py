@@ -4,6 +4,8 @@ import time
 import queue
 import pickle
 import initialization
+import pygame
+from constant import *
 
 
 class Multi_Server:
@@ -21,6 +23,9 @@ class Multi_Server:
         self.is_password = False
         self.password = ""
         self.random_request = False
+        self.addr = 0
+        self.ip = 0
+        self.name = 0
 
     def single_send(self, index, msg):
         try:
@@ -49,7 +54,6 @@ class Multi_Server:
         try:
             while True:
                 msg = pickle.loads(client_socket.recv(4096))
-
                 if isinstance(msg, dict):
                     self.msg_queue.put(msg)
                 elif isinstance(msg, list):
@@ -63,10 +67,15 @@ class Multi_Server:
                     elif msg[0:6] == "random":
                         if self.random_request == False:
                             self.random_request = True
-
                             num = int(msg[15:])
                     elif msg == "start":
                         self.msg_queue.put(msg)
+                    elif msg[1] == "out":
+                        self.disconnect_client(msg[0])
+                    elif type(msg) == tuple:  # 새로운 이름인 경우
+                        self.ip = msg[0]
+                        self.name = msg[1]
+                        pygame.event.post(pygame.event.Event(EVENT_UPDATE_CHK_SERVER))
                     else:
                         self.msg_queue.put(msg)
         except:
@@ -75,6 +84,7 @@ class Multi_Server:
     def handle_client(self):
         while True:
             connect_socket, addr = self.server_socket.accept()
+            self.addr = addr
             if self.is_password == True:
                 connect_socket.send(pickle.dumps("password"))
                 thread = threading.Thread(
@@ -110,6 +120,7 @@ class Multi_Server:
         thread_receive = threading.Thread(target=self.receive, args=(connect_socket,))
         thread_receive.daemon = True
         thread_receive.start()
+        pygame.event.post(pygame.event.Event(EVENT_UPDATE_CHK))
 
     def server_start(self):
         thread_handle_client = threading.Thread(target=self.handle_client)
@@ -120,5 +131,11 @@ class Multi_Server:
         thread_send.daemon = True
         thread_send.start()
 
-    # def multi_game_initialization(self, a, b, c):
-    # return initialization.init_game(self.socket_array, a, b, c)
+    def disconnect_client(self, ip):
+        for i, client_socket in enumerate(self.socket_array):
+            client_addr = client_socket.getpeername()
+            if client_addr[0] == ip:
+                client_socket.close()
+                self.socket_array.pop(i)
+                print(f"클라이언트 {client_addr}의 연결이 끊어졌습니다.")
+                break

@@ -1,4 +1,5 @@
 import sys, os
+import time
 
 import pygame
 
@@ -213,6 +214,7 @@ class Test(unittest.TestCase):
 
 
     def test_story_a(self):
+        pygame.init()
         self.gm = GM.Gm
         self.gm.start_cards_integer = 10
         self.gm.story_A_computer_count = 1
@@ -226,7 +228,7 @@ class Test(unittest.TestCase):
             print(f"{self.gm.turn} 번 유저 턴")
             self.gm.turn_start()
             self.before_turn_check = self.gm.turn
-            if isinstance(self.gm.players[self.gm.turn],GM.StoryA_User):
+            if isinstance(self.gm.players[self.gm.turn],(GM.Computer, GM.StoryA_User)):
                 self.gm.players[self.gm.turn].computer_play()
                 print(f"컴퓨터 플레이어, {self.gm.turn_count}번째 턴 종료")
 
@@ -261,6 +263,8 @@ class Test(unittest.TestCase):
                     print("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ")
                 turn_check = 1
                 self.is_combo = False
+        time.sleep(0.5)
+        pygame.quit()
 
 
     def test_story_b(self):
@@ -277,6 +281,7 @@ class Test(unittest.TestCase):
     
 
     def test_story_c(self):
+        pygame.init()
         self.gm = GM.Gm
         self.gm.start_cards_integer = 10
         self.gm.computer_count = 2
@@ -293,7 +298,7 @@ class Test(unittest.TestCase):
                 print(f"바뀐 후의 grave_top 색 : {self.gm.grave_top_color}")
                 print("----------------------------------")
                 self.assertNotEqual(self.gm.grave_top_color,self.grave_top_four)
-            if isinstance(self.gm.players[self.gm.turn],GM.Computer):
+            if isinstance(self.gm.players[self.gm.turn],(GM.Computer, GM.StoryA_User)):
                 self.gm.players[self.gm.turn].computer_play()
             else:
                 self.gm.players[self.gm.turn].play()
@@ -301,8 +306,11 @@ class Test(unittest.TestCase):
             self.gm.turn_end()
             if self.gm.turn_count % self.gm.top_card_change_num == (self.gm.top_card_change_num-1):
                 self.grave_top_four = self.gm.grave_top_color
+        time.sleep(0.5)
+        pygame.quit()
 
     def test_story_d(self):
+        pygame.init()
         self.gm = GM.Gm
         self.gm.start_cards_integer = 10
         self.gm.computer_count = 3
@@ -325,7 +333,7 @@ class Test(unittest.TestCase):
                 self.assertNotEqual(before_hand,after_hand)
                 before_hand = []
                 after_hand = []
-            if isinstance(self.gm.players[self.gm.turn],GM.Computer):
+            if isinstance(self.gm.players[self.gm.turn],(GM.Computer, GM.StoryA_User)):
                 self.gm.players[self.gm.turn].computer_play()
             else:
                 self.gm.players[self.gm.turn].play()
@@ -334,6 +342,8 @@ class Test(unittest.TestCase):
             if self.gm.turn_count % self.gm.hand_change_num == (self.gm.hand_change_num-1):
                 for a in range(len(self.gm.players)):
                     before_hand.append(len(self.gm.players[a].hand))
+        time.sleep(0.5)
+        pygame.quit()
 
     def test_other_func(self):
         pygame.init()
