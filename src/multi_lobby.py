@@ -440,7 +440,7 @@ class MultiLobby(Menu):
                     self.init_draw()
                 elif self.state == "client_connected":
                     # TODO: 방장에게 방 떠남을 알리기
-                    self.mss.kicked()
+                    self.mss.kicked(self.my_ip)
                     self.state = "client_or_server"
                     self.other = []
                     self.max_other = 0
