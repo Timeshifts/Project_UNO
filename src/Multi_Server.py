@@ -67,15 +67,16 @@ class Multi_Server:
                     elif msg[0:6] == "random":
                         if self.random_request == False:
                             self.random_request = True
-
                             num = int(msg[15:])
                     elif msg == "start":
                         self.msg_queue.put(msg)
-                    elif type(msg) == tuple:
+                    elif msg[1] == "out":
+                        self.disconnect_client(msg[0])
+                    elif type(msg) == tuple:  # 새로운 이름인 경우
                         self.ip = msg[0]
                         self.name = msg[1]
                         pygame.event.post(pygame.event.Event(EVENT_UPDATE_CHK_SERVER))
-                    else:  # 새로운 이름인 경우
+                    else:
                         self.msg_queue.put(msg)
         except:
             print("서버: 원격 호스트에 의해 강제로 끊김!")

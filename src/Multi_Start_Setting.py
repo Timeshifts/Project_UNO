@@ -141,9 +141,10 @@ class Multi_Start_Setting:
                 print(self.ip_name)
                 pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
 
-    def kicked(self):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
-        print("강퇴")
-        self.Client.client_end()
+    def kicked(self, ip):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
+        print("나가기")
+        self.Client.send((ip, "out"))
+        # self.Client.client_end()
 
     # # 게임 시작
     # dic = Server.init_game()
