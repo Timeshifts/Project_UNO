@@ -80,9 +80,9 @@ class Multi_Single:
     def game_start(self):
         # Gm 역시 single처럼 게임 재시작시 변경되도록 처리
         self.my_index = self.dic['index']
-        GM.Gm = GM.GameManager(self.client, self.dic)
+        MGM.Gm = MGM.GameManager(self.client, self.dic)
 
-        self.game = GM.Gm
+        self.game = MGM.Gm
         #self.game.story = self.story
         #self.game.computer_count = self.computer_count
         #self.game.start_cards_integer = 5
