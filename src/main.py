@@ -370,7 +370,8 @@ def main():
                 dic = multi_lobby.mss.dic
 
                 # 게임 로비 제거
-                game_objects.remove(multi_lobby)
+                game_objects.clear()
+                # game_objects.remove(multi_lobby)
                 state = "multi"
                 background = get_background(state, size)
 

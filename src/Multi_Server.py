@@ -59,7 +59,6 @@ class Multi_Server:
                 elif isinstance(msg, list):
                     initialization.init_game(self.socket_array, msg[0], msg[1], msg[2])
                     dic = initialization.game_dic
-                    print(f"딕 : {dic}")
                     self.msg_queue.put(dic)
                     break
                 else:
