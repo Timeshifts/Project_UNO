@@ -681,7 +681,7 @@ class MultiUser(Player):
     def __init__(self, is_computer, ip):
         super().__init__(is_computer)
         self.ip = ip
-        self.return_value = 0
+        self.return_value = "get"
 
     def play(self):
         self.possible_cards.clear()
@@ -694,6 +694,8 @@ class MultiUser(Player):
             thread = threading.Thread(target=self.threading_receive)
             thread.daemon = True
             thread.start()
+            thread.join(timeout=16.0)
+            return self.return_value
 
     def threading_receive(self):
         while True:
