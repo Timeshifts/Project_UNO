@@ -415,7 +415,6 @@ class MultiLobby(Menu):
                             self.story_A_computer_count,
                         ]
                     )
-                    pygame.event.post(pygame.event.Event(EVENT_START_MULTI))
                     # TODO: 멀티플레이 게임 시작
                     computer_count = self.other_chk.count(1)
                     story_A_computer_count = self.other_chk.count(2)
