@@ -29,7 +29,7 @@ class Multi_Start_Setting:
         # 따로 호스트 처리 안하고 싹다 클라이언트로 간편하게 처리하기 위함
         self.Client = Multi_Client.Multi_Client(self.host_ip)
         self.Client.client_start()
-        # self.ip_name[self.host_ip] = self.server_name
+        self.connect_server()
 
     def player_index(self, chk, ip, name):
         # 다른 클라이언트에게 전달할 동기화 메시지 생성
@@ -40,6 +40,9 @@ class Multi_Start_Setting:
         sync_msg = {"type": "player_index", "chk": chk, "name": self.ip_name}
         # 동기화 메시지를 모든 클라이언트에 전송
         print("서버로 리스트 전송")
+        print(f"메시지 : {sync_msg}")
+        a = self.Server.socket_array
+        print(a)
         self.Server.multi_sendto(sync_msg)
 
     def password(self, pw):
@@ -128,6 +131,25 @@ class Multi_Start_Setting:
         receiver_thread.start()
 
     def receive_messages(self):
+        while True:
+            # Client의 msg_queue가 비어있으면 계속 대기한다.
+            if self.Client.msg_queue.empty() == True:
+                time.sleep(0.2)
+            # Client의 msg_queue가 채워져있으면 else 문으로 간다. 이는 서버로부터 메세지를 받았음을 의미
+            else:
+                # msg_queue로부터 메세지를 pop해온다.
+                msg = self.Client.msg_queue.get()
+                self.chk = msg["chk"]
+                self.ip_name = msg["name"]
+                print(self.ip_name)
+                pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
+
+    def connect_server(self):  # 서버의 클라이언트
+        # 메시지 수신을 위한 스레드 생성
+        receiver_thread = threading.Thread(target=self.receive_messages_server)
+        receiver_thread.start()
+
+    def receive_messages_server(self):
         while True:
             # Client의 msg_queue가 비어있으면 계속 대기한다.
             if self.Client.msg_queue.empty() == True:

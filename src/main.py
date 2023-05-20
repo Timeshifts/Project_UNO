@@ -270,9 +270,14 @@ def main():
                     if "input" in event.dict.keys():
                         multi_lobby.name = event.input
                         # 다른 플레이어에게 이름 변경 알리기
-                        multi_lobby.mss.player_index(
-                            multi_lobby.other_chk, multi_lobby.my_ip, multi_lobby.name
-                        )
+                        if multi_lobby.server:
+                            multi_lobby.mss.player_index(
+                                multi_lobby.other_chk,
+                                str(multi_lobby.my_ip),
+                                multi_lobby.name,
+                            )
+                        else:
+                            multi_lobby.mss.Client.send(multi_lobby.name)
                     game_objects.remove(text_prompt)
                 elif state == "passwd_change":
                     # 변경 창에서 바꾼 비밀번호를 멀티에 반영

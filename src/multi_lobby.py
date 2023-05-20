@@ -78,6 +78,7 @@ class MultiLobby(Menu):
         self.max_menu = 2
         self.init_draw()
         print("화면 업데이트")
+        print(f"배열 : {self.mss.Server.socket_array}")
 
     def init_draw(self):
         self.button = []
@@ -316,9 +317,6 @@ class MultiLobby(Menu):
             index -= self.max_other
             if self.avail_menu[index] == "이름 변경":
                 pygame.event.post(pygame.event.Event(EVENT_OPEN_RENAME))  # 이름 변경
-                # self.mss.player_index(
-                #     self.other_chk, self.my_ip, self.name
-                # )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
             elif self.avail_menu[index] == "비밀번호":
                 if self.state == "server_connected":
                     # server_connected: 비밀번호 변경
