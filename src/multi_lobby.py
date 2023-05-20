@@ -260,7 +260,7 @@ class MultiLobby(Menu):
                     self.other_chk[index] = 1
                     print(self.other_chk)
                     self.mss.player_index(
-                        self.other_chk, self.mss.Server.addr[0], self.name
+                        self.other_chk, self.my_ip, self.name
                     )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
                 elif self.other_chk[index] == 1:  # 기본 컴퓨터 → A지역 컴퓨터
                     self.button[index].ChangeText(
@@ -270,7 +270,7 @@ class MultiLobby(Menu):
                     # for i in range(self.max_other):
                     print(self.other_chk)
                     self.mss.player_index(
-                        self.other_chk, self.mss.Server.addr[0], self.name
+                        self.other_chk, self.my_ip, self.name
                     )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
 
                 elif self.other_chk[index] == 2:  # A지역 컴퓨터 → 없음
@@ -286,7 +286,7 @@ class MultiLobby(Menu):
                     self.other_chk[index] = 0
                     print(self.other_chk)
                     self.mss.player_index(
-                        self.other_chk, self.mss.Server.addr[0], self.name
+                        self.other_chk, self.my_ip, self.name
                     )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
                 else:  # 멀티 플레이어 → 없음
                     self.button[index].ChangeImage(
@@ -301,7 +301,7 @@ class MultiLobby(Menu):
                     self.other_chk[index] = 0
                     print(self.other_chk)
                     self.mss.player_index(
-                        self.other_chk, self.mss.Server.addr[0], self.name
+                        self.other_chk, self.my_ip, self.name
                     )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
                     # 플레이어 추방 코드 추가
                     #
