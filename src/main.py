@@ -270,7 +270,6 @@ def main():
                     if "input" in event.dict.keys():
                         multi_lobby.name = event.input
                         # 다른 플레이어에게 이름 변경 알리기
-                        print(multi_lobby.server)
                         if multi_lobby.server == True:
                             multi_lobby.mss.player_index(
                                 multi_lobby.other_chk,
@@ -467,6 +466,15 @@ def main():
             # 멀티플레이 클라이언트 화면 업데이트
             if event.type == EVENT_UPDATE_CHK:
                 multi_lobby.update_chk()
+
+            # 멀티플레이 클라이언트 화면 업데이트
+            if event.type == EVENT_UPDATE_CHK_SERVER:
+                multi_lobby.mss.player_index(
+                    multi_lobby.other_chk,
+                    multi_lobby.mss.Server.ip,
+                    multi_lobby.mss.Server.name,
+                )
+                multi_lobby.init_draw()
 
             # 이름 변경 열기
             if event.type == EVENT_OPEN_RENAME:

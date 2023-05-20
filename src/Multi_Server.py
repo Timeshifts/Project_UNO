@@ -24,6 +24,8 @@ class Multi_Server:
         self.password = ""
         self.random_request = False
         self.addr = 0
+        self.ip = 0
+        self.name = 0
 
     def single_send(self, index, msg):
         try:
@@ -69,6 +71,10 @@ class Multi_Server:
                             num = int(msg[15:])
                     elif msg == "start":
                         self.msg_queue.put(msg)
+                    elif type(msg) == tuple:
+                        self.ip = msg[0]
+                        self.name = msg[1]
+                        pygame.event.post(pygame.event.Event(EVENT_UPDATE_CHK_SERVER))
                     else:  # 새로운 이름인 경우
                         self.msg_queue.put(msg)
         except:

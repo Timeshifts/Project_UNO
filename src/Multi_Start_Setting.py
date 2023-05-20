@@ -40,8 +40,6 @@ class Multi_Start_Setting:
         # 동기화 메시지를 모든 클라이언트에 전송
         print("서버로 리스트 전송")
         print(f"메시지 : {sync_msg}")
-        a = self.Server.socket_array
-        print(a)
         self.Server.multi_sendto(sync_msg)
 
     def password(self, pw):
@@ -138,13 +136,10 @@ class Multi_Start_Setting:
             else:
                 # msg_queue로부터 메세지를 pop해온다.
                 msg = self.Client.msg_queue.get()
-                if type(msg) == tuple:
-                    self.player_index(self.chk, msg[0], msg[1])
-                else:
-                    self.chk = msg["chk"]
-                    self.ip_name = msg["name"]
-                    print(self.ip_name)
-                    pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
+                self.chk = msg["chk"]
+                self.ip_name = msg["name"]
+                print(self.ip_name)
+                pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
 
     def kicked(self):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
         print("강퇴")
