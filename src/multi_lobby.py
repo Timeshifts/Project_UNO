@@ -294,7 +294,7 @@ class MultiLobby(Menu):
                             (list_x, list_y),
                         )
                     )
-                    self.button[index].ChangeText("+", "Black", "Black")
+                    self.button[index].ChangeText(" ", "Black", "Black")
                     self.other_chk[index] = 0
                     print(self.other_chk)
                     self.mss.player_index(
