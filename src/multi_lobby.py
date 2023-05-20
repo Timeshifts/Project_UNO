@@ -294,7 +294,7 @@ class MultiLobby(Menu):
                             (list_x, list_y),
                         )
                     )
-                    self.button[index].ChangeText("+", "Black", "Black")
+                    self.button[index].ChangeText(" ", "Black", "Black")
                     self.other_chk[index] = 0
                     print(self.other_chk)
                     self.mss.player_index(
@@ -376,10 +376,14 @@ class MultiLobby(Menu):
                     # 연결 성공
                     elif connect == "authenticated":  # 비밀번호 필요없다면
                         # TODO: 정원 초과를 확인해서 오류 메시지 표시
-                        self.host_ip = socket.gethostbyname(socket.gethostname())
-                        self.state = "client_connected"
-                        self.update()
-                        self.mss.connect()
+                        if self.other_chk.count(0) > 0:
+                            self.host_ip = socket.gethostbyname(socket.gethostname())
+                            self.state = "client_connected"
+                            self.update()
+                            self.mss.connect()
+                        else:
+                            print("정원 초과")
+                            self.mss.kicked()
             elif self.avail_menu[index] == "접속하기":
                 if self.password == "":  # 비밀번호를 입력하지 않으면
                     pass
