@@ -32,11 +32,11 @@ def init_game(clients, card_count, computer_count, storyA_count):
         GM.players[i].hand = GM.roulette_wheel_selection(
             GM.players[i].skill_card_weight
         )
-        
-    game_dic['ref_deck'] = GM.ref_deck
-    game_dic['deck'] = GM.deck
-    game_dic['players'] = GM.players
-    game_dic['turn'] = GM.turn
-    game_dic['computer_count'] = computer_count
-    game_dic['story_A_computer_count'] = storyA_count
-    return game_dic
+
+    game_dic["ref_deck"] = GM.ref_deck
+    game_dic["deck"] = GM.deck
+    game_dic["players"] = GM.players
+    game_dic["turn"] = GM.turn
+    game_dic["computer_count"] = computer_count
+    game_dic["story_A_computer_count"] = storyA_count
+    # return game_dic

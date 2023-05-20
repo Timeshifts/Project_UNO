@@ -54,23 +54,6 @@ class Multi_Start_Setting:
         self.Client.send("start")
         self.Client.send([5, 1, 0])
 
-    # "start"는 방장이 게임을 시작함
-    # if M == "start":
-    #    print("게임 시작")
-    #    MGM = Multi_GameManager.Gm
-    #    MGM.client = Client
-
-    # if isinstance(M ,dict):
-    #    MGM.deck = M['ref_deck']
-    #    MGM.deck = M['deck']
-    #    MGM.deck = M['players']
-    #    MGM.deck = M['turn']
-
-    #         c = int(input())
-    #         print(f" {c}번 인덱스 소켓 강퇴됨 ")
-    #         Server.single_send(c, "kicked")
-    #         Server.socket_array.pop(c)
-
     def client(self, ip):
         # 아이피 입력하면, 해당 아이피의 서버로 접속
         self.input_ip = ip

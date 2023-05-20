@@ -427,6 +427,10 @@ class MultiLobby(Menu):
                     )
                     card_count = 5
                     name = self.name
+                    while True:
+                        self.mss.Client.msg_queue.get()
+                        if self.mss.Client.msg_queue.empty() == True:
+                            break
                     self.mss.Client.send(
                         [
                             card_count,
@@ -439,8 +443,10 @@ class MultiLobby(Menu):
                     while True:
                         if self.mss.Client.msg_queue.empty() == False:
                             msg = self.mss.Client.msg_queue.get()
-                            dic = msg[1]
-                            break
+                            if isinstance(msg, dict):
+                                print(f"{msg}")
+                                dic = msg
+                                break
                     self.mss.start(
                         card_count,
                         computer_count,

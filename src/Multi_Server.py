@@ -57,10 +57,11 @@ class Multi_Server:
                 if isinstance(msg, dict):
                     self.msg_queue.put(msg)
                 elif isinstance(msg, list):
-                    dic = initialization.init_game(
-                        self.socket_array, msg[0], msg[1], msg[2]
-                    )
-                    self.msg_queue.put((msg, dic))
+                    initialization.init_game(self.socket_array, msg[0], msg[1], msg[2])
+                    dic = initialization.game_dic
+                    print(f"딕 : {dic}")
+                    self.msg_queue.put(dic)
+                    break
                 else:
                     if msg == "deleted":
                         break
