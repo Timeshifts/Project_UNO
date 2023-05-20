@@ -54,34 +54,6 @@ class Multi_Start_Setting:
         self.Client.send("start")
         self.Client.send([5, 1, 0])
 
-    def drop(self):
-        # 게임 강퇴
-        print("강퇴")
-        #     # 강퇴, Server의 Socket 배열의 인덱스를 제거하는 방식
-        #     # 현재 연결된 소켓배열의 크기를 print로 host에게 보여준다.
-        #     # 해당 인덱스 입력시, 해당 소켓에 "kicked" 메세지를 보내며
-        #     # Server 객체의 socket 배열에서 pop 한다.
-        #     elif b == 2:
-        #         print("강퇴할 인덱스를 입력하세요")
-        #         print(f"현재 최대 인덱스 : {len(Server.socket_array) - 1}")
-
-    # "start"는 방장이 게임을 시작함
-    # if M == "start":
-    #    print("게임 시작")
-    #    MGM = Multi_GameManager.Gm
-    #    MGM.client = Client
-
-    # if isinstance(M ,dict):
-    #    MGM.deck = M['ref_deck']
-    #    MGM.deck = M['deck']
-    #    MGM.deck = M['players']
-    #    MGM.deck = M['turn']
-
-    #         c = int(input())
-    #         print(f" {c}번 인덱스 소켓 강퇴됨 ")
-    #         Server.single_send(c, "kicked")
-    #         Server.socket_array.pop(c)
-
     def client(self, ip):
         # 아이피 입력하면, 해당 아이피의 서버로 접속
         self.input_ip = ip
@@ -136,23 +108,50 @@ class Multi_Start_Setting:
             else:
                 # msg_queue로부터 메세지를 pop해온다.
                 msg = self.Client.msg_queue.get()
-                self.chk = msg["chk"]
-                self.ip_name = msg["name"]
-                print(self.ip_name)
-                pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
+                if "chk" in msg:
+                    self.chk = msg["chk"]
+                    self.ip_name = msg["name"]
+                    print(self.ip_name)
+                    pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
+                else:  # 게임 시작
+                    card_count = msg[0][0]
+                    computer_count = msg[0][1]
+                    story_A_computer_count = msg[0][2]
+                    player_count = msg[0][3]
+                    name = msg[0][4]
+                    dic = msg[1]
+                    self.start(
+                        card_count,
+                        computer_count,
+                        story_A_computer_count,
+                        player_count,
+                        name,
+                        dic,
+                    )
+
+    def start(
+        self,
+        card_count,
+        computer_count,
+        story_A_computer_count,
+        player_count,
+        name,
+        dic,
+    ):
+        self.card_count = card_count
+        self.computer_count = computer_count
+        self.story_A_computer_count = story_A_computer_count
+        self.player_count = player_count
+        self.name = name
+        self.dic = dic
+        print(f"card_count : {self.card_count}")
+        print(f"computer_count : {self.computer_count}")
+        print(f"story_A_computer_count : {self.story_A_computer_count}")
+        print(f"player_count : {self.player_count}")
+        print(f"name : {self.name}")
+        print(f"dic : {self.dic}")
+        pygame.event.post(pygame.event.Event(EVENT_START_MULTI))  # 게임 시작 이벤트
 
     def kicked(self, ip):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
         print("나가기")
         self.Client.send((ip, "out"))
-        # self.Client.client_end()
-
-    # # 게임 시작
-    # dic = Server.init_game()
-    # Server.send()
-
-    # -----------------------------------------------
-    # 나중에, 화면에 그리기 코드와 매핑되면 아래 sleep(1) 쓰는 와일문은 삭제
-    # -----------------------------------------------
-
-    # while True:
-    #     time.sleep(1)

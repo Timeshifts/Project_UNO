@@ -362,29 +362,16 @@ def main():
                 single_turn = 1
             elif event.type == EVENT_START_MULTI:  # 멀티플레이 시작
                 # 컴퓨터 개수
-                computer_count = multi_lobby.other_chk.count(1)
-                story_A_computer_count = multi_lobby.other_chk.count(2)
-                player_count = multi_lobby.other_chk.count(3)
-                card_count = 5
-                name = multi_lobby.name
-
-                multi_lobby.mss.Client.send(
-                    [card_count, computer_count, story_A_computer_count]
-                )
-
-                # --------------------------------------------------------
-                dic = {}
-
-                while True:
-                    if multi_lobby.mss.Client.msg_queue.empty() == False:
-                        M = multi_lobby.mss.Client.msg_queue.get()
-
-                        if isinstance(M, dict):
-                            dic = M
-                            break
+                card_count = multi_lobby.mss.card_count
+                computer_count = multi_lobby.mss.computer_count
+                story_A_computer_count = multi_lobby.mss.story_A_computer_count
+                player_count = multi_lobby.mss.player_count
+                name = multi_lobby.mss.name
+                dic = multi_lobby.mss.dic
 
                 # 게임 로비 제거
-                game_objects.remove(multi_lobby)
+                game_objects.clear()
+                # game_objects.remove(multi_lobby)
                 state = "multi"
                 background = get_background(state, size)
 
