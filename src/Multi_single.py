@@ -1,4 +1,4 @@
-import Multi_GameManager as MGM
+import Multi_GameManager as GM
 import pygame
 import setting
 import threading
@@ -14,7 +14,16 @@ clock = pygame.time.Clock()
 
 class Multi_Single:
     def __init__(
-        self, pos=(0, 0), size=(150, 50), computer_count=1, story_A_computer_count=0, player_count=0, name="ME", story=-1, client = 0, dict={}
+        self,
+        pos=(0, 0),
+        size=(150, 50),
+        computer_count=1,
+        story_A_computer_count=0,
+        player_count=0,
+        name="ME",
+        story=-1,
+        client=0,
+        dict={},
     ):
         # self.menu = self.avail_menu
         # self.max_menu = len(self.menu)
@@ -80,12 +89,12 @@ class Multi_Single:
     def game_start(self):
         # Gm 역시 single처럼 게임 재시작시 변경되도록 처리
         self.my_index = self.dic['index']
-        MGM.Gm = MGM.GameManager(self.client, self.dic)
+        GM.Gm = GM.GameManager(self.client, self.dic)
 
-        self.game = MGM.Gm
-        #self.game.story = self.story
-        #self.game.computer_count = self.computer_count
-        #self.game.start_cards_integer = 5
+        self.game = GM.Gm
+        # self.game.story = self.story
+        # self.game.computer_count = self.computer_count
+        # self.game.start_cards_integer = 5
         self.game.initial_sync()
         self.game.game_start()
         self.update_card()

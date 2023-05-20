@@ -57,10 +57,10 @@ class Multi_Server:
                 if isinstance(msg, dict):
                     self.msg_queue.put(msg)
                 elif isinstance(msg, list):
-                    dic = initialization.init_game(
-                        self.socket_array, msg[0], msg[1], msg[2]
-                    )
+                    initialization.init_game(self.socket_array, msg[0], msg[1], msg[2])
+                    dic = initialization.game_dic
                     self.msg_queue.put(dic)
+                    break
                 else:
                     if msg == "deleted":
                         break
@@ -139,6 +139,3 @@ class Multi_Server:
                 self.socket_array.pop(i)
                 print(f"클라이언트 {client_addr}의 연결이 끊어졌습니다.")
                 break
-
-    # def multi_game_initialization(self, a, b, c):
-    # return initialization.init_game(self.socket_array, a, b, c)

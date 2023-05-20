@@ -61,11 +61,11 @@ class GameManager:
     @staticmethod
     def toggle_achi(num, state):
         if state:
-            if num - 1 not in Multi_GameManager.achi_flag:
-                Multi_GameManager.achi_flag.append(num - 1)
+            if num - 1 not in GameManager.achi_flag:
+                GameManager.achi_flag.append(num - 1)
         else:
-            if num - 1 in Multi_GameManager.achi_flag:
-                Multi_GameManager.achi_flag.remove(num - 1)
+            if num - 1 in GameManager.achi_flag:
+                GameManager.achi_flag.remove(num - 1)
 
     # 게임 맨처음 시작시 각종 설정 초기화 해주는 함수
     def game_start(self):
