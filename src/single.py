@@ -134,7 +134,8 @@ class Single:
 
     def computer_wait(self):
         time.sleep(random.random() * 2 + 1)
-        pygame.event.post(pygame.event.Event(EVENT_COMPUTER_THINK))
+        if pygame.get_init():
+            pygame.event.post(pygame.event.Event(EVENT_COMPUTER_THINK))
 
     def init_draw(self):
         self.button = []
