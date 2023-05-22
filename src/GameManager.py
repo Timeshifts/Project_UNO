@@ -478,6 +478,7 @@ class GameManager:
     def top_card_change(self):
         if self.turn_count % self.top_card_change_num == 0:
             random_color = ["blue", "green", "red", "yellow"]
+            random_color.remove(self.grave_top_color)
             self.grave_top_color = random.choice(random_color)
 
     def hand_change(self):
