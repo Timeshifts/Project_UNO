@@ -53,7 +53,7 @@ class MultiLobby(Menu):
         self.server = False
 
     def update_chk(self):  # 클라이언트 접속시
-        if self.other_chk.count(0) == 0:    # 정원초과시 강퇴하기
+        if self.other_chk.count(0) == 0:  # 정원초과시 강퇴하기
             self.mss.kicked(self.mss.Server.addr[0])
         else:
             for i in range(self.max_other):
@@ -434,23 +434,16 @@ class MultiLobby(Menu):
                             card_count,
                             computer_count,
                             story_A_computer_count,
-                            player_count,
-                            name,
                         ]
                     )
                     while True:
                         if self.mss.Client.msg_queue.empty() == False:
                             msg = self.mss.Client.msg_queue.get()
                             if isinstance(msg, dict):
-                                print(f"{msg}")
+                                print("서버에서 게임시작 메시지 받음")
                                 dic = msg
                                 break
                     self.mss.start(
-                        card_count,
-                        computer_count,
-                        story_A_computer_count,
-                        player_count,
-                        name,
                         dic,
                     )
 
