@@ -27,8 +27,8 @@ class Multi_Single:
     ):
         # self.menu = self.avail_menu
         # self.max_menu = len(self.menu)
-        self.computer_count = computer_count
-        self.story_A_computer_count = story_A_computer_count
+        self.computer_count = dict["computer_count"]
+        self.story_A_computer_count = dict["story_A_computer_count"]
         self.player_count = player_count
         self.name = name
         self.button = []
