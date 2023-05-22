@@ -479,7 +479,7 @@ class MultiLobby(Menu):
                     self.state = "client_or_server"
                     index = self.other_chk.index(self.my_ip)
                     self.other_chk[index] = 0
-                    self.mss.kicked(self.other_chk,self.my_ip,self.name)
+                    self.mss.client_end(self.other_chk,self.my_ip,self.name)
                     self.other = []
                     self.max_other = 0
                     self.avail_menu = ["방 접속하기", "방 만들기", "돌아가기"]
