@@ -27,6 +27,7 @@ class Multi_Server:
         self.ip = 0
         self.name = 0
 
+
     def single_send(self, index, msg):
         try:
             self.socket_array[index].send(pickle.dumps(msg))
@@ -139,3 +140,8 @@ class Multi_Server:
                 self.socket_array.pop(i)
                 print(f"클라이언트 {client_addr}의 연결이 끊어졌습니다.")
                 break
+
+    def disconnect_server(self):
+        for i in range(len(self.socket_array)):
+            self.socket_array[i].close()
+        self.server_socket.close()
