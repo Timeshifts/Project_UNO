@@ -783,6 +783,9 @@ class Multi_Single:
                     self.game.turn_end(option=1)
 
                     self.game.client.send("wild_four_" + str(index))
+                    time.sleep(0.3)
+                    self.game.client.msg_queue.get()
+                    
                 # elif self.game.wild_card == "wild_target":
                 #     self.game.attack(2, random.randint(0, self.game.player_num - 1))
                 #     self.game.wild = False
@@ -792,6 +795,8 @@ class Multi_Single:
                     self.game.turn_end(option=1)
 
                     self.game.client.send("wild_color_" + str(index))
+                    time.sleep(0.3)
+                    self.game.client.msg_queue.get()
         else:
             if index in self.possible_cards_num:
                 self.effect = self.hand_card[self.my_index][index]
@@ -803,6 +808,8 @@ class Multi_Single:
                     self.game.turn_timer_end = True
                 else:
                     self.game.client.send("use_card_" + str(index))
+                    time.sleep(0.3)
+                    self.game.client.msg_queue.get()
                     self.game.turn_end(option=1)
 
             if index == self.max_card:  # 덱
@@ -811,6 +818,8 @@ class Multi_Single:
                 self.game.turn_end()
 
                 self.game.client.send("get_card")
+                time.sleep(0.3)
+                self.game.client.msg_queue.get()
 
             if index == self.max_card + 1:  # 우노버튼
                 self.game.players[self.my_index].press_uno()
