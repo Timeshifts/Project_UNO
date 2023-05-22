@@ -70,7 +70,9 @@ class Multi_Server:
                             self.random_request = True
                             num = int(msg[15:])
                     elif msg == "start":
-                        self.msg_queue.put(msg)      
+                        self.msg_queue.put(msg) 
+                    elif msg[1] == "kicked":
+                        self.disconnect_client(msg[0])
                     elif msg[1] == "out":
                         self.disconnect_client(msg[0])
                         self.multi_sendto(msg[2])
