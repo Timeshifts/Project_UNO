@@ -17,9 +17,9 @@ class Multi_Single:
         self,
         pos=(0, 0),
         size=(150, 50),
-        computer_count=1,
+        computer_count=0,
         story_A_computer_count=0,
-        player_count=0,
+        player_count=1,
         name="ME",
         story=-1,
         client=0,
@@ -88,7 +88,7 @@ class Multi_Single:
 
     def game_start(self):
         # Gm 역시 single처럼 게임 재시작시 변경되도록 처리
-        self.my_index = self.dic['index']
+        self.my_index = self.dic["index"]
         GM.Gm = GM.GameManager(self.client, self.dic)
 
         self.game = GM.Gm

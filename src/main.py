@@ -127,6 +127,9 @@ def main():
     # 싱글게임 진행 중인지 확인
     single_turn = 0
 
+    # 멀티게임 진행 중인지 확인
+    multi_turn = 0
+
     while True:
         for event in pygame.event.get():
             # 사용자가 X 버튼을 누르는 등의 동작으로 창 종료 시, 메뉴에서 종료 선택 시 종료 처리
@@ -233,6 +236,7 @@ def main():
                     elif "multi" in str(game_objects[0]):
                         game_objects.remove(multi)
                         del multi  # multi 객체 삭제
+                        multi_turn = 0  # multi 진행 X
 
                 # 메인 메뉴로 복귀
                 game_objects.append(main_menu)
@@ -361,12 +365,6 @@ def main():
                 # single.computer_count = computer_count
                 single_turn = 1
             elif event.type == EVENT_START_MULTI:  # 멀티플레이 시작
-                # 컴퓨터 개수
-                card_count = multi_lobby.mss.card_count
-                computer_count = multi_lobby.mss.computer_count
-                story_A_computer_count = multi_lobby.mss.story_A_computer_count
-                player_count = multi_lobby.mss.player_count
-                name = multi_lobby.mss.name
                 dic = multi_lobby.mss.dic
 
                 # 게임 로비 제거
@@ -378,16 +376,12 @@ def main():
                 multi = Multi_Single(
                     (width, height),
                     size,
-                    computer_count,
-                    story_A_computer_count,
-                    player_count,
-                    name,
-                    -1,
-                    multi_lobby.mss.Client,
-                    dic,
+                    story=-1,
+                    client=multi_lobby.mss.Client,
+                    dict=dic,
                 )
                 game_objects.append(multi)
-                # ----------------------------------------------------------
+                multi_turn = 1
 
             # 접속 IP 입력 (클라이언트 측)
             if event.type == EVENT_OPEN_ENTER_IP:
@@ -577,6 +571,18 @@ def main():
             single_turn = single.turn_start()
             if single_turn == 0:  # 싱글 게임 종료
                 if single.game.winner_index == 0:  # 플레이어 승리한 경우
+                    player_win = True
+                else:  # 플레이어 패배한 경우
+                    player_win = False
+                pygame.event.post(
+                    pygame.event.Event(EVENT_END_GAME, player_win=player_win)
+                )
+
+        # 멀티 게임 진행중 확인
+        if multi_turn == 1:
+            multi_turn = multi.turn_start()
+            if multi_turn == 0:  # 멀티 게임 종료
+                if multi.game.winner_index == 0:  # 플레이어 승리한 경우
                     player_win = True
                 else:  # 플레이어 패배한 경우
                     player_win = False
