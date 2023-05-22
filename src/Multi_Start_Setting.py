@@ -108,6 +108,8 @@ class Multi_Start_Setting:
             else:
                 # msg_queue로부터 메세지를 pop해온다.
                 msg = self.Client.msg_queue.get()
+                if isinstance(msg, dict):
+                    msg = msg
                 if "chk" in msg:
                     self.chk = msg["chk"]
                     self.ip_name = msg["name"]
