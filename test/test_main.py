@@ -18,6 +18,8 @@ EVENTS = (
     pygame.event.Event(EVENT_OPEN_STORYMAP),
     pygame.event.Event(EVENT_START_SINGLE, index=1),
     pygame.event.Event(EVENT_START_LOBBY_MULTI),
+    pygame.event.Event(EVENT_OPEN_ENTER_IP),
+    pygame.event.Event(EVENT_CLOSE_ENTER_IP),
     # 추후 멀티플레이 동작 추가
     pygame.event.Event(EVENT_MAIN),
     pygame.event.Event(EVENT_OPEN_ACHIEVEMENT),

@@ -15,10 +15,10 @@ TEST_REFERANCE_DICT = {"index": 0,
                        "turn": 0, 
                        "players": [Multi_GameManager.User(True),
                                     Multi_GameManager.User(True)], 
-                       "computer_count": 0, 
+                       "computer_count": 1, 
                        "story_A_computer_count": 0, 
-                       "ref_deck": [Card("1", "blue"), Card("1", "blue")], 
-                       "deck": [Card("1", "blue"), Card("1", "blue")]}
+                       "ref_deck": [Card("1", "blue"), Card("1", "blue"), Card("1", "blue")], 
+                       "deck": [Card("1", "blue"), Card("1", "blue"), Card("1", "blue")]}
 
 class DummyQueue():
     def empty():
@@ -61,7 +61,26 @@ class Test(unittest.TestCase):
         self.assertEqual(single_object.handle_event(
             pygame.event.Event(pygame.KEYDOWN, key=setting.options["enter"])
         ), None)
+        pygame.quit()
 
+    def test_animation(self):
+        ANIMATION = ("get", "get_my", 0, "red_skip", "red_again", "red_pick", "wild_four")
+
+        pygame.init()
+        single_object = Multi_single.Multi_Single(client=DummyClient(), dict=TEST_REFERANCE_DICT)
+        test_screen = pygame.surface.Surface((1920, 1080))
+        single_object.game.turn = 1
+        for anim in ANIMATION:
+            single_object.effect = anim
+            self.assertEqual(single_object.draw(test_screen), None)
+        single_object.game.turn = 0
+        for anim in ANIMATION:
+            single_object.effect = anim
+            self.assertEqual(single_object.draw(test_screen), None)
+        # 우노 이펙트
+        single_object.effect = 0
+        single_object.game.players[0].is_uno = True
+        self.assertEqual(single_object.draw(test_screen), None)
         pygame.quit()
 
 if __name__ == "__main__":
