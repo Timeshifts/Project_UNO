@@ -161,9 +161,16 @@ def main():
                     )
 
                 if endgame_prompt == None:
-                    endgame_prompt = endgame.EndGamePrompt(
-                        size, size, name, single, event.player_win, computer_count
-                    )
+                    # 싱글
+                    if "single" in locals():
+                        endgame_prompt = endgame.EndGamePrompt(
+                            size, size, name, single, event.player_win, computer_count
+                        )
+                    # 멀티
+                    elif "multi" in locals():
+                        endgame_prompt = endgame.EndGamePrompt(
+                            size, size, name, multi, event.player_win, computer_count
+                        )
                     game_objects.append(endgame_prompt)
 
                 # 스토리 모드였다면 다음 지역 해금
@@ -178,17 +185,20 @@ def main():
                                 EVENT_ACQUIRE_ACHIEVEMENT, id=event.story_map
                             )
                         )
-                elif event.player_win:
-                    # 업적 0: 싱글 플레이어 승리
-                    pygame.event.post(
-                        pygame.event.Event(EVENT_ACQUIRE_ACHIEVEMENT, {"id": 0})
-                    )
-                if event.player_win:
-                    # 나머지 업적 flag를 읽어 업적 획득
-                    for achi in single.game.achi_flag:
+                elif "single" in locals():
+                    if event.player_win:
+                        # 업적 0: 싱글 플레이어 승리
                         pygame.event.post(
-                            pygame.event.Event(EVENT_ACQUIRE_ACHIEVEMENT, {"id": achi})
+                            pygame.event.Event(EVENT_ACQUIRE_ACHIEVEMENT, {"id": 0})
                         )
+                    if event.player_win:
+                        # 나머지 업적 flag를 읽어 업적 획득
+                        for achi in single.game.achi_flag:
+                            pygame.event.post(
+                                pygame.event.Event(
+                                    EVENT_ACQUIRE_ACHIEVEMENT, {"id": achi}
+                                )
+                            )
                 state = "end_game"
 
             # 게임 종료 상황에
@@ -229,12 +239,12 @@ def main():
                 elif state == "achievement":  # 업적 메뉴 제거
                     game_objects.remove(achi_object)
                 elif state in ("single", "multi", "end_game"):  # single 혹은 multi 제거
-                    if "single" in str(game_objects[0]):
+                    if "single" in locals():
                         game_objects.remove(single)
                         del single  # single 객체 삭제
                         single_turn = 0  # single 진행 X
-                    elif "multi" in str(game_objects[0]):
-                        game_objects.remove(multi)
+                    elif "multi" in locals():
+                        game_objects.clear()
                         del multi  # multi 객체 삭제
                         multi_turn = 0  # multi 진행 X
 
@@ -359,17 +369,14 @@ def main():
                         story_A_computer_count,
                         name,
                     )
-
+                computer_count += story_A_computer_count
                 game_objects.append(single)
-                # single.name = name
-                # single.computer_count = computer_count
                 single_turn = 1
             elif event.type == EVENT_START_MULTI:  # 멀티플레이 시작
                 dic = multi_lobby.mss.dic
-
+                name = multi_lobby.name
                 # 게임 로비 제거
                 game_objects.clear()
-                # game_objects.remove(multi_lobby)
                 state = "multi"
                 background = get_background(state, size)
 
@@ -380,6 +387,7 @@ def main():
                     client=multi_lobby.mss.Client,
                     dict=dic,
                 )
+                computer_count = dic["computer_count"] + dic["story_A_computer_count"]
                 game_objects.append(multi)
                 multi_turn = 1
 

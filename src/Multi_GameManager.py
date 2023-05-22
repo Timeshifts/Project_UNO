@@ -694,9 +694,30 @@ class MultiUser(Player):
         self.possible_cards_num.clear()
         self.judge_possible_cards()
 
-        thread = threading.Thread(target=self.threading_receive)
-        thread.daemon = True
-        thread.start()
+        # thread = threading.Thread(target=self.threading_receive)
+        # thread.daemon = True
+        # thread.start()
+        
+        while True:
+            if Gm.client.msg_queue.empty() == False:
+                M = Gm.client.msg_queue.get()
+                
+                print(M)
+
+                if M == "get_card":
+                    self.get_card()
+                    self.return_value = "get"
+                    break
+
+                if M[0:8] == "use_card":
+                    index = int(M[9:])
+                    
+                    self.use_card(index)
+                    self.return_value = (
+                        f"{self.current_card.color}_{self.current_card.name}"
+                    )
+                    self.current_card = 0
+                    break
         
         return self.return_value
 
@@ -714,6 +735,9 @@ class MultiUser(Player):
 
                 if M[0:8] == "use_card":
                     index = int(M[9:])
+                    
+                    print(len(self.hand))
+                    
                     self.use_card(index)
                     self.return_value = (
                         f"{self.current_card.color}_{self.current_card.name}"
