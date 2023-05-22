@@ -109,7 +109,7 @@ class Multi_Start_Setting:
                 # msg_queue로부터 메세지를 pop해온다.
                 msg = self.Client.msg_queue.get()
                 if isinstance(msg, dict):
-                    msg = msg
+                    dic = msg
                 if "chk" in msg:
                     self.chk = msg["chk"]
                     self.ip_name = msg["name"]
@@ -117,20 +117,21 @@ class Multi_Start_Setting:
                     pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
                 else:  # 게임 시작
                     print("서버에서 게임시작 메시지 받음")
-                    card_count = msg[0][0]
-                    computer_count = msg[0][1]
-                    story_A_computer_count = msg[0][2]
-                    player_count = msg[0][3]
-                    name = msg[0][4]
-                    dic = msg[1]
-                    self.start(
-                        card_count,
-                        computer_count,
-                        story_A_computer_count,
-                        player_count,
-                        name,
-                        dic,
-                    )
+                    # card_count = msg[0][0]
+                    # computer_count = msg[0][1]
+                    # story_A_computer_count = msg[0][2]
+                    # player_count = msg[0][3]
+                    # name = msg[0][4]
+                    # dic = msg[1]
+                    print(dic)
+                    # self.start(
+                    #     card_count,
+                    #     computer_count,
+                    #     story_A_computer_count,
+                    #     player_count,
+                    #     name,
+                    #     dic,
+                    # )
 
     def start(
         self,
