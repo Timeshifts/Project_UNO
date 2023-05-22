@@ -73,7 +73,7 @@ class Multi_Single:
 
     def update_card(self):
         self.hand_card = []  # 각자 소유한 카드
-        for i in range(self.computer_count + 1):
+        for i in range(len(self.dic["players"])):
             self.hand_card.append([])
             for j in range(len(self.game.players[i].hand)):
                 self.hand_card[i].append(
