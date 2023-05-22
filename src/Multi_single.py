@@ -53,6 +53,7 @@ class Multi_Single:
         self.client = client
         self.dic = dict
         self.my_index = dict["index"]
+        print(f"내 인덱스 값 = {self.my_index}")
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
