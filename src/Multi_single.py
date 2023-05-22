@@ -442,7 +442,10 @@ class Multi_Single:
         # 메인보드 컴퓨터 이름
         for i in range(self.player_count - 1):
             color = "White"
-            if self.game.turn == self.my_index + 1 + i:
+            turn = self.my_index + 1 + i
+            if turn > self.player_count:
+                turn -= self.player_count
+            if self.game.turn == turn:
                 color = "Blue"
             if self.player_count - self.computer_count - 1 > i:  # 사람이면
                 board_player_name = font.render("U" + str(i + 1), True, color)
