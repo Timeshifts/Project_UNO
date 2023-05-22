@@ -52,7 +52,8 @@ class Multi_Single:
         self.story = story  # 스토리 모드 (-1이면 스토리 아님)
         self.client = client
         self.dic = dict
-        self.my_index = 0
+        self.my_index = dict["index"]
+        print(f"내 인덱스 값 = {self.my_index}")
 
         # 현재 highlight된 위치의 index
         self.highlight = 0
@@ -88,7 +89,6 @@ class Multi_Single:
 
     def game_start(self):
         # Gm 역시 single처럼 게임 재시작시 변경되도록 처리
-        self.my_index = self.dic["index"]
         GM.Gm = GM.GameManager(self.client, self.dic)
 
         self.game = GM.Gm
@@ -153,7 +153,7 @@ class Multi_Single:
         self.set_first = 1
 
     def computer_wait(self):
-        time.sleep(random.random() * 2 + 1)
+        time.sleep(2)
         pygame.event.post(pygame.event.Event(EVENT_COMPUTER_THINK))
 
     def init_draw(self):
