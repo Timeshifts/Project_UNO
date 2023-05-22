@@ -443,7 +443,7 @@ class Multi_Single:
         for i in range(self.player_count - 1):
             color = "White"
             turn = self.my_index + 1 + i
-            if turn > self.player_count:
+            if turn >= self.player_count:
                 turn -= self.player_count
             if self.game.turn == turn:
                 color = "Blue"
