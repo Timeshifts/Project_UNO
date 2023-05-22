@@ -84,21 +84,25 @@ class Multi_Server:
 
     def handle_client(self):
         while True:
-            connect_socket, addr = self.server_socket.accept()
-            self.addr = addr
-            if self.is_password == True:
-                connect_socket.send(pickle.dumps("password"))
-                thread = threading.Thread(
-                    target=self.password_receive,
-                    args=(
-                        connect_socket,
-                        addr,
-                    ),
-                )
-                thread.daemon = True
-                thread.start()
-            else:
-                self.authenticated_client(connect_socket, addr)
+            try:
+                connect_socket, addr = self.server_socket.accept()
+                self.addr = addr
+                if self.is_password == True:
+                    connect_socket.send(pickle.dumps("password"))
+                    thread = threading.Thread(
+                        target=self.password_receive,
+                        args=(
+                            connect_socket,
+                            addr,
+                        ),
+                    )
+                    thread.daemon = True
+                    thread.start()
+                else:
+                    self.authenticated_client(connect_socket, addr)
+            except ConnectionAbortedError as e:     # 서버가 방 나갈 시에 예외처리
+                print(str(e))
+                break
 
     def password_receive(self, connect_socket, addr):
         while True:
