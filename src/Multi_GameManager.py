@@ -2,7 +2,6 @@ import random
 import pygame
 import threading
 import time
-import Multi_Server
 import Multi_Client
 from constant import EVENT_END_GAME, EVENT_TURN_END
 
