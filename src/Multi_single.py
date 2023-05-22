@@ -29,7 +29,7 @@ class Multi_Single:
         # self.max_menu = len(self.menu)
         self.computer_count = dict["computer_count"]
         self.story_A_computer_count = dict["story_A_computer_count"]
-        self.player_count = player_count
+        self.player_count = len(dict["players"])
         self.name = name
         self.button = []
         self.rect = []
@@ -73,7 +73,7 @@ class Multi_Single:
 
     def update_card(self):
         self.hand_card = []  # 각자 소유한 카드
-        for i in range(len(self.dic["players"])):
+        for i in range(len(self.player_count)):
             self.hand_card.append([])
             for j in range(len(self.game.players[i].hand)):
                 self.hand_card[i].append(
@@ -97,6 +97,7 @@ class Multi_Single:
         # self.game.start_cards_integer = 5
         self.game.initial_sync()
         self.game.game_start()
+        self.computer_count += self.story_A_computer_count  # 컴퓨터 총 개수로 통일
         self.update_card()
 
     def turn_start(self):
@@ -360,7 +361,7 @@ class Multi_Single:
                 self.size[1] / 50,
             ),
         )
-        for i in range(self.computer_count):
+        for i in range(self.player_count - 1):
             # Player List 상자
             playlist_x = 480 * setting.get_screen_scale()
             playlist_y = 180 * setting.get_screen_scale()
@@ -372,15 +373,27 @@ class Multi_Single:
                 center=(self.size[0] * 7 / 8, self.size[1] * (2 * i + 3) / 12)
             )
             screen.blit(playlist_box, playlist_box_rect)
-            # Player List 컴퓨터 이름
-            playlist_player_name = font.render("Player_" + str(i + 1), True, "White")
-            screen.blit(
-                playlist_player_name,
-                (
-                    self.size[0] * (7 / 8 - 1 / 8) + 30,
-                    self.size[1] * ((2 * i + 3) / 12 - 1 / 12) + 10,
-                ),
-            )
+            if self.player_count - self.computer_count - 1 > i:  # 사람이면
+                playlist_player_name = font.render("Me" + str(i + 1), True, "White")
+                screen.blit(
+                    playlist_player_name,
+                    (
+                        self.size[0] * (7 / 8 - 1 / 8) + 30,
+                        self.size[1] * ((2 * i + 3) / 12 - 1 / 12) + 10,
+                    ),
+                )
+            else:
+                # Player List 컴퓨터 이름
+                playlist_player_name = font.render(
+                    "Player_" + str(i + 1), True, "White"
+                )
+                screen.blit(
+                    playlist_player_name,
+                    (
+                        self.size[0] * (7 / 8 - 1 / 8) + 30,
+                        self.size[1] * ((2 * i + 3) / 12 - 1 / 12) + 10,
+                    ),
+                )
             # Player List 컴퓨터 카드
             for j in range(
                 len(self.hand_card[i + 1])
@@ -404,11 +417,11 @@ class Multi_Single:
 
         # 메인보드
         # 메인보드 컴퓨터 카드
-        for i in range(self.computer_count):
+        for i in range(self.player_count - 1):
             card_x = 87.75 * setting.get_screen_scale()
             card_y = 122.85 * setting.get_screen_scale()
             card_pos_x = (
-                self.size[0] * 3 / 4 * (self.game.turn) / (self.computer_count + 1)
+                self.size[0] * 3 / 4 * (self.game.turn) / (self.player_count)
                 - card_x / 2
             )
             card_pos_y = card_y * 2 / 3
@@ -421,13 +434,12 @@ class Multi_Single:
             screen.blit(
                 board_player_card,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.computer_count + 1)
-                    - card_x / 2,
+                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) - card_x / 2,
                     card_pos_y,
                 ),
             )
         # 메인보드 컴퓨터 이름
-        for i in range(self.computer_count):
+        for i in range(self.player_count - 1):
             color = "White"
             if self.game.turn == i + 1:
                 color = "Blue"
@@ -435,21 +447,19 @@ class Multi_Single:
             screen.blit(
                 board_player_name,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.computer_count + 1)
-                    - card_x / 2,
+                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) - card_x / 2,
                     self.size[1] / 50,
                 ),
             )
         # 메인보드 컴퓨터 카드 개수
-        for i in range(self.computer_count):
+        for i in range(self.player_count - 1):
             board_player_cardnum = font.render(
                 f"{len(self.hand_card[i+1])}", True, "Black"
             )
             screen.blit(
                 board_player_cardnum,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.computer_count + 1)
-                    - card_x / 6,
+                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) - card_x / 6,
                     card_y * 5 / 3,
                 ),
             )
@@ -462,13 +472,12 @@ class Multi_Single:
             screen.blit(
                 turn_timer,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.computer_count + 1)
-                    + card_x / 2,
+                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) + card_x / 2,
                     card_y * 2 / 3,
                 ),
             )
         # 메인보드 컴퓨터 쉴드
-        for i in range(self.computer_count):
+        for i in range(self.player_count - 1):
             if self.game.players[i + 1].defence_int > 0:
                 shield_x = 49 * setting.get_screen_scale()
                 shield_y = 53 * setting.get_screen_scale()
@@ -477,7 +486,7 @@ class Multi_Single:
                 screen.blit(
                     shield,
                     (
-                        self.size[0] * 3 / 4 * (i + 1) / (self.computer_count + 1)
+                        self.size[0] * 3 / 4 * (i + 1) / (self.player_count)
                         + card_x / 2,
                         card_y * 5 / 3 - shield_y,
                     ),
