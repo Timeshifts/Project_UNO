@@ -114,6 +114,7 @@ class Multi_Start_Setting:
                     print(self.ip_name)
                     pygame.event.post(pygame.event.Event(EVENT_UPDATE))  # 화면 업데이트 이벤트
                 else:  # 게임 시작
+                    print("서버에서 게임시작 메시지 받음")
                     card_count = msg[0][0]
                     computer_count = msg[0][1]
                     story_A_computer_count = msg[0][2]
