@@ -54,8 +54,7 @@ class MultiLobby(Menu):
 
     def update_chk(self):  # 클라이언트 접속시
         if self.other_chk.count(0) == 0:  # 정원초과시 강퇴하기
-            self.mss.kicked(self.other_chk,self.mss.Server.addr[0],self.name)
-
+            self.mss.kicked(self.mss.Server.addr[0])
         else:
             for i in range(self.max_other):
                 if self.other_chk[i] == 0:
@@ -480,7 +479,7 @@ class MultiLobby(Menu):
                     self.state = "client_or_server"
                     index = self.other_chk.index(self.my_ip)
                     self.other_chk[index] = 0
-                    self.mss.kicked(self.other_chk,self.my_ip,self.name)
+                    self.mss.client_end(self.other_chk,self.my_ip,self.name)
                     self.other = []
                     self.max_other = 0
                     self.avail_menu = ["방 접속하기", "방 만들기", "돌아가기"]
