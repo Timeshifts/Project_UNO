@@ -118,6 +118,7 @@ class Multi_Single:
                             self.game.players[self.my_index].get_card()
                     self.game.turn_end(option=2)
                 if self.set_first == 0:
+                    print("내 차례")
                     self.game.turn_start()
                     self.init_draw()
                     self.set_first = 1
@@ -434,8 +435,7 @@ class Multi_Single:
             screen.blit(
                 board_player_card,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count)
-                    - card_x / 2,
+                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) - card_x / 2,
                     card_pos_y,
                 ),
             )
@@ -451,8 +451,7 @@ class Multi_Single:
             screen.blit(
                 board_player_name,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count)
-                    - card_x / 2,
+                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) - card_x / 2,
                     self.size[1] / 50,
                 ),
             )
@@ -464,8 +463,7 @@ class Multi_Single:
             screen.blit(
                 board_player_cardnum,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count)
-                    - card_x / 6,
+                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) - card_x / 6,
                     card_y * 5 / 3,
                 ),
             )
@@ -478,8 +476,7 @@ class Multi_Single:
             screen.blit(
                 turn_timer,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count)
-                    + card_x / 2,
+                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) + card_x / 2,
                     card_y * 2 / 3,
                 ),
             )
@@ -801,7 +798,7 @@ class Multi_Single:
                     self.game.client.send("wild_four_" + str(index))
                     time.sleep(0.3)
                     self.game.client.msg_queue.get()
-                    
+
                 # elif self.game.wild_card == "wild_target":
                 #     self.game.attack(2, random.randint(0, self.game.player_num - 1))
                 #     self.game.wild = False
