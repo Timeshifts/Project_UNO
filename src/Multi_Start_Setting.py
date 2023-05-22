@@ -126,7 +126,7 @@ class Multi_Start_Setting:
         print(f"dic : {self.dic}")
         pygame.event.post(pygame.event.Event(EVENT_START_MULTI))  # 게임 시작 이벤트
 
-    def kicked(self,chk,ip,name):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
+    def client_end(self,chk,ip,name):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
         print("나가기")
         if ip in self.ip_name:
             del self.ip_name[ip]
@@ -135,6 +135,11 @@ class Multi_Start_Setting:
         # 동기화 메시지를 모든 클라이언트에 전송
         print(f"메시지 : {sync_msg}")
         self.Client.send((ip,"out",sync_msg))
+
+    def kicked(self,ip):        # 강퇴하기
+        print("강퇴하기")
+        self.Client.send((ip,"kicked"))
+
 
     def server_end(self):
         print("서버 끊음")
