@@ -434,7 +434,8 @@ class Multi_Single:
             screen.blit(
                 board_player_card,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) - card_x / 2,
+                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count)
+                    - card_x / 2,
                     card_pos_y,
                 ),
             )
@@ -450,7 +451,8 @@ class Multi_Single:
             screen.blit(
                 board_player_name,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) - card_x / 2,
+                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count)
+                    - card_x / 2,
                     self.size[1] / 50,
                 ),
             )
@@ -462,12 +464,13 @@ class Multi_Single:
             screen.blit(
                 board_player_cardnum,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) - card_x / 6,
+                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count)
+                    - card_x / 6,
                     card_y * 5 / 3,
                 ),
             )
         # 메인보드 컴퓨터 타이머
-        for i in range(self.computer_count):
+        for i in range(self.player_count - 1):
             if self.game.turn == i + 1:
                 turn_timer = font.render(f"{self.turn_timer}", True, "White")
             else:
@@ -475,7 +478,8 @@ class Multi_Single:
             screen.blit(
                 turn_timer,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) + card_x / 2,
+                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count)
+                    + card_x / 2,
                     card_y * 2 / 3,
                 ),
             )
