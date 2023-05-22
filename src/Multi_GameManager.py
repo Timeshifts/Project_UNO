@@ -697,7 +697,6 @@ class MultiUser(Player):
         thread = threading.Thread(target=self.threading_receive)
         thread.daemon = True
         thread.start()
-        thread.join(timeout=16.0)
         
         return self.return_value
 
@@ -705,6 +704,8 @@ class MultiUser(Player):
         while True:
             if Gm.client.msg_queue.empty() == False:
                 M = Gm.client.msg_queue.get()
+                
+                print(M)
 
                 if M == "get_card":
                     self.get_card()
