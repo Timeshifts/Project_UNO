@@ -155,3 +155,7 @@ class Multi_Start_Setting:
     def kicked(self, ip):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
         print("나가기")
         self.Client.send((ip, "out"))
+
+    def server_end(self):
+        print("서버 끊음")
+        self.Server.disconnect_server()

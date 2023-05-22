@@ -53,14 +53,17 @@ class MultiLobby(Menu):
         self.server = False
 
     def update_chk(self):  # 클라이언트 접속시
-        for i in range(self.max_other):
-            if self.other_chk[i] == 0:
-                self.other_chk[i] = self.mss.Server.addr[0]
-                break
-        self.mss.player_index(
-            self.other_chk, self.mss.Server.addr[0], self.name
-        )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
-        self.init_draw()
+        if self.other_chk.count(0) == 0:    # 정원초과시 강퇴하기
+            self.mss.kicked(self.mss.Server.addr[0])
+        else:
+            for i in range(self.max_other):
+                if self.other_chk[i] == 0:
+                    self.other_chk[i] = self.mss.Server.addr[0]
+                    break
+            self.mss.player_index(
+                self.other_chk, self.mss.Server.addr[0], self.name
+            )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
+            self.init_draw()
 
     def update(self):
         # TODO: 서버와 통신하여 타 플레이어 정보 받아오기
@@ -376,14 +379,10 @@ class MultiLobby(Menu):
                     # 연결 성공
                     elif connect == "authenticated":  # 비밀번호 필요없다면
                         # TODO: 정원 초과를 확인해서 오류 메시지 표시
-                        if self.other_chk.count(0) > 0:
-                            self.host_ip = socket.gethostbyname(socket.gethostname())
-                            self.state = "client_connected"
-                            self.update()
-                            self.mss.connect()
-                        else:
-                            print("정원 초과")
-                            self.mss.kicked()
+                        self.host_ip = socket.gethostbyname(socket.gethostname())
+                        self.state = "client_connected"
+                        self.update()
+                        self.mss.connect()
             elif self.avail_menu[index] == "접속하기":
                 if self.password == "":  # 비밀번호를 입력하지 않으면
                     pass
@@ -473,6 +472,7 @@ class MultiLobby(Menu):
                 elif self.state == "server_connected":
                     # TODO: 방에 들어온 인원 전원 강퇴
                     self.server = False
+                    self.mss.server_end()
                     self.state = "client_or_server"
                     self.other = []
                     self.max_other = 0
