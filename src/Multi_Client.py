@@ -25,6 +25,7 @@ class Multi_Client:
         try:
             while True:
                 msg = pickle.loads(self.client_socket.recv(4096))
+                #print(msg)
                 if isinstance(msg, dict):
                     self.msg_queue.put(msg)
                 else:
@@ -33,6 +34,7 @@ class Multi_Client:
                     if "type" in msg:
                         self.handle_sync_message(msg)  # 동기화 메시지 처리
                     else:
+                        print(msg)
                         self.msg_queue.put(msg)
 
                 # "wrong" 받으면 와일문 탈출, 잘못된 패스워드를 입력한 경우이다.

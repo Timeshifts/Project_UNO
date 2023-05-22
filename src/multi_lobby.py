@@ -443,6 +443,7 @@ class MultiLobby(Menu):
                                 print("서버에서 게임시작 메시지 받음")
                                 dic = msg
                                 break
+                    
                     self.mss.start(
                         dic,
                     )
