@@ -152,7 +152,7 @@ class Multi_Single:
         self.set_first = 1
 
     def computer_wait(self):
-        time.sleep(random.random() * 2 + 1)
+        time.sleep(2)
         pygame.event.post(pygame.event.Event(EVENT_COMPUTER_THINK))
 
     def init_draw(self):
