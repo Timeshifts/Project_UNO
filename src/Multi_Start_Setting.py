@@ -48,11 +48,11 @@ class Multi_Start_Setting:
         self.Server.password = pw
         print(self.Server.password)
 
-    def start(self):
-        # 게임 시작
-        print("게임 시작")
-        self.Client.send("start")
-        self.Client.send([5, 1, 0])
+    # def start(self):
+    #     # 게임 시작
+    #     print("게임 시작")
+    #     self.Client.send("start")
+    #     self.Client.send([5, 1, 0])
 
     def client(self, ip):
         # 아이피 입력하면, 해당 아이피의 서버로 접속
