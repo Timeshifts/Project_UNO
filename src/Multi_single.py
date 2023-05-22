@@ -73,7 +73,7 @@ class Multi_Single:
 
     def update_card(self):
         self.hand_card = []  # 각자 소유한 카드
-        for i in range(len(self.player_count)):
+        for i in range(self.player_count):
             self.hand_card.append([])
             for j in range(len(self.game.players[i].hand)):
                 self.hand_card[i].append(
@@ -374,7 +374,7 @@ class Multi_Single:
             )
             screen.blit(playlist_box, playlist_box_rect)
             if self.player_count - self.computer_count - 1 > i:  # 사람이면
-                playlist_player_name = font.render("Me" + str(i + 1), True, "White")
+                playlist_player_name = font.render("User" + str(i + 1), True, "White")
                 screen.blit(
                     playlist_player_name,
                     (
@@ -443,7 +443,10 @@ class Multi_Single:
             color = "White"
             if self.game.turn == i + 1:
                 color = "Blue"
-            board_player_name = font.render("P" + str(i + 1), True, color)
+            if self.player_count - self.computer_count - 1 > i:  # 사람이면
+                board_player_name = font.render("U" + str(i + 1), True, color)
+            else:  # 컴퓨터면
+                board_player_name = font.render("P" + str(i + 1), True, color)
             screen.blit(
                 board_player_name,
                 (
