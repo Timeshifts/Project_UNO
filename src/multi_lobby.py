@@ -434,8 +434,6 @@ class MultiLobby(Menu):
                             card_count,
                             computer_count,
                             story_A_computer_count,
-                            player_count,
-                            name,
                         ]
                     )
                     while True:
@@ -446,11 +444,6 @@ class MultiLobby(Menu):
                                 dic = msg
                                 break
                     self.mss.start(
-                        card_count,
-                        computer_count,
-                        story_A_computer_count,
-                        player_count,
-                        name,
                         dic,
                     )
 

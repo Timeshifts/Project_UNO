@@ -361,12 +361,6 @@ def main():
                 # single.computer_count = computer_count
                 single_turn = 1
             elif event.type == EVENT_START_MULTI:  # 멀티플레이 시작
-                # 컴퓨터 개수
-                card_count = multi_lobby.mss.card_count
-                computer_count = multi_lobby.mss.computer_count
-                story_A_computer_count = multi_lobby.mss.story_A_computer_count
-                player_count = multi_lobby.mss.player_count
-                name = multi_lobby.mss.name
                 dic = multi_lobby.mss.dic
 
                 # 게임 로비 제거
@@ -378,13 +372,9 @@ def main():
                 multi = Multi_Single(
                     (width, height),
                     size,
-                    computer_count,
-                    story_A_computer_count,
-                    player_count,
-                    name,
-                    -1,
-                    multi_lobby.mss.Client,
-                    dic,
+                    story=-1,
+                    client=multi_lobby.mss.Client,
+                    dict=dic,
                 )
                 game_objects.append(multi)
                 # ----------------------------------------------------------
