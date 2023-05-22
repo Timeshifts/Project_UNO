@@ -442,8 +442,8 @@ class Multi_Single:
         # 메인보드 컴퓨터 이름
         for i in range(self.player_count - 1):
             color = "White"
-            turn = self.my_index + 1
-            if turn > self.player_count - 1:
+            turn = i + self.my_index
+            if turn > self.player_count:
                 turn - self.player_count
             if self.game.turn == turn:
                 color = "Blue"
