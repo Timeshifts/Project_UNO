@@ -21,11 +21,12 @@ class MultiLobbyTest(unittest.TestCase):
         test_screen = pygame.display.set_mode((1920, 1080))
         for state in STATES:
             menu.state = state
+            menu.password = "1234"
             if menu.max_other != 0:
                 menu.other_chk[0] = 1
-                menu.other_chk[0] = 2
-                menu.other_chk[0] = 3
-                menu.other_chk[0] = 4
+                menu.other_chk[1] = 2
+                menu.other_chk[2] = 3
+                menu.other_chk[3] = 4
             self.assertEqual(menu.draw(test_screen), None)
 
         pygame.quit()
