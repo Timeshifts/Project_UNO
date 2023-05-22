@@ -756,8 +756,8 @@ class MultiComputer(Player):
         self.possible_cards_num.clear()
         self.judge_possible_cards()
 
-        if len(self.possible_cards_num) != 0:
-            ran = self.possible_cards_num - 1  # 가능한 카드중 무조건 맨 뒤의 카드 선택
+        if len(self.possible_cards) != 0:
+            ran = len(self.possible_cards) - 1  # 가능한 카드중 무조건 맨 뒤의 카드 선택
             # ran = random.randrange(len(self.possible_cards))
             self.use_card(ran)
             return_value = f"{self.current_card.color}_{self.current_card.name}"
