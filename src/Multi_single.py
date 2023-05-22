@@ -472,7 +472,10 @@ class Multi_Single:
             )
         # 메인보드 컴퓨터 타이머
         for i in range(self.player_count - 1):
-            if self.game.turn == i + 1:
+            turn = self.my_index + 1 + i
+            if turn >= self.player_count:
+                turn -= self.player_count
+            if self.game.turn == turn:
                 turn_timer = font.render(f"{self.turn_timer}", True, "White")
             else:
                 turn_timer = font.render("15", True, "White")
@@ -602,7 +605,7 @@ class Multi_Single:
         )
         # 턴 타이머
         font = setting.get_font(50)
-        if self.game.turn == 0:
+        if self.game.turn == self.my_index:
             turn_timer = font.render(f"{self.turn_timer}", True, "White")
         else:
             turn_timer = font.render("15", True, "White")
