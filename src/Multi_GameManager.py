@@ -686,15 +686,20 @@ class MultiUser(Player):
         self.possible_cards.clear()
         self.possible_cards_num.clear()
         self.judge_possible_cards()
+        
+        return self.possible_cards_num
+            
+    def computer_play(self):
+        self.possible_cards.clear()
+        self.possible_cards_num.clear()
+        self.judge_possible_cards()
 
-        if self.ip == Gm.client.client_socket.getsockname():
-            return self.possible_cards_num
-        else:
-            thread = threading.Thread(target=self.threading_receive)
-            thread.daemon = True
-            thread.start()
-            thread.join(timeout=16.0)
-            return self.return_value
+        thread = threading.Thread(target=self.threading_receive)
+        thread.daemon = True
+        thread.start()
+        thread.join(timeout=16.0)
+        
+        return self.return_value
 
     def threading_receive(self):
         while True:
@@ -730,7 +735,7 @@ class Computer(Player):
 
         if Gm.set_uno == False and len(self.hand) == 2:
             # 컴퓨터의 우노 사용 - 8번 업적(사냥꾼) 획득 가능
-            Multi_GameManager.toggle_achi(8, True)
+            GameManager.toggle_achi(8, True)
             self.press_uno()
 
         if len(self.possible_cards_num) != 0:
