@@ -442,7 +442,10 @@ class Multi_Single:
         # 메인보드 컴퓨터 이름
         for i in range(self.player_count - 1):
             color = "White"
-            if self.game.turn == i + 1:
+            turn = self.my_index + 1 + i
+            if turn >= self.player_count:
+                turn -= self.player_count
+            if self.game.turn == turn:
                 color = "Blue"
             if self.player_count - self.computer_count - 1 > i:  # 사람이면
                 board_player_name = font.render("U" + str(i + 1), True, color)
@@ -457,8 +460,11 @@ class Multi_Single:
             )
         # 메인보드 컴퓨터 카드 개수
         for i in range(self.player_count - 1):
+            turn = self.my_index + 1 + i
+            if turn >= self.player_count:
+                turn -= self.player_count
             board_player_cardnum = font.render(
-                f"{len(self.hand_card[i+1])}", True, "Black"
+                f"{len(self.hand_card[turn])}", True, "Black"
             )
             screen.blit(
                 board_player_cardnum,
@@ -469,7 +475,10 @@ class Multi_Single:
             )
         # 메인보드 컴퓨터 타이머
         for i in range(self.player_count - 1):
-            if self.game.turn == i + 1:
+            turn = self.my_index + 1 + i
+            if turn >= self.player_count:
+                turn -= self.player_count
+            if self.game.turn == turn:
                 turn_timer = font.render(f"{self.turn_timer}", True, "White")
             else:
                 turn_timer = font.render("15", True, "White")
@@ -482,7 +491,10 @@ class Multi_Single:
             )
         # 메인보드 컴퓨터 쉴드
         for i in range(self.player_count - 1):
-            if self.game.players[i + 1].defence_int > 0:
+            turn = self.my_index + 1 + i
+            if turn >= self.player_count:
+                turn -= self.player_count
+            if self.game.players[turn].defence_int > 0:
                 shield_x = 49 * setting.get_screen_scale()
                 shield_y = 53 * setting.get_screen_scale()
                 shield = pygame.image.load(RESOURCE_PATH / "single" / "shield.png")
@@ -564,7 +576,7 @@ class Multi_Single:
         # 내 보드
         # 내 이름
         color = "White"
-        if self.game.turn == 0:
+        if self.game.turn == self.my_index:
             color = "Blue"
         my_name = font.render(self.name, True, color)
         screen.blit(
@@ -599,7 +611,7 @@ class Multi_Single:
         )
         # 턴 타이머
         font = setting.get_font(50)
-        if self.game.turn == 0:
+        if self.game.turn == self.my_index:
             turn_timer = font.render(f"{self.turn_timer}", True, "White")
         else:
             turn_timer = font.render("15", True, "White")
@@ -793,30 +805,30 @@ class Multi_Single:
                         target = (self.game.turn - 1) % self.game.player_num
                     self.game.attack(4, target)
                     self.game.wild = False
-                    
+
                     self.game.client.send("wild_four_" + str(index))
-                    
+
                     while True:
                         if self.client.msg_queue.empty() == False:
                             self.client.msg_queue.get()
                             break
-                    
+
                     self.game.turn_end(option=1)
-                    
+
                 # elif self.game.wild_card == "wild_target":
                 #     self.game.attack(2, random.randint(0, self.game.player_num - 1))
                 #     self.game.wild = False
                 #     self.game.turn_end(option=1)
                 else:
                     self.game.wild = False
-                    
+
                     self.game.client.send("wild_color_" + str(index))
-                    
+
                     while True:
                         if self.client.msg_queue.empty() == False:
                             self.client.msg_queue.get()
                             break
-                    
+
                     self.game.turn_end(option=1)
         else:
             if index in self.possible_cards_num:
@@ -829,25 +841,25 @@ class Multi_Single:
                     self.game.turn_timer_end = True
                 else:
                     self.game.client.send("use_card_" + str(index))
-                    
+
                     while True:
                         if self.client.msg_queue.empty() == False:
                             self.client.msg_queue.get()
                             break
-                        
+
                     self.game.turn_end(option=1)
 
             if index == self.max_card:  # 덱
                 self.game.players[self.my_index].get_card()
                 self.effect = "get_my"
-                
+
                 self.game.client.send("get_card")
-                
+
                 while True:
                     if self.client.msg_queue.empty() == False:
                         self.client.msg_queue.get()
                         break
-                
+
                 self.game.turn_end()
 
             if index == self.max_card + 1:  # 우노버튼
