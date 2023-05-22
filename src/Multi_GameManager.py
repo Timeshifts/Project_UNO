@@ -352,7 +352,7 @@ class GameManager:
 
     # 맨 처음에 덱에 카드넣기
     def set_deck(self):
-        card_color = ["blue", "green", "red", "yellow", "wild"]
+        card_color = ["blue", "green", "red", "yellow"]
         card_name = [
             "0",
             "1",
