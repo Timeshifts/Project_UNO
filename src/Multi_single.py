@@ -460,8 +460,11 @@ class Multi_Single:
             )
         # 메인보드 컴퓨터 카드 개수
         for i in range(self.player_count - 1):
+            turn = self.my_index + 1 + i
+            if turn >= self.player_count:
+                turn -= self.player_count
             board_player_cardnum = font.render(
-                f"{len(self.hand_card[i+1])}", True, "Black"
+                f"{len(self.hand_card[turn])}", True, "Black"
             )
             screen.blit(
                 board_player_cardnum,
@@ -488,7 +491,10 @@ class Multi_Single:
             )
         # 메인보드 컴퓨터 쉴드
         for i in range(self.player_count - 1):
-            if self.game.players[i + 1].defence_int > 0:
+            turn = self.my_index + 1 + i
+            if turn >= self.player_count:
+                turn -= self.player_count
+            if self.game.players[turn].defence_int > 0:
                 shield_x = 49 * setting.get_screen_scale()
                 shield_y = 53 * setting.get_screen_scale()
                 shield = pygame.image.load(RESOURCE_PATH / "single" / "shield.png")
