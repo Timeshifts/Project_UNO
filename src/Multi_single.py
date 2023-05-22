@@ -97,6 +97,7 @@ class Multi_Single:
         # self.game.start_cards_integer = 5
         self.game.initial_sync()
         self.game.game_start()
+        self.computer_count += self.story_A_computer_count  # 컴퓨터 총 개수로 통일
         self.update_card()
 
     def turn_start(self):
@@ -372,15 +373,27 @@ class Multi_Single:
                 center=(self.size[0] * 7 / 8, self.size[1] * (2 * i + 3) / 12)
             )
             screen.blit(playlist_box, playlist_box_rect)
-            # Player List 컴퓨터 이름
-            playlist_player_name = font.render("Player_" + str(i + 1), True, "White")
-            screen.blit(
-                playlist_player_name,
-                (
-                    self.size[0] * (7 / 8 - 1 / 8) + 30,
-                    self.size[1] * ((2 * i + 3) / 12 - 1 / 12) + 10,
-                ),
-            )
+            if self.player_count - self.computer_count - 1 > i:  # 사람이면
+                playlist_player_name = font.render("User" + str(i + 1), True, "White")
+                screen.blit(
+                    playlist_player_name,
+                    (
+                        self.size[0] * (7 / 8 - 1 / 8) + 30,
+                        self.size[1] * ((2 * i + 3) / 12 - 1 / 12) + 10,
+                    ),
+                )
+            else:
+                # Player List 컴퓨터 이름
+                playlist_player_name = font.render(
+                    "Player_" + str(i + 1), True, "White"
+                )
+                screen.blit(
+                    playlist_player_name,
+                    (
+                        self.size[0] * (7 / 8 - 1 / 8) + 30,
+                        self.size[1] * ((2 * i + 3) / 12 - 1 / 12) + 10,
+                    ),
+                )
             # Player List 컴퓨터 카드
             for j in range(
                 len(self.hand_card[i + 1])
@@ -431,7 +444,10 @@ class Multi_Single:
             color = "White"
             if self.game.turn == i + 1:
                 color = "Blue"
-            board_player_name = font.render("P" + str(i + 1), True, color)
+            if self.player_count - self.computer_count - 1 > i:  # 사람이면
+                board_player_name = font.render("U" + str(i + 1), True, color)
+            else:  # 컴퓨터면
+                board_player_name = font.render("P" + str(i + 1), True, color)
             screen.blit(
                 board_player_name,
                 (
@@ -783,6 +799,9 @@ class Multi_Single:
                     self.game.turn_end(option=1)
 
                     self.game.client.send("wild_four_" + str(index))
+                    time.sleep(0.3)
+                    self.game.client.msg_queue.get()
+                    
                 # elif self.game.wild_card == "wild_target":
                 #     self.game.attack(2, random.randint(0, self.game.player_num - 1))
                 #     self.game.wild = False
@@ -792,6 +811,8 @@ class Multi_Single:
                     self.game.turn_end(option=1)
 
                     self.game.client.send("wild_color_" + str(index))
+                    time.sleep(0.3)
+                    self.game.client.msg_queue.get()
         else:
             if index in self.possible_cards_num:
                 self.effect = self.hand_card[self.my_index][index]
@@ -803,6 +824,8 @@ class Multi_Single:
                     self.game.turn_timer_end = True
                 else:
                     self.game.client.send("use_card_" + str(index))
+                    time.sleep(0.3)
+                    self.game.client.msg_queue.get()
                     self.game.turn_end(option=1)
 
             if index == self.max_card:  # 덱
@@ -811,6 +834,8 @@ class Multi_Single:
                 self.game.turn_end()
 
                 self.game.client.send("get_card")
+                time.sleep(0.3)
+                self.game.client.msg_queue.get()
 
             if index == self.max_card + 1:  # 우노버튼
                 self.game.players[self.my_index].press_uno()
