@@ -793,23 +793,31 @@ class Multi_Single:
                         target = (self.game.turn - 1) % self.game.player_num
                     self.game.attack(4, target)
                     self.game.wild = False
-                    self.game.turn_end(option=1)
-
+                    
                     self.game.client.send("wild_four_" + str(index))
-                    time.sleep(0.3)
-                    self.game.client.msg_queue.get()
-
+                    
+                    while True:
+                        if self.client.msg_queue.empty() == False:
+                            self.client.msg_queue.get()
+                            break
+                    
+                    self.game.turn_end(option=1)
+                    
                 # elif self.game.wild_card == "wild_target":
                 #     self.game.attack(2, random.randint(0, self.game.player_num - 1))
                 #     self.game.wild = False
                 #     self.game.turn_end(option=1)
                 else:
                     self.game.wild = False
-                    self.game.turn_end(option=1)
-
+                    
                     self.game.client.send("wild_color_" + str(index))
-                    time.sleep(0.3)
-                    self.game.client.msg_queue.get()
+                    
+                    while True:
+                        if self.client.msg_queue.empty() == False:
+                            self.client.msg_queue.get()
+                            break
+                    
+                    self.game.turn_end(option=1)
         else:
             if index in self.possible_cards_num:
                 self.effect = self.hand_card[self.my_index][index]
@@ -821,18 +829,26 @@ class Multi_Single:
                     self.game.turn_timer_end = True
                 else:
                     self.game.client.send("use_card_" + str(index))
-                    time.sleep(0.3)
-                    self.game.client.msg_queue.get()
+                    
+                    while True:
+                        if self.client.msg_queue.empty() == False:
+                            self.client.msg_queue.get()
+                            break
+                        
                     self.game.turn_end(option=1)
 
             if index == self.max_card:  # 덱
                 self.game.players[self.my_index].get_card()
                 self.effect = "get_my"
-                self.game.turn_end()
-
+                
                 self.game.client.send("get_card")
-                time.sleep(0.3)
-                self.game.client.msg_queue.get()
+                
+                while True:
+                    if self.client.msg_queue.empty() == False:
+                        self.client.msg_queue.get()
+                        break
+                
+                self.game.turn_end()
 
             if index == self.max_card + 1:  # 우노버튼
                 self.game.players[self.my_index].press_uno()
