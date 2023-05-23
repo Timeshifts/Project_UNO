@@ -64,6 +64,16 @@ class MultiLobby(Menu):
                 self.other_chk, self.mss.Server.addr[0], self.name
             )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
             self.init_draw()
+            
+    def update_menu(self):
+        index = self.other_chk.index(self.mss.Server.out_client_ip)
+        self.other_chk[index] = 0
+        self.mss.player_index(
+                self.other_chk, self.mss.Server.out_client_ip, self.name
+            )  # 클라이언트에게 other_chk 리스트, ip, 이름 보내기
+        self.init_draw()
+
+
 
     def update(self):
         # TODO: 서버와 통신하여 타 플레이어 정보 받아오기
@@ -477,8 +487,8 @@ class MultiLobby(Menu):
                 elif self.state == "client_connected":
                     # TODO: 방장에게 방 떠남을 알리기
                     self.state = "client_or_server"
-                    index = self.other_chk.index(self.my_ip)
-                    self.other_chk[index] = 0
+                    # index = self.other_chk.index(self.my_ip)
+                    # self.other_chk[index] = 0
                     self.mss.client_end(self.other_chk,self.my_ip,self.name)
                     self.other = []
                     self.max_other = 0
