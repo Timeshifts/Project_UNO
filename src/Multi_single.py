@@ -106,13 +106,15 @@ class Multi_Single:
         else:
             self.update_card()
             if self.game.turn == self.my_index:  # 플레이어인 경우
-                self.possible_cards_num = self.game.players[self.my_index].play()
+                self.possible_cards_num = self.game.players[self.my_index].play(
+                )
                 if self.game.timer_zero == True:  # 턴 타이머 종료된 경우
                     if self.game.no_act == False:
                         if self.game.wild == True:
                             # 와일드카드 정하다 시간 초과 -> 랜덤 선택
                             self.game.wild
-                            self.grave_top_color = random.choice(self.game.random_color)
+                            self.grave_top_color = random.choice(
+                                self.game.random_color)
                         else:
                             # 일반적인 시간 초과
                             self.game.players[self.my_index].get_card()
@@ -173,14 +175,16 @@ class Multi_Single:
                     Button(
                         pygame.transform.scale(
                             pygame.image.load(
-                                str(RESOURCE_PATH / card_folder / f"{card_color[i]}")
+                                str(RESOURCE_PATH / card_folder /
+                                    f"{card_color[i]}")
                                 + ".png"
                             ),
                             (color_x, color_y),
                         ),
                         pygame.transform.scale(
                             pygame.image.load(
-                                str(RESOURCE_PATH / card_folder / f"{card_color[i]}")
+                                str(RESOURCE_PATH / card_folder /
+                                    f"{card_color[i]}")
                                 + ".png"
                             ),
                             (color_x, color_y),
@@ -207,7 +211,8 @@ class Multi_Single:
                         Button(
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    str(RESOURCE_PATH / card_folder / self.my_card[i])
+                                    str(RESOURCE_PATH /
+                                        card_folder / self.my_card[i])
                                     + ".png"
                                 ),
                                 (card_x, card_y),
@@ -219,8 +224,10 @@ class Multi_Single:
                                 (card_x, card_y),
                             ),
                             pos=(
-                                (i + 1.5) * card_x * setting.get_screen_scale() * 3 / 4,
-                                self.size[1] - card_y * setting.get_screen_scale(),
+                                (i + 1.5) * card_x *
+                                setting.get_screen_scale() * 3 / 4,
+                                self.size[1] - card_y *
+                                setting.get_screen_scale(),
                             ),
                             text_input="",
                             font=setting.get_font(50),
@@ -233,7 +240,8 @@ class Multi_Single:
                         Button(
                             pygame.transform.scale(
                                 pygame.image.load(
-                                    str(RESOURCE_PATH / card_folder / self.my_card[i])
+                                    str(RESOURCE_PATH /
+                                        card_folder / self.my_card[i])
                                     + ".png"
                                 ),
                                 (card_x, card_y),
@@ -245,8 +253,10 @@ class Multi_Single:
                                 (card_x, card_y),
                             ),
                             pos=(
-                                (i + 1.5) * card_x * setting.get_screen_scale() * 3 / 4,
-                                self.size[1] - card_y * setting.get_screen_scale() / 2,
+                                (i + 1.5) * card_x *
+                                setting.get_screen_scale() * 3 / 4,
+                                self.size[1] - card_y *
+                                setting.get_screen_scale() / 2,
                             ),
                             text_input="",
                             font=setting.get_font(50),
@@ -259,21 +269,25 @@ class Multi_Single:
                     Button(
                         pygame.transform.scale(
                             pygame.image.load(
-                                str(RESOURCE_PATH / card_folder / self.my_card[i])
+                                str(RESOURCE_PATH /
+                                    card_folder / self.my_card[i])
                                 + ".png"
                             ),
                             (card_x, card_y),
                         ),
                         pygame.transform.scale(
                             pygame.image.load(
-                                str(RESOURCE_PATH / card_folder / self.my_card[i])
+                                str(RESOURCE_PATH /
+                                    card_folder / self.my_card[i])
                                 + ".png"
                             ),
                             (card_x, card_y),
                         ),
                         pos=(
-                            (i + 1.5) * card_x * setting.get_screen_scale() * 3 / 4,
-                            self.size[1] - card_y * setting.get_screen_scale() / 2,
+                            (i + 1.5) * card_x *
+                            setting.get_screen_scale() * 3 / 4,
+                            self.size[1] - card_y *
+                            setting.get_screen_scale() / 2,
                         ),
                         text_input="",
                         font=setting.get_font(50),
@@ -294,7 +308,8 @@ class Multi_Single:
                     (deck_card_x, deck_card_y),
                 ),
                 pygame.transform.scale(
-                    pygame.image.load(RESOURCE_PATH / card_folder / "highlight.png"),
+                    pygame.image.load(
+                        RESOURCE_PATH / card_folder / "highlight.png"),
                     (deck_card_x, deck_card_y),
                 ),
                 pos=(
@@ -315,7 +330,8 @@ class Multi_Single:
         self.button.append(
             Button(
                 pygame.transform.scale(
-                    pygame.image.load(RESOURCE_PATH / "single" / "uno_button.png"),
+                    pygame.image.load(
+                        RESOURCE_PATH / "single" / "uno_button.png"),
                     (uno_x, uno_y),
                 ),
                 pygame.transform.scale(
@@ -325,7 +341,8 @@ class Multi_Single:
                     (uno_x, uno_y),
                 ),
                 pos=(
-                    self.size[0] * 3 / 4 - uno_x * setting.get_screen_scale() / 2,
+                    self.size[0] * 3 / 4 - uno_x *
+                    setting.get_screen_scale() / 2,
                     self.size[1] / 2,
                 ),
                 text_input="",
@@ -363,10 +380,14 @@ class Multi_Single:
             ),
         )
         for i in range(self.player_count - 1):
+            turn = self.my_index + 1 + i
+            if turn >= self.player_count:
+                turn -= self.player_count
             # Player List 상자
             playlist_x = 480 * setting.get_screen_scale()
             playlist_y = 180 * setting.get_screen_scale()
-            playlist_box = pygame.image.load(RESOURCE_PATH / "single" / "list.png")
+            playlist_box = pygame.image.load(
+                RESOURCE_PATH / "single" / "list.png")
             playlist_box = pygame.transform.scale(
                 playlist_box, (playlist_x, playlist_y)
             )
@@ -375,7 +396,8 @@ class Multi_Single:
             )
             screen.blit(playlist_box, playlist_box_rect)
             if self.player_count - self.computer_count - 1 > i:  # 사람이면
-                playlist_player_name = font.render("User" + str(i + 1), True, "White")
+                playlist_player_name = font.render(
+                    "User" + str(i + 1), True, "White")
                 screen.blit(
                     playlist_player_name,
                     (
@@ -386,7 +408,7 @@ class Multi_Single:
             else:
                 # Player List 컴퓨터 이름
                 playlist_player_name = font.render(
-                    "Player_" + str(i + 1), True, "White"
+                    "Player_" + str(turn), True, "White"
                 )
                 screen.blit(
                     playlist_player_name,
@@ -397,7 +419,7 @@ class Multi_Single:
                 )
             # Player List 컴퓨터 카드
             for j in range(
-                len(self.hand_card[i + 1])
+                len(self.hand_card[turn])
             ):  # GameManager의 Computer(i)의 카드 개수
                 card_x = 52 * setting.get_screen_scale()
                 card_y = 72.8 * setting.get_screen_scale()
@@ -435,7 +457,8 @@ class Multi_Single:
             screen.blit(
                 board_player_card,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) - card_x / 2,
+                    self.size[0] * 3 / 4 * (i + 1) /
+                    (self.player_count) - card_x / 2,
                     card_pos_y,
                 ),
             )
@@ -454,7 +477,8 @@ class Multi_Single:
             screen.blit(
                 board_player_name,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) - card_x / 2,
+                    self.size[0] * 3 / 4 * (i + 1) /
+                    (self.player_count) - card_x / 2,
                     self.size[1] / 50,
                 ),
             )
@@ -469,7 +493,8 @@ class Multi_Single:
             screen.blit(
                 board_player_cardnum,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) - card_x / 6,
+                    self.size[0] * 3 / 4 * (i + 1) /
+                    (self.player_count) - card_x / 6,
                     card_y * 5 / 3,
                 ),
             )
@@ -485,7 +510,8 @@ class Multi_Single:
             screen.blit(
                 turn_timer,
                 (
-                    self.size[0] * 3 / 4 * (i + 1) / (self.player_count) + card_x / 2,
+                    self.size[0] * 3 / 4 * (i + 1) /
+                    (self.player_count) + card_x / 2,
                     card_y * 2 / 3,
                 ),
             )
@@ -497,7 +523,8 @@ class Multi_Single:
             if self.game.players[turn].defence_int > 0:
                 shield_x = 49 * setting.get_screen_scale()
                 shield_y = 53 * setting.get_screen_scale()
-                shield = pygame.image.load(RESOURCE_PATH / "single" / "shield.png")
+                shield = pygame.image.load(
+                    RESOURCE_PATH / "single" / "shield.png")
                 shield = pygame.transform.scale(shield, (shield_x, shield_y))
                 screen.blit(
                     shield,
@@ -511,7 +538,8 @@ class Multi_Single:
         deck_card_x = 130 * setting.get_screen_scale()
         deck_card_y = 182 * setting.get_screen_scale()
         deck_card = pygame.image.load(RESOURCE_PATH / "card" / "card_back.png")
-        deck_card = pygame.transform.scale(deck_card, (deck_card_x, deck_card_y))
+        deck_card = pygame.transform.scale(
+            deck_card, (deck_card_x, deck_card_y))
         screen.blit(
             deck_card,
             (
@@ -534,7 +562,8 @@ class Multi_Single:
             )
             + ".png"
         )
-        grave_card = pygame.transform.scale(grave_card, (grave_card_x, grave_card_y))
+        grave_card = pygame.transform.scale(
+            grave_card, (grave_card_x, grave_card_y))
         screen.blit(
             grave_card,
             (
@@ -546,9 +575,11 @@ class Multi_Single:
         color_card_x = 80 * setting.get_screen_scale()
         color_card_y = 80 * setting.get_screen_scale()
         color_card = pygame.image.load(
-            str(RESOURCE_PATH / card_folder / f"{self.game.grave_top_color}") + ".png"
+            str(RESOURCE_PATH / card_folder /
+                f"{self.game.grave_top_color}") + ".png"
         )
-        color_card = pygame.transform.scale(color_card, (color_card_x, color_card_y))
+        color_card = pygame.transform.scale(
+            color_card, (color_card_x, color_card_y))
         screen.blit(
             color_card,
             (
@@ -560,7 +591,8 @@ class Multi_Single:
         rotation_x = 943 * setting.get_screen_scale()
         rotation_y = 238 * setting.get_screen_scale()
         if self.is_turn_reversed == False:
-            rotation = pygame.image.load(RESOURCE_PATH / "single" / "rotation.png")
+            rotation = pygame.image.load(
+                RESOURCE_PATH / "single" / "rotation.png")
         else:
             rotation = pygame.image.load(
                 RESOURCE_PATH / "single" / "rotation_reversed.png"
@@ -629,7 +661,8 @@ class Multi_Single:
             get_card = pygame.image.load(
                 RESOURCE_PATH / card_folder / "card_back_effect.png"
             )
-            get_card = pygame.transform.scale(get_card, (get_card_x, get_card_y))
+            get_card = pygame.transform.scale(
+                get_card, (get_card_x, get_card_y))
             screen.blit(
                 get_card,
                 (
@@ -644,7 +677,8 @@ class Multi_Single:
             get_card = pygame.image.load(
                 RESOURCE_PATH / card_folder / "card_back_effect.png"
             )
-            get_card = pygame.transform.scale(get_card, (get_card_x, get_card_y))
+            get_card = pygame.transform.scale(
+                get_card, (get_card_x, get_card_y))
             screen.blit(
                 get_card,
                 (
@@ -658,8 +692,10 @@ class Multi_Single:
             if "skip" in self.effect:  # skip 카드 낼때
                 skip_x = 300 * setting.get_screen_scale()
                 skip_y = 300 * setting.get_screen_scale()
-                skip_effect = pygame.image.load(RESOURCE_PATH / "single" / "skip.png")
-                skip_effect = pygame.transform.scale(skip_effect, (skip_x, skip_y))
+                skip_effect = pygame.image.load(
+                    RESOURCE_PATH / "single" / "skip.png")
+                skip_effect = pygame.transform.scale(
+                    skip_effect, (skip_x, skip_y))
                 screen.blit(
                     skip_effect,
                     (
@@ -670,8 +706,10 @@ class Multi_Single:
             if "again" in self.effect:  # again 카드 낼때
                 again_x = 300 * setting.get_screen_scale()
                 again_y = 300 * setting.get_screen_scale()
-                again_effect = pygame.image.load(RESOURCE_PATH / "single" / "again.png")
-                again_effect = pygame.transform.scale(again_effect, (again_x, again_y))
+                again_effect = pygame.image.load(
+                    RESOURCE_PATH / "single" / "again.png")
+                again_effect = pygame.transform.scale(
+                    again_effect, (again_x, again_y))
                 screen.blit(
                     again_effect,
                     (
@@ -682,8 +720,10 @@ class Multi_Single:
             if "pick" in self.effect:  # pick 카드 낼때
                 pick_x = 300 * setting.get_screen_scale()
                 pick_y = 300 * setting.get_screen_scale()
-                pick_effect = pygame.image.load(RESOURCE_PATH / "single" / "pick.png")
-                pick_effect = pygame.transform.scale(pick_effect, (pick_x, pick_y))
+                pick_effect = pygame.image.load(
+                    RESOURCE_PATH / "single" / "pick.png")
+                pick_effect = pygame.transform.scale(
+                    pick_effect, (pick_x, pick_y))
                 screen.blit(
                     pick_effect,
                     (
@@ -694,8 +734,10 @@ class Multi_Single:
             if "four" in self.effect:  # four 카드 낼때
                 four_x = 300 * setting.get_screen_scale()
                 four_y = 300 * setting.get_screen_scale()
-                four_effect = pygame.image.load(RESOURCE_PATH / "single" / "four.png")
-                four_effect = pygame.transform.scale(four_effect, (four_x, four_y))
+                four_effect = pygame.image.load(
+                    RESOURCE_PATH / "single" / "four.png")
+                four_effect = pygame.transform.scale(
+                    four_effect, (four_x, four_y))
                 screen.blit(
                     four_effect,
                     (
@@ -713,7 +755,8 @@ class Multi_Single:
                     * 3
                     / 4,
                 )
-                give_y = self.size[1] - give_card_y * setting.get_screen_scale() / 2
+                give_y = self.size[1] - give_card_y * \
+                    setting.get_screen_scale() / 2
                 give_card = pygame.image.load(
                     RESOURCE_PATH / card_folder / f"{self.effect}.png"
                 )
@@ -724,8 +767,10 @@ class Multi_Single:
                     give_card,
                     (
                         give_x[0]
-                        + (grave_card_pos_x - give_x[0]) * self.count / max_count,
-                        give_y + (grave_card_pos_y - give_y) * self.count / max_count,
+                        + (grave_card_pos_x -
+                           give_x[0]) * self.count / max_count,
+                        give_y + (grave_card_pos_y - give_y) *
+                        self.count / max_count,
                     ),
                 )
                 self.count += 1
@@ -737,7 +782,8 @@ class Multi_Single:
                     uno_x = 400 * setting.get_screen_scale()
                     uno_y = 300 * setting.get_screen_scale()
                     uno = pygame.transform.scale(
-                        pygame.image.load(RESOURCE_PATH / "single" / "uno_effect.png"),
+                        pygame.image.load(
+                            RESOURCE_PATH / "single" / "uno_effect.png"),
                         (uno_x, uno_y),
                     )
                     screen.blit(
@@ -761,9 +807,11 @@ class Multi_Single:
                     give_card,
                     (
                         card_pos_x
-                        + (grave_card_pos_x - card_pos_x) * self.count / max_count,
+                        + (grave_card_pos_x - card_pos_x) *
+                        self.count / max_count,
                         card_pos_y
-                        + (grave_card_pos_y - card_pos_y) * self.count / max_count,
+                        + (grave_card_pos_y - card_pos_y) *
+                        self.count / max_count,
                     ),
                 )
                 self.count += 1
@@ -775,7 +823,8 @@ class Multi_Single:
                     uno_x = 400 * setting.get_screen_scale()
                     uno_y = 300 * setting.get_screen_scale()
                     uno = pygame.transform.scale(
-                        pygame.image.load(RESOURCE_PATH / "single" / "uno_effect.png"),
+                        pygame.image.load(
+                            RESOURCE_PATH / "single" / "uno_effect.png"),
                         (uno_x, uno_y),
                     )
                     screen.blit(
@@ -883,7 +932,8 @@ class Multi_Single:
             if self.game.turn != self.my_index and self.set_first != 0:
                 self.update_card()
                 se_event = pygame.event.Event(
-                    EVENT_PLAY_SE, {"path": RESOURCE_PATH / "sound" / "select.mp3"}
+                    EVENT_PLAY_SE, {
+                        "path": RESOURCE_PATH / "sound" / "select.mp3"}
                 )
                 pygame.event.post(se_event)
                 self.set_first = 0
@@ -911,7 +961,8 @@ class Multi_Single:
                             pygame.event.post(
                                 pygame.event.Event(
                                     EVENT_PLAY_SE,
-                                    {"path": RESOURCE_PATH / "sound" / "select.mp3"},
+                                    {"path": RESOURCE_PATH /
+                                        "sound" / "select.mp3"},
                                 )
                             )
                         # highlight 대상을 변경
@@ -932,7 +983,8 @@ class Multi_Single:
                             pygame.event.post(
                                 pygame.event.Event(
                                     EVENT_PLAY_SE,
-                                    {"path": RESOURCE_PATH / "sound" / "select.mp3"},
+                                    {"path": RESOURCE_PATH /
+                                        "sound" / "select.mp3"},
                                 )
                             )
                             # 선택을 하나 왼쪽으로 이동
@@ -945,7 +997,8 @@ class Multi_Single:
                             pygame.event.post(
                                 pygame.event.Event(
                                     EVENT_PLAY_SE,
-                                    {"path": RESOURCE_PATH / "sound" / "select.mp3"},
+                                    {"path": RESOURCE_PATH /
+                                        "sound" / "select.mp3"},
                                 )
                             )
                             # 선택을 하나 오른쪽으로 이동
