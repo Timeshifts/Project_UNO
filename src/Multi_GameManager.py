@@ -606,8 +606,11 @@ class Player:
             if Gm.set_uno == False:
                 self.is_uno = True
                 print("우노 성공")
-                M = f"uno_{Gm.turn}_{True}"
-                Gm.client.send(M)
+                
+                if self.is_computer == False:
+                    M = f"uno_{Gm.turn}_{True}"
+                    Gm.client.send(M)
+                
         # 남의 턴에 우노 버튼 클릭
         if self.is_authority == False and len(self.hand) == 2:
             Gm.set_uno = True
