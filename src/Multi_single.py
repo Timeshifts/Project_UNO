@@ -807,6 +807,7 @@ class Multi_Single:
                     self.game.wild = False
 
                     self.game.client.send("wild_four_" + str(index))
+                    self.game.client.send("wild_four_" + str(index))
 
                     while True:
                         if self.client.msg_queue.empty() == False:
@@ -823,6 +824,7 @@ class Multi_Single:
                     self.game.wild = False
 
                     self.game.client.send("wild_color_" + str(index))
+                    self.game.client.send("wild_four_" + str(index))
 
                     while True:
                         if self.client.msg_queue.empty() == False:
@@ -841,11 +843,14 @@ class Multi_Single:
                     self.game.turn_timer_end = True
                 else:
                     self.game.client.send("use_card_" + str(index))
+                    self.game.client.send("use_card_" + str(index))
+                    self.game.client.send("use_card_" + str(index))
+                    self.game.client.send("use_card_" + str(index))
 
                     while True:
-                        if self.client.msg_queue.empty() == False:
-                            self.client.msg_queue.get()
+                        if self.client.msg_queue.empty() == True:
                             break
+                        self.client.msg_queue.get()
 
                     self.game.turn_end(option=1)
 
@@ -854,11 +859,14 @@ class Multi_Single:
                 self.effect = "get_my"
 
                 self.game.client.send("get_card")
+                self.game.client.send("get_card")
+                self.game.client.send("get_card")
+                self.game.client.send("get_card")
 
                 while True:
-                    if self.client.msg_queue.empty() == False:
-                        self.client.msg_queue.get()
+                    if self.client.msg_queue.empty() == True:
                         break
+                    self.client.msg_queue.get()
 
                 self.game.turn_end()
 
