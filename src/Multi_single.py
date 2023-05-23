@@ -395,7 +395,7 @@ class Multi_Single:
                 center=(self.size[0] * 7 / 8, self.size[1] * (2 * i + 3) / 12)
             )
             screen.blit(playlist_box, playlist_box_rect)
-            if self.player_count - self.computer_count - 1 > i:  # 사람이면
+            if self.player_count - self.computer_count - self.my_index - 1 > i and self.player_count - self.my_index - 1 < i:  # 사람이면
                 playlist_player_name = font.render(
                     "User" + str(i + 1), True, "White")
                 screen.blit(
