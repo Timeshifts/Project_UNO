@@ -128,9 +128,9 @@ class Multi_Start_Setting:
 
     def client_end(self,chk,ip,name):  # 스스로 "돌아가기" 버튼을 통해 방을 나갈때
         print("나가기")
-        if ip in self.ip_name:
-            del self.ip_name[ip]
-        self.ip_name[ip] = name
+        # if ip in self.ip_name:
+        #     del self.ip_name[ip]
+        # self.ip_name[ip] = name
         sync_msg = {"type": "player_index", "chk": chk, "name": self.ip_name}
         # 동기화 메시지를 모든 클라이언트에 전송
         print(f"메시지 : {sync_msg}")

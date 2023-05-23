@@ -455,6 +455,9 @@ def main():
             # 멀티플레이 클라이언트 화면 업데이트
             if event.type == EVENT_UPDATE_CHK:
                 multi_lobby.update_chk()
+            
+            if event.type == EVENT_UPDATE_SERVER:
+                multi_lobby.update_menu()
 
             # 멀티플레이 클라이언트 화면 업데이트
             if event.type == EVENT_UPDATE_CHK_SERVER:

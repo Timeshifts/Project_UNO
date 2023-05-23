@@ -26,6 +26,7 @@ class Multi_Server:
         self.addr = 0
         self.ip = 0
         self.name = 0
+        self.out_client_ip = 0
 
 
     def single_send(self, index, msg):
@@ -74,8 +75,10 @@ class Multi_Server:
                     elif msg[1] == "kicked":
                         self.disconnect_client(msg[0])
                     elif msg[1] == "out":
+                        self.out_client_ip = msg[0]
+                        pygame.event.post(pygame.event.Event(EVENT_UPDATE_SERVER))  # 게임 시작 이벤트
                         self.disconnect_client(msg[0])
-                        self.multi_sendto(msg[2])
+                        # self.multi_sendto(msg[2])
                     elif type(msg) == tuple:  # 새로운 이름인 경우
                         self.ip = msg[0]
                         self.name = msg[1]
